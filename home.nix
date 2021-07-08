@@ -18,6 +18,11 @@
   # changes in each release.
   home.stateVersion = "21.05";
 
+  # TODO: why do I need this? surely home-manager can do it
+  home.sessionPath = [
+    "/etc/profiles/per-user/Patrick/bin"
+  ];
+
   home.packages =
     [
       pkgs.tmux
@@ -36,12 +41,18 @@
       pkgs.handbrake
     ];
 
+  programs.tmux = {
+    shell = "\${pkgs.zsh}/bin/zsh";
+  };
+
   programs.zsh = {
     enable = true;
     autocd = true;
-    dotDir = ".config/zsh";
     enableAutosuggestions = true;
     enableCompletion = true;
+    history = {
+      expireDuplicatesFirst = true;
+    };
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "osx" "dircycle" "timer" ];
@@ -53,6 +64,7 @@
       LC_CTYPE = "en_US.UTF-8";
     };
     shellAliases = {
+      vim = "nvim";
       view = "vim -R";
     };
   };
