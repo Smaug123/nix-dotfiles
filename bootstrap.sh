@@ -14,14 +14,12 @@ install_darwin_build () {
   echo "nix-darwin installed."
 }
 
+ln -s . ~/.nixpkgs || exit 1
+
 nix-build --version || install_nix || exit 1
 darwin-rebuild changelog || install_darwin_build || exit 1
 
 nix-channel --add https://github.com/rycee/home-manager/archive/master.tar.gz home-manager || exit 1
 nix-channel --update || exit 1
 
-mkdir -p ~/.nixpkgs && cp ./darwin-configuration.nix ~/.nixpkgs/darwin-configuration.nix || exit 1
-mkdir -p ~/.config/nixpkgs && cp ./home.nix ~/.config/nixpkgs/home.nix || exit 1
-
 darwin-rebuild || exit 1
-home-manager switch || exit 1
