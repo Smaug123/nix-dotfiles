@@ -177,22 +177,9 @@ in
   # $ nix-env -qaP | grep wget
 
   environment.systemPackages =
-    [ pkgs.alacritty
-      pkgs.tmux
-      pkgs.wget
-      pkgs.youtube-dl
-      pkgs.cmake
-      pkgs.gcc
-      pkgs.gdb
-      pkgs.hledger
-      pkgs.hledger-web
-      pkgs.dotnet-sdk_5
-      pkgs.docker
+    [
+      pkgs.alacritty
       pkgs.keepassxc
-      pkgs.jitsi-meet
-      pkgs.elan
-      pkgs.protonmail-bridge
-      pkgs.handbrake
       vscode-with-extensions
     ];
 
@@ -205,6 +192,7 @@ in
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
+  environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
 
   # Auto upgrade nix package and the daemon service.
   # services.nix-daemon.enable = true;
