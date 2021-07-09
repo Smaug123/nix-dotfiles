@@ -114,4 +114,6 @@ let g:syntastic_check_on_wq = 0''; }
   programs.neovim.withPython3 = true;
 
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
+
+  home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
 }
