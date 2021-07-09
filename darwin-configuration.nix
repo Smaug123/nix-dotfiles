@@ -189,10 +189,13 @@ in
     "vscode-extension-ms-vscode-remote-remote-ssh"
   ];
 
+  # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
+  programs.zsh.enable = true;
+
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
-  environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
+  #environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
 
   # Auto upgrade nix package and the daemon service.
   # services.nix-daemon.enable = true;

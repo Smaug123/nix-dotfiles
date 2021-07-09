@@ -18,11 +18,6 @@
   # changes in each release.
   home.stateVersion = "21.05";
 
-  # TODO: why do I need this? surely home-manager can do it
-  home.sessionPath = [
-    "/etc/profiles/per-user/Patrick/bin"
-  ];
-
   home.packages =
     [
       pkgs.tmux
