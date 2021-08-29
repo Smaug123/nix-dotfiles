@@ -166,6 +166,13 @@ let
       };
 
 in
+
+let
+  my-python-packages = python-packages: [
+  ]; 
+  python = pkgs.python3.withPackages my-python-packages;
+in
+
 {
 
   imports = [ <home-manager/nix-darwin> ];
@@ -181,7 +188,14 @@ in
       pkgs.alacritty
       pkgs.keepassxc
       vscode-with-extensions
+      python
     ];
+
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "vscode"

@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -34,7 +35,13 @@
       pkgs.elan
       pkgs.protonmail-bridge
       pkgs.handbrake
+      pkgs.ripgrep
     ];
+
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacsGcc;
+  };
 
   programs.tmux = {
     shell = "\${pkgs.zsh}/bin/zsh";
@@ -116,4 +123,16 @@ let g:syntastic_check_on_wq = 0''; }
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
+
+  home.file.".emacs.d" = {
+    # don't make the directory read only so that impure melpa can still happen
+    # for now
+    recursive = true;
+    source = pkgs.fetchFromGitHub {
+      owner = "syl20bnr";
+      repo = "spacemacs";
+      rev = "59852a6ab52911ac76bb22aa8642ccef48238349";
+      sha256 = "0m634adqnwqvi8d7qkq7nh8ivfz6cx90idvwd2wiylg4w1hly252";
+    };
+  };
 }
