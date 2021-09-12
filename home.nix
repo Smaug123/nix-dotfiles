@@ -38,11 +38,6 @@
       pkgs.ripgrep
     ];
 
-  programs.emacs = {
-    enable = true;
-    package = pkgs.emacsGcc;
-  };
-
   programs.tmux = {
     shell = "\${pkgs.zsh}/bin/zsh";
   };
@@ -127,6 +122,12 @@ let g:syntastic_check_on_wq = 0''; }
   home.file.".ideavimrc".source = ./ideavimrc;
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
+
+  #programs.emacs = {
+  #  enable = true;
+  #  package = pkgs.emacsGcc;
+  #};
+
 
   #home.file.".emacs.d" = {
   #  # don't make the directory read only so that impure melpa can still happen

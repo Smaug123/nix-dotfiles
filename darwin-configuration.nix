@@ -191,12 +191,6 @@ in
       python
     ];
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/8ed671dab09f08e8079e24f9fc7800b7ce260fa2.tar.gz;
-    }))
-  ];
-
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "vscode"
     "vscode-with-extensions"
@@ -209,7 +203,14 @@ in
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
-  #environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
+
+  # TODO: get Spacemacs actually working
+  #nixpkgs.overlays = [
+  #  (import (builtins.fetchTarball {
+  #    url = https://github.com/nix-community/emacs-overlay/archive/8ed671dab09f08e8079e24f9fc7800b7ce260fa2.tar.gz;
+  #  }))
+  #];
+
 
   # Auto upgrade nix package and the daemon service.
   # services.nix-daemon.enable = true;
