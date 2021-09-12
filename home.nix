@@ -124,15 +124,18 @@ let g:syntastic_check_on_wq = 0''; }
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
 
-  home.file.".emacs.d" = {
-    # don't make the directory read only so that impure melpa can still happen
-    # for now
-    recursive = true;
-    source = pkgs.fetchFromGitHub {
-      owner = "syl20bnr";
-      repo = "spacemacs";
-      rev = "59852a6ab52911ac76bb22aa8642ccef48238349";
-      sha256 = "0m634adqnwqvi8d7qkq7nh8ivfz6cx90idvwd2wiylg4w1hly252";
-    };
-  };
+  #home.file.".emacs.d" = {
+  #  # don't make the directory read only so that impure melpa can still happen
+  #  # for now
+  #  recursive = true;
+  #  source = pkgs.fetchFromGitHub {
+  #    owner = "syl20bnr";
+  #    repo = "spacemacs";
+  #    rev = "663cfc5ba7826dd20d18fe5c1f8fb09338284955";
+  #    sha256 = "1a5myflp32myxah296kbq1xc0idixf6xvgis3v4fbs6vk9fj39hw";
+  #    leaveDotGit = true;
+  #  };
+  #};
+
+  #home.file.".spacemacs".source = ./.spacemacs;
 }
