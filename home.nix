@@ -124,6 +124,8 @@ let g:syntastic_check_on_wq = 0''; }
 
   home.file.".ssh/config".source = ./ssh.config;
 
+  home.file.".ideavimrc".source = ./ideavimrc;
+
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
 
   #home.file.".emacs.d" = {
