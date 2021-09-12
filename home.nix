@@ -122,6 +122,8 @@ let g:syntastic_check_on_wq = 0''; }
 
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
 
+  home.file.".ssh/config".source = ./ssh.config;
+
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
 
   #home.file.".emacs.d" = {
