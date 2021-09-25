@@ -187,15 +187,17 @@ in
     [
       pkgs.alacritty
       pkgs.keepassxc
-      vscode-with-extensions
+      pkgs.rustc
+      pkgs.cargo
       python
+      #vscode-with-extensions
     ];
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "vscode"
-    "vscode-with-extensions"
-    "vscode-extension-ms-vscode-remote-remote-ssh"
-  ];
+ #nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+ #  "vscode"
+ #  "vscode-with-extensions"
+ #  "vscode-extension-ms-vscode-remote-remote-ssh"
+ #];
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
