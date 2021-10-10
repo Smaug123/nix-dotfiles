@@ -174,6 +174,7 @@ let
 in
 
 {
+  nix.useDaemon = true;
 
   imports = [ <home-manager/nix-darwin> ];
   home-manager.useGlobalPkgs = true;
@@ -186,11 +187,11 @@ in
   environment.systemPackages =
     [
       pkgs.alacritty
-      pkgs.keepassxc
       pkgs.rustc
       pkgs.cargo
       python
       #vscode-with-extensions
+      #pkgs.keepassxc
     ];
 
  #nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
