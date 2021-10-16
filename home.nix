@@ -31,11 +31,17 @@
       pkgs.dotnet-sdk_5
       pkgs.docker
       pkgs.jitsi-meet
-      pkgs.elan
       pkgs.protonmail-bridge
       pkgs.handbrake
       pkgs.ripgrep
+      pkgs.elan
     ];
+
+  programs.vscode = {
+      enable = true;
+      package = pkgs.vscodium; 
+      extensions = import ./vscode-extensions.nix { inherit pkgs; };
+  };
 
   programs.tmux = {
     shell = "\${pkgs.zsh}/bin/zsh";
