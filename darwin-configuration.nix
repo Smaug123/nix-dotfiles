@@ -2,19 +2,7 @@
 
 let pkgs = import <nixpkgs> { config = import ./config.nix; }; in
 
-let
-  my-python-packages = python-packages: with python-packages; [
-    pip
-    mathlibtools
-  ];
-  in
-      let python =
-          let packageOverrides = self: super: {
-              # Test failures on darwin ("windows-1252"); just skip pytest
-              beautifulsoup4 = super.beautifulsoup4.overridePythonAttrs(old: { pytestCheckPhase="true"; });
-           };
-        in (pkgs.python3.override { inherit packageOverrides; }).withPackages my-python-packages;
-in
+let python = import ./python.nix { inherit pkgs; }; in
 
 {
 
