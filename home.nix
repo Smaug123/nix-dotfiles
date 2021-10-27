@@ -104,6 +104,7 @@
 
   programs.neovim.enable = true;
   programs.neovim.plugins = with pkgs.vimPlugins; [
+    molokai
     { plugin = rust-vim;
       config = "let g:rustfmt_autosave = 1"; }
     { plugin = syntastic;
