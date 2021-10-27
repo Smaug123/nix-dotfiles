@@ -1,8 +1,12 @@
-{ config, lib, ... }:
-
-let pkgs = import <nixpkgs> { config = import ./config.nix; }; in
+{ config, lib, pkgs, ... }:
 
 let python = import ./python.nix { inherit pkgs; }; in
+
+let gmp =
+  #if pkgs.stdenv.isDarwin then
+      import ./gmp.nix { inherit pkgs; }
+  #else pkgs.gmp
+  ; in
 
 {
 
@@ -22,8 +26,7 @@ let python = import ./python.nix { inherit pkgs; }; in
       pkgs.rustc
       pkgs.cargo
       pkgs.clang
-      pkgs.gmp
-      pkgs.darwin.apple_sdk.frameworks.Foundation
+      gmp
       python
       #pkgs.keepassxc
     ];
