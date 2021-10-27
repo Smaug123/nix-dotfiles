@@ -36,6 +36,7 @@
       pkgs.ripgrep
       pkgs.elan
       pkgs.coreutils-prefixed
+      pkgs.shellcheck
     ];
 
   programs.vscode = {
