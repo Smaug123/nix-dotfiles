@@ -3,9 +3,9 @@
 let python = import ./python.nix { inherit pkgs; }; in
 
 let gmp =
-  #if pkgs.stdenv.isDarwin then
+  if pkgs.stdenv.isDarwin then
       import ./gmp.nix { inherit pkgs; }
-  #else pkgs.gmp
+  else pkgs.gmp
   ; in
 
 {
