@@ -1,12 +1,16 @@
 { config, pkgs, ... }:
 
+let username = "Patrick"; in
+
+let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
+
 {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "Patrick";
+  home.username = username;
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -20,6 +24,7 @@
 
   home.packages =
     [
+      pkgs.rust-analyzer
       pkgs.tmux
       pkgs.wget
       pkgs.youtube-dl
@@ -34,11 +39,12 @@
       pkgs.protonmail-bridge
       pkgs.handbrake
       pkgs.ripgrep
-      pkgs.elan
+      #pkgs.elan
       pkgs.coreutils-prefixed
       pkgs.shellcheck
       pkgs.html-tidy
       pkgs.hugo
+      #rider
     ];
 
   programs.vscode = {
@@ -83,6 +89,7 @@
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
+      nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
     };
   };
 

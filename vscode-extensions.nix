@@ -5,9 +5,7 @@ with pkgs.vscode-extensions; [
     haskell.haskell
     yzhang.markdown-all-in-one
     james-yu.latex-workshop
-    matklad.rust-analyzer
     ms-azuretools.vscode-docker
-    vadimcn.vscode-lldb
     vscodevim.vim
 # Doesn't work with vscodium, and unfree
 #       ms-vscode-remote.remote-ssh
@@ -19,6 +17,18 @@ with pkgs.vscode-extensions; [
     publisher = "austin";
     version = "0.2.2";
     sha256 = "1fz89m6ja25aif6wszg9h2fh5vajk6bj3lp1mh0l2b04nw2mzhd5";
+}
+{
+    name = "rust-analyzer";
+    publisher = "matklad";
+    version = "0.2.792";
+    sha256 = "1m4g6nf5yhfjrjja0x8pfp79v04lxp5lfm6z91y0iilmqbb9kx1q";
+}
+{
+    name = "vscode-lldb";
+    publisher = "vadimcn";
+    version = "1.6.8";
+    sha256 = "1c81hs2lbcxshw3fnpajc9hzkpykc76a6hgs7wl5xji57782bckl";
 }
 {
     name = "toml";
@@ -36,7 +46,7 @@ with pkgs.vscode-extensions; [
     name = "lean";
     publisher = "jroesch";
     version = "0.16.39";
-    sha256 = "1ijzh82ka7k9pmzqax4ikmqv20yjmw7zi9vz2lizgsz6gdaylrj9";
+    sha256 = "0v1w0rmx2z7q6lfrl430fl6aq6n70y14s2fqsp734igdkdhdnvmk";
 }
 {
     name = "language-haskell";

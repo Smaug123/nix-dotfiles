@@ -27,8 +27,8 @@ let gmp =
       pkgs.cargo
       pkgs.clang
       gmp
-      python
       #pkgs.keepassxc
+      python
     ];
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
