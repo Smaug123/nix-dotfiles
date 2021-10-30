@@ -37,12 +37,25 @@
       pkgs.elan
       pkgs.coreutils-prefixed
       pkgs.shellcheck
+      pkgs.html-tidy
+      pkgs.hugo
     ];
 
   programs.vscode = {
       enable = true;
       package = pkgs.vscodium; 
       extensions = import ./vscode-extensions.nix { inherit pkgs; };
+      userSettings = {
+        workbench.colorTheme = "Default High Contrast";
+        "files.Exclude" = {
+          "**/.git" = true;
+          "**/.DS_Store" = true;
+          "**/Thumbs.db" = true;
+          "**/*.olean" = true;
+        };
+        "git.path" = "${pkgs.git}/bin/git";
+        "update.mode" = "none";
+      };
   };
 
   programs.tmux = {
