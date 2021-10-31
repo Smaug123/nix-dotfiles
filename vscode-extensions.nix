@@ -5,13 +5,18 @@ with pkgs.vscode-extensions; [
     haskell.haskell
     yzhang.markdown-all-in-one
     james-yu.latex-workshop
-    ms-azuretools.vscode-docker
     vscodevim.vim
 # Doesn't work with vscodium, and unfree
 #       ms-vscode-remote.remote-ssh
 # Not supported on Darwin, apparently
 #       ms-dotnettools.csharp
 ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+{
+    name = "vscode-docker";
+    publisher = "ms-azuretools";
+    version = "1.14.0";
+    sha256 = "0wc0k3hf9yfjcx7cw9vm528v5f4bk968bgc98h8fwmlx14vhapzp";
+}
 {
     name = "code-gnu-global";
     publisher = "austin";

@@ -61,6 +61,7 @@ let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
         };
         "git.path" = "${pkgs.git}/bin/git";
         "update.mode" = "none";
+        "docker.dockerPath" = "${pkgs.docker}/bin/docker";
       };
   };
 
