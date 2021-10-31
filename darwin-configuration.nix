@@ -38,12 +38,11 @@ let gmp =
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
 
-  # TODO: get Spacemacs actually working
-  #nixpkgs.overlays = [
-  #  (import (builtins.fetchTarball {
-  #    url = https://github.com/nix-community/emacs-overlay/archive/8ed671dab09f08e8079e24f9fc7800b7ce260fa2.tar.gz;
-  #  }))
-  #];
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/25dd5297f613fd13971e4847e82d1097077eeb53.tar.gz;
+    }))
+  ];
 
 
   # Auto upgrade nix package and the daemon service.

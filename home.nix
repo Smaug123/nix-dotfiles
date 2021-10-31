@@ -44,6 +44,7 @@ let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
       pkgs.shellcheck
       pkgs.html-tidy
       pkgs.hugo
+      pkgs.agda
       #rider
     ];
 
@@ -152,24 +153,9 @@ let g:syntastic_check_on_wq = 0''; }
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
 
-  #programs.emacs = {
-  #  enable = true;
-  #  package = pkgs.emacsGcc;
-  #};
-
-
-  #home.file.".emacs.d" = {
-  #  # don't make the directory read only so that impure melpa can still happen
-  #  # for now
-  #  recursive = true;
-  #  source = pkgs.fetchFromGitHub {
-  #    owner = "syl20bnr";
-  #    repo = "spacemacs";
-  #    rev = "663cfc5ba7826dd20d18fe5c1f8fb09338284955";
-  #    sha256 = "1a5myflp32myxah296kbq1xc0idixf6xvgis3v4fbs6vk9fj39hw";
-  #    leaveDotGit = true;
-  #  };
-  #};
-
-  #home.file.".spacemacs".source = ./.spacemacs;
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacsGcc;
+    extraPackages = (epkgs: []);
+  };
 }
