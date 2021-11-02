@@ -39,7 +39,7 @@ let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
       pkgs.protonmail-bridge
       pkgs.handbrake
       pkgs.ripgrep
-      #pkgs.elan
+      pkgs.elan
       pkgs.coreutils-prefixed
       pkgs.shellcheck
       pkgs.html-tidy
