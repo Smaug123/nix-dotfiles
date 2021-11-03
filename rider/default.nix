@@ -11,11 +11,12 @@ let riderconfig =
         src = src;
         phases = [ "unpackPhase" ];
         unpackPhase = ''
-        mkdir -p $out
-        cp ${src} $out/GlobalSettingsStorage.DotSettings
-        cp ${link} $out/link.sh
-        chmod u+x $out/link.sh
+        mkdir -p "$out"
+        cp ${src} "$out/GlobalSettingsStorage.DotSettings"
+        cp ${link} "$out/link.sh"
+        chmod u+x "$out/link.sh"
         sed -i 's_NIX-DOTNET-SDK_${pkgs.dotnet-sdk}_' "$out/GlobalSettingsStorage.DotSettings"
+        sed -i "s!NIX-RIDER-CONFIG!$out!" "$out/link.sh"
         '';
 
         installPhase = ''
