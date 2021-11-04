@@ -158,5 +158,9 @@ let g:syntastic_check_on_wq = 0''; }
     enable = true;
     package = pkgs.emacsGcc;
     extraPackages = (epkgs: []);
+    extraConfig = ''
+(load-file (let ((coding-system-for-read 'utf-8))
+           (shell-command-to-string "agda-mode locate")))
+    '';
   };
 }
