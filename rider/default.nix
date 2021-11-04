@@ -39,5 +39,3 @@ find "$dest" -type d -maxdepth 1 -name 'Rider*' -exec sh -c '${riderconfig}/link
   };
 
 }
-
-#mkdir -p "$out" && touch "$out/done.txt"
