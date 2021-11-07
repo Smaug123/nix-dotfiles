@@ -45,7 +45,7 @@ let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
       pkgs.html-tidy
       pkgs.hugo
       pkgs.agda
-      #rider
+      #pkgs.anki-bin
     ];
 
   programs.vscode = {
