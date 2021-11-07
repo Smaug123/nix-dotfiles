@@ -111,6 +111,9 @@ let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
       st = "status";
     };
     extraConfig = {
+      rerere = {
+        enabled = true;
+      };
       push = {
         default = "current";
       };
