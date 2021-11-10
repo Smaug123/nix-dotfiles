@@ -47,6 +47,7 @@ let username = "Patrick"; in
       pkgs.html-tidy
       pkgs.hugo
       pkgs.agda
+      #pkgs.anki-bin
     ];
 
   programs.vscode = {
@@ -112,6 +113,9 @@ let username = "Patrick"; in
       st = "status";
     };
     extraConfig = {
+      rerere = {
+        enabled = true;
+      };
       push = {
         default = "current";
       };
@@ -159,5 +163,9 @@ let g:syntastic_check_on_wq = 0''; }
     enable = true;
     package = pkgs.emacsGcc;
     extraPackages = (epkgs: []);
+    extraConfig = ''
+(load-file (let ((coding-system-for-read 'utf-8))
+           (shell-command-to-string "agda-mode locate")))
+    '';
   };
 }

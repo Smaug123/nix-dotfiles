@@ -36,7 +36,7 @@ let gmp =
 
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
-  # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
+  environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -46,8 +46,14 @@ let gmp =
 
 
   # Auto upgrade nix package and the daemon service.
-  # services.nix-daemon.enable = true;
-  # nix.package = pkgs.nix;
+  services.nix-daemon.enable = true;
+  nix.package = pkgs.nix;
+  nix.gc.automatic = true;
+  nix.useSandbox = true;
+
+  nix.extraOptions = ''
+    auto-optimise-store = true
+  '';
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
