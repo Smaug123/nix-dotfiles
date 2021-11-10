@@ -2,9 +2,11 @@
 
 let username = "Patrick"; in
 
-let rider = import ./rider/rider.nix { inherit pkgs; username = username; }; in
-
 {
+  imports = [ ./rider ];
+
+  rider = { enable = true; username = username; };
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
