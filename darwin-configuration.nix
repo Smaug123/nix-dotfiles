@@ -26,7 +26,7 @@ let gmp =
       pkgs.rustc
       pkgs.cargo
       pkgs.clang
-      gmp
+      #gmp
       #pkgs.keepassxc
       python
     ];

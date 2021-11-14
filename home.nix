@@ -1,11 +1,12 @@
 { config, pkgs, ... }:
 
 let username = "Patrick"; in
+let dotnet = pkgs.dotnet-sdk_6; in
 
 {
   imports = [ ./rider ];
 
-  rider = { enable = true; username = username; };
+  rider = { enable = true; username = username; dotnet = dotnet; };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -35,7 +36,7 @@ let username = "Patrick"; in
       pkgs.gdb
       pkgs.hledger
       pkgs.hledger-web
-      pkgs.dotnet-sdk_5
+      dotnet
       pkgs.docker
       pkgs.jitsi-meet
       pkgs.protonmail-bridge
@@ -47,6 +48,7 @@ let username = "Patrick"; in
       pkgs.html-tidy
       pkgs.hugo
       pkgs.agda
+      pkgs.pijul
       #pkgs.anki-bin
     ];
 

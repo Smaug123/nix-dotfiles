@@ -15,7 +15,7 @@ let riderconfig =
         cp ${src} "$out/GlobalSettingsStorage.DotSettings"
         cp ${link} "$out/link.sh"
         chmod u+x "$out/link.sh"
-        sed -i 's_NIX-DOTNET-SDK_${pkgs.dotnet-sdk}_' "$out/GlobalSettingsStorage.DotSettings"
+        sed -i 's_NIX-DOTNET-SDK_${config.rider.dotnet}_' "$out/GlobalSettingsStorage.DotSettings"
         sed -i "s!NIX-RIDER-CONFIG!$out!" "$out/link.sh"
         '';
 
@@ -28,6 +28,7 @@ in
   options = {
     rider.enable = lib.mkOption { default = false; };
     rider.username = lib.mkOption { type = lib.types.str; example = "Patrick"; };
+    rider.dotnet = lib.mkOption { default = pkgs.dotnet-sdk; };
   };
 
   config = lib.mkIf config.rider.enable {
