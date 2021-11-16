@@ -46,8 +46,8 @@ let dotnet = pkgs.dotnet-sdk_6; in
       pkgs.shellcheck
       pkgs.html-tidy
       pkgs.hugo
-     # pkgs.agda
-     # pkgs.pijul
+      #pkgs.agda
+      pkgs.pijul
     ];
 
   #programs.vscode = {
