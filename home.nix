@@ -39,37 +39,35 @@ let dotnet = pkgs.dotnet-sdk_6; in
       dotnet
       pkgs.docker
       pkgs.jitsi-meet
-      pkgs.protonmail-bridge
-      pkgs.handbrake
+      #pkgs.handbrake
       pkgs.ripgrep
       pkgs.elan
       pkgs.coreutils-prefixed
       pkgs.shellcheck
       pkgs.html-tidy
       pkgs.hugo
-      pkgs.agda
-      pkgs.pijul
-      #pkgs.anki-bin
+     # pkgs.agda
+     # pkgs.pijul
     ];
 
-  programs.vscode = {
-      enable = true;
-      package = pkgs.vscodium; 
-      extensions = import ./vscode-extensions.nix { inherit pkgs; };
-      userSettings = {
-        workbench.colorTheme = "Default High Contrast";
-        "files.Exclude" = {
-          "**/.git" = true;
-          "**/.DS_Store" = true;
-          "**/Thumbs.db" = true;
-          "**/*.olean" = true;
-        };
-        "git.path" = "${pkgs.git}/bin/git";
-        "update.mode" = "none";
-        "docker.dockerPath" = "${pkgs.docker}/bin/docker";
-        "lean.leanpkgPath" = "${pkgs.elan}/bin/leanpkg";
-      };
-  };
+  #programs.vscode = {
+  #    enable = true;
+  #    package = pkgs.vscodium; 
+  #    extensions = import ./vscode-extensions.nix { inherit pkgs; };
+  #    userSettings = {
+  #      workbench.colorTheme = "Default High Contrast";
+  #      "files.Exclude" = {
+  #        "**/.git" = true;
+  #        "**/.DS_Store" = true;
+  #        "**/Thumbs.db" = true;
+  #        "**/*.olean" = true;
+  #      };
+  #      "git.path" = "${pkgs.git}/bin/git";
+  #      "update.mode" = "none";
+  #      "docker.dockerPath" = "${pkgs.docker}/bin/docker";
+  #      "lean.leanpkgPath" = "${pkgs.elan}/bin/leanpkg";
+  #    };
+  #};
 
   programs.tmux = {
     shell = "\${pkgs.zsh}/bin/zsh";
@@ -79,13 +77,13 @@ let dotnet = pkgs.dotnet-sdk_6; in
     enable = true;
     autocd = true;
     enableAutosuggestions = true;
-    enableCompletion = true;
+    enableCompletion = false;
     history = {
       expireDuplicatesFirst = true;
     };
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "osx" "dircycle" "timer" ];
+      plugins = [ "git" "macos" "dircycle" "timer" ];
       theme = "robbyrussell";
     };
     sessionVariables = {
