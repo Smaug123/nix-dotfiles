@@ -77,7 +77,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
     enable = true;
     autocd = true;
     enableAutosuggestions = true;
-    enableCompletion = false;
+    enableCompletion = true;
     history = {
       expireDuplicatesFirst = true;
     };
@@ -90,6 +90,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
+      RUSTFLAGS = "-L ${pkgs.libiconv}/lib";
     };
     shellAliases = {
       vim = "nvim";

@@ -23,8 +23,8 @@ let gmp =
   environment.systemPackages =
     [
       pkgs.alacritty
-      pkgs.rustc
-      pkgs.cargo
+      pkgs.rustup
+      pkgs.libiconv
       pkgs.clang
       #gmp
       #pkgs.keepassxc
