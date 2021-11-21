@@ -50,24 +50,24 @@ let dotnet = pkgs.dotnet-sdk_6; in
       pkgs.pijul
     ];
 
-  #programs.vscode = {
-  #    enable = true;
-  #    package = pkgs.vscodium; 
-  #    extensions = import ./vscode-extensions.nix { inherit pkgs; };
-  #    userSettings = {
-  #      workbench.colorTheme = "Default High Contrast";
-  #      "files.Exclude" = {
-  #        "**/.git" = true;
-  #        "**/.DS_Store" = true;
-  #        "**/Thumbs.db" = true;
-  #        "**/*.olean" = true;
-  #      };
-  #      "git.path" = "${pkgs.git}/bin/git";
-  #      "update.mode" = "none";
-  #      "docker.dockerPath" = "${pkgs.docker}/bin/docker";
-  #      "lean.leanpkgPath" = "${pkgs.elan}/bin/leanpkg";
-  #    };
-  #};
+  programs.vscode = {
+      enable = true;
+      package = pkgs.vscode;
+      extensions = import ./vscode-extensions.nix { inherit pkgs; };
+      userSettings = {
+        workbench.colorTheme = "Default High Contrast";
+        "files.Exclude" = {
+          "**/.git" = true;
+          "**/.DS_Store" = true;
+          "**/Thumbs.db" = true;
+          "**/*.olean" = true;
+        };
+        "git.path" = "${pkgs.git}/bin/git";
+        "update.mode" = "none";
+        "docker.dockerPath" = "${pkgs.docker}/bin/docker";
+        "lean.leanpkgPath" = "${pkgs.elan}/bin/leanpkg";
+      };
+  };
 
   programs.tmux = {
     shell = "\${pkgs.zsh}/bin/zsh";

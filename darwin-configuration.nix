@@ -44,6 +44,9 @@ let gmp =
     }))
   ];
 
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "vscode"
+  ];
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
