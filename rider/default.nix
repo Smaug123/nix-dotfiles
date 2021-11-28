@@ -35,7 +35,9 @@ in
     home.activation.jetbrains-rider-settings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
 
 dest="/Users/${config.rider.username}/Library/Application Support/JetBrains"
-find "$dest" -type d -maxdepth 1 -name 'Rider*' -exec sh -c '${riderconfig}/link.sh "$0"' {} \;
+if [ -e "$dest" ]; then
+  find "$dest" -type d -maxdepth 1 -name 'Rider*' -exec sh -c '${riderconfig}/link.sh "$0"' {} \;
+fi
     '';
   };
 

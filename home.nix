@@ -4,9 +4,10 @@ let username = "Patrick"; in
 let dotnet = pkgs.dotnet-sdk_6; in
 
 {
-  imports = [ ./rider ];
+  imports = [ ./rider ./gmp ];
 
   rider = { enable = true; username = username; dotnet = dotnet; };
+  gmp-symlink = { enable = true; };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -32,6 +33,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
       pkgs.wget
       pkgs.youtube-dl
       pkgs.cmake
+      pkgs.gnumake
       pkgs.gcc
       pkgs.gdb
       pkgs.hledger
@@ -39,22 +41,21 @@ let dotnet = pkgs.dotnet-sdk_6; in
       dotnet
       pkgs.docker
       pkgs.jitsi-meet
-      pkgs.protonmail-bridge
-      pkgs.handbrake
+      #pkgs.handbrake
       pkgs.ripgrep
       pkgs.elan
       pkgs.coreutils-prefixed
       pkgs.shellcheck
       pkgs.html-tidy
       pkgs.hugo
-      pkgs.agda
+      #pkgs.agda
       pkgs.pijul
-      #pkgs.anki-bin
+      pkgs.universal-ctags
     ];
 
   programs.vscode = {
       enable = true;
-      package = pkgs.vscodium; 
+      package = pkgs.vscode;
       extensions = import ./vscode-extensions.nix { inherit pkgs; };
       userSettings = {
         workbench.colorTheme = "Default High Contrast";
@@ -85,18 +86,20 @@ let dotnet = pkgs.dotnet-sdk_6; in
     };
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "osx" "dircycle" "timer" ];
+      plugins = [ "git" "macos" "dircycle" "timer" ];
       theme = "robbyrussell";
     };
     sessionVariables = {
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
+      RUSTFLAGS = "-L ${pkgs.libiconv}/lib";
     };
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
       nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
+      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${pkgs.gnumake}/bin/make";
     };
   };
 
@@ -136,6 +139,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
   programs.neovim.enable = true;
   programs.neovim.plugins = with pkgs.vimPlugins; [
     molokai
+    tagbar
     { plugin = rust-vim;
       config = "let g:rustfmt_autosave = 1"; }
     { plugin = syntastic;

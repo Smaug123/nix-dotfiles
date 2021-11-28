@@ -2,12 +2,6 @@
 
 let python = import ./python.nix { inherit pkgs; }; in
 
-let gmp =
-  if pkgs.stdenv.isDarwin then
-      import ./gmp.nix { inherit pkgs; }
-  else pkgs.gmp
-  ; in
-
 {
 
   nix.useDaemon = true;
@@ -23,10 +17,9 @@ let gmp =
   environment.systemPackages =
     [
       pkgs.alacritty
-      pkgs.rustc
-      pkgs.cargo
+      pkgs.rustup
+      pkgs.libiconv
       pkgs.clang
-      #gmp
       #pkgs.keepassxc
       python
     ];
@@ -44,15 +37,19 @@ let gmp =
     }))
   ];
 
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "vscode"
+  ];
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
-  nix.package = pkgs.nix;
+  nix.package = pkgs.nixFlakes;
   nix.gc.automatic = true;
   nix.useSandbox = true;
 
   nix.extraOptions = ''
     auto-optimise-store = true
+    experimental-features = nix-command flakes
   '';
 
   # Used for backwards compatibility, please read the changelog before changing.
