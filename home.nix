@@ -104,7 +104,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
       vim = "nvim";
       view = "vim -R";
       nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
-      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${pkgs.gnumake}/bin/make -DCMAKE_AR=${pkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${pkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${pkgs.gmp.dev}/include/";
+      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${pkgs.gnumake}/bin/make -DCMAKE_AR=${pkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${pkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${pkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${pkgs.gmp}/bin";
       ar = "${pkgs.darwin.cctools}/bin/ar";
     };
   };
