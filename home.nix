@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 
-let username = "Patrick"; in
+let username = "patrick"; in
 let dotnet = pkgs.dotnet-sdk_6; in
 
 {
@@ -51,6 +51,8 @@ let dotnet = pkgs.dotnet-sdk_6; in
       #pkgs.agda
       pkgs.pijul
       pkgs.universal-ctags
+      pkgs.asciinema
+      pkgs.git-lfs
     ];
 
   programs.vscode = {
@@ -68,7 +70,9 @@ let dotnet = pkgs.dotnet-sdk_6; in
         "git.path" = "${pkgs.git}/bin/git";
         "update.mode" = "none";
         "docker.dockerPath" = "${pkgs.docker}/bin/docker";
-        "lean.leanpkgPath" = "${pkgs.elan}/bin/leanpkg";
+        "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
+        "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
+        "lean.memoryLimit" = 8092;
       };
   };
 
@@ -94,6 +98,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
       RUSTFLAGS = "-L ${pkgs.libiconv}/lib";
+      RUST_BACKTRACE = "full";
     };
     shellAliases = {
       vim = "nvim";
@@ -133,6 +138,12 @@ let dotnet = pkgs.dotnet-sdk_6; in
       };
       advice = {
         addIgnoredFile = false;
+      };
+      "filter \"lfs\"" = {
+         clean = "${pkgs.git-lfs} clean -- %f";
+         smudge = "${pkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
+         process = "${pkgs.git-lfs}/bin/git-lfs filter-process";
+         required = true;
       };
     };
   };
