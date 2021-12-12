@@ -4,10 +4,9 @@ let username = "Patrick"; in
 let dotnet = pkgs.dotnet-sdk_6; in
 
 {
-  imports = [ ./rider ./gmp ];
+  imports = [ ./rider ];
 
   rider = { enable = true; username = username; dotnet = dotnet; };
-  gmp-symlink = { enable = true; };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
