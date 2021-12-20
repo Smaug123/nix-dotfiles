@@ -7,15 +7,15 @@ with pkgs.vscode-extensions; [
     james-yu.latex-workshop
     vscodevim.vim
 # Doesn't work with vscodium, and unfree
-#       ms-vscode-remote.remote-ssh
+#    ms-vscode-remote.remote-ssh
 # Not supported on Darwin, apparently
-#       ms-dotnettools.csharp
+#    ms-dotnettools.csharp
 ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
 {
     name = "vscode-docker";
     publisher = "ms-azuretools";
-    version = "1.14.0";
-    sha256 = "0wc0k3hf9yfjcx7cw9vm528v5f4bk968bgc98h8fwmlx14vhapzp";
+    version = "1.18.0";
+    sha256 = "UPUfTOc5xJhI5ACm2oyWqtZ4zNxZjy16D6Mf30eHFEI=";
 }
 {
     name = "code-gnu-global";
@@ -26,20 +26,20 @@ with pkgs.vscode-extensions; [
 {
     name = "rust-analyzer";
     publisher = "matklad";
-    version = "0.2.792";
-    sha256 = "1m4g6nf5yhfjrjja0x8pfp79v04lxp5lfm6z91y0iilmqbb9kx1q";
+    version = "0.2.867";
+    sha256 = "HYq8PuzchMwx0wd3SInitGzhNQe2biw2Njl+xdNuWjk=";
 }
 {
     name = "vscode-lldb";
     publisher = "vadimcn";
-    version = "1.6.8";
-    sha256 = "1c81hs2lbcxshw3fnpajc9hzkpykc76a6hgs7wl5xji57782bckl";
+    version = "1.6.10";
+    sha256 = "CGVVs//jIZM8uX7Wc9gM4aQGwECi88eIpfPqU2hKbeA=";
 }
 {
     name = "toml";
     publisher = "be5invis";
-    version = "0.5.1";
-    sha256 = "1r1y6krqw5rrdhia9xbs3bx9gibd1ky4bm709231m9zvbqqwwq2j";
+    version = "0.6.0";
+    sha256 = "yk7buEyQIw6aiUizAm+sgalWxUibIuP9crhyBaOjC2E=";
 }
 {
     name = "Ionide-Paket";
@@ -50,8 +50,8 @@ with pkgs.vscode-extensions; [
 {
     name = "lean";
     publisher = "jroesch";
-    version = "0.16.39";
-    sha256 = "0v1w0rmx2z7q6lfrl430fl6aq6n70y14s2fqsp734igdkdhdnvmk";
+    version = "0.16.41";
+    sha256 = "9fbeSIBSLcCQFekeGuGaYnut3eFm2oQVqJA4Y0Yfy5o=";
 }
 {
     name = "language-haskell";
@@ -68,20 +68,20 @@ with pkgs.vscode-extensions; [
 {
     name = "dotnet-interactive-vscode";
     publisher = "ms-dotnettools";
-    version = "1.0.2309031";
-    sha256 = "0vqlspq3696yyfsv17rpcbsaqs7nm7yvggv700sl1bia817cak10";
+    version = "1.0.2606011";
+    sha256 = "a3u9NKsqHZKhZkKqJqo+LgJFTL2yhehBepTOFOXE+jY=";
 }
 {
     name = "python";
     publisher = "ms-python";
-    version = "2021.5.926500501";
-    sha256 = "0hpb1z10ykg1sz0840qnas5ddbys9inqnjf749lvakj9spk1syk3";
+    version = "2021.12.1559732655";
+    sha256 = "hXTVZ7gbu234zyAg0ZrZPUo6oULB98apxe79U2yQHD4=";
 }
 {
     name = "remote-containers";
     publisher = "ms-vscode-remote";
-    version = "0.183.0";
-    sha256 = "12v7037rn46svv6ff2g824hdkk7l95g4gbzrp5zdddwxs0a62jlg";
+    version = "0.209.6";
+    sha256 = "SOYTUBY8EGLTYhNkQC56apAwgV0feCe9ydU8UOtRdbc=";
 }
 {
     name = "mono-debug";
