@@ -52,6 +52,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
       pkgs.universal-ctags
       pkgs.asciinema
       pkgs.git-lfs
+      pkgs.imagemagick
     ];
 
   programs.vscode = {
