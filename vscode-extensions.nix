@@ -26,8 +26,8 @@ with pkgs.vscode-extensions; [
 {
     name = "rust-analyzer";
     publisher = "matklad";
-    version = "0.2.867";
-    sha256 = "HYq8PuzchMwx0wd3SInitGzhNQe2biw2Njl+xdNuWjk=";
+    version = "0.3.904";
+    sha256 = "poprHSj19QVDaVynYXSypigsqLw5xDd629FUBSJrqdg=";
 }
 {
     name = "vscode-lldb";
@@ -50,8 +50,8 @@ with pkgs.vscode-extensions; [
 {
     name = "lean";
     publisher = "jroesch";
-    version = "0.16.41";
-    sha256 = "9fbeSIBSLcCQFekeGuGaYnut3eFm2oQVqJA4Y0Yfy5o=";
+    version = "0.16.44";
+    sha256 = "hjflz5JHVr1YWq6QI9DpdNPY1uL7lAuQTMAdwCtLEfY=";
 }
 {
     name = "language-haskell";
@@ -80,8 +80,8 @@ with pkgs.vscode-extensions; [
 {
     name = "remote-containers";
     publisher = "ms-vscode-remote";
-    version = "0.209.6";
-    sha256 = "SOYTUBY8EGLTYhNkQC56apAwgV0feCe9ydU8UOtRdbc=";
+    version = "0.212.0";
+    sha256 = "w7vQRwhqTXHnQDRVNUCMBdX/rP96IhL9ejn0uSTzyyw=";
 }
 {
     name = "mono-debug";
