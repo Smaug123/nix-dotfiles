@@ -27,7 +27,7 @@ with pkgs.vscode-extensions; [
     name = "rust-analyzer";
     publisher = "matklad";
     version = "0.3.904";
-    sha256 = "poprHSj19QVDaVynYXSypigsqLw5xDd629FUBSJrqdg=";
+    sha256 = "t5CCUdFCiSYrMsBHG5eOfg3sXMacFWiR0hmVa7S1i8Y=";
 }
 {
     name = "vscode-lldb";

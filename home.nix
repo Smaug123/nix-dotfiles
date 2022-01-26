@@ -145,6 +145,9 @@ let dotnet = pkgs.dotnet-sdk_6; in
          process = "${pkgs.git-lfs}/bin/git-lfs filter-process";
          required = true;
       };
+      pull = {
+        twohead = "ort";
+      };
     };
   };
 

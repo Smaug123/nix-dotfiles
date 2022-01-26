@@ -31,11 +31,7 @@ let python = import ./python.nix { inherit pkgs; }; in
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/9516033899da467b8fcee6536a61ea66ebd0c4fa.tar.gz;
-    }))
-  ];
+  nixpkgs.overlays = import ./overlays.nix;
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "vscode"
@@ -45,7 +41,9 @@ let python = import ./python.nix { inherit pkgs; }; in
   services.nix-daemon.enable = true;
   nix.package = pkgs.nixFlakes;
   nix.gc.automatic = true;
-  nix.useSandbox = true;
+
+  # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
+  nix.useSandbox = false;
 
   nix.extraOptions = ''
     auto-optimise-store = true
