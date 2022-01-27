@@ -1,4 +1,4 @@
-{ config, lib, pkgs, home-manager, emacs, ... }:
+{ pkgs, home-manager, emacs, ... }:
 
 let python = import ./python.nix { inherit pkgs; }; in
 
@@ -8,7 +8,7 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.Patrick = import ./home.nix { emacs = emacs; };
+  home-manager.users.Patrick = import ./home.nix { emacs = emacs; pkgs = pkgs; };
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -32,7 +32,7 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   nixpkgs.overlays = import ./overlays.nix;
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
     "vscode"
   ];
 
