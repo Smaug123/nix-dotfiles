@@ -15,10 +15,11 @@
   };
 
   outputs = { self, darwin, nixpkgs, home-manager, emacs }: {
-    darwinConfigurations.patrick = darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
-      modules = [ (./darwin-configuration.nix { home-manager = home-manager; emacs = emacs; }) ];
+    darwinConfigurations = {
+        patrick = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [ (./darwin-configuration.nix { home-manager = home-manager; emacs = emacs; }) ];
+        };
     };
-    #defaultPackage.aarch64-darwin = self.darwinConfigurations.patrick;
   };
 }
