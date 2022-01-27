@@ -18,7 +18,7 @@
     darwinConfigurations = {
         patrick = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          modules = [ ((import ./darwin-configuration.nix) { pkgs = nixpkgs; home-manager = home-manager; emacs = emacs; }) ];
+          modules = [ ./darwin-configuration.nix ]; # { pkgs = nixpkgs; home-manager = home-manager; emacs = emacs; }) ];
         };
     };
   };
