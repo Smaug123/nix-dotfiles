@@ -23,7 +23,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "21.11";
+  home.stateVersion = "22.05";
 
   home.packages =
     [
@@ -53,6 +53,8 @@ let dotnet = pkgs.dotnet-sdk_6; in
       pkgs.asciinema
       pkgs.git-lfs
       pkgs.imagemagick
+      pkgs.nixpkgs-fmt
+      pkgs.rnix-lsp
     ];
 
   programs.vscode = {
@@ -157,6 +159,8 @@ let dotnet = pkgs.dotnet-sdk_6; in
     tagbar
     { plugin = rust-vim;
       config = "let g:rustfmt_autosave = 1"; }
+    { plugin = LanguageClient-neovim;
+      config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }"; }
     { plugin = syntastic;
       config = ''let g:syntastic_rust_checkers = ['cargo']
 let g:syntastic_always_populate_loc_list = 1
