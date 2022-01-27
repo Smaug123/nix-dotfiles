@@ -1,4 +1,4 @@
-{ config, lib, pkgs, home-manager, ... }:
+{ config, lib, pkgs, home-manager, emacs, ... }:
 
 let python = import ./python.nix { inherit pkgs; }; in
 
@@ -6,10 +6,9 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   nix.useDaemon = true;
 
-  imports = [ <home-manager/nix-darwin> ];
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.Patrick = import ./home.nix;
+  home-manager.users.Patrick = import ./home.nix { emacs = emacs; };
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget

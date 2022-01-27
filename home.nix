@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, emacs, ... }:
 
 let username = "Patrick"; in
 let dotnet = pkgs.dotnet-sdk_6; in
@@ -186,7 +186,7 @@ let g:syntastic_check_on_wq = 0''; }
 
   programs.emacs = {
     enable = true;
-    package = pkgs.emacsGcc;
+    package = emacs;
     extraPackages = (epkgs: []);
     extraConfig = ''
 (load-file (let ((coding-system-for-read 'utf-8))
