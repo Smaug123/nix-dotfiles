@@ -1,5 +1,4 @@
-{ home-manager, emacs }:
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, home-manager, emacs, ... }:
 
 let python = import ./python.nix { inherit pkgs; }; in
 
