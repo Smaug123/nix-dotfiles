@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
 
 let
-  inherit (inputs) home-manager emacs;
+  inherit (inputs) home-manager;
 in
 
 let python = import ./python.nix { inherit pkgs; }; in
@@ -9,10 +9,11 @@ let python = import ./python.nix { inherit pkgs; }; in
 {
 
   nix.useDaemon = true;
+  #imports = [ home-manager ];
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.Patrick = import ./home.nix { emacs = emacs; pkgs = pkgs; };
+  home-manager.users.Patrick = import ./home.nix inputs;
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget

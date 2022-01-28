@@ -183,14 +183,4 @@ let g:syntastic_check_on_wq = 0''; }
   home.file.".ideavimrc".source = ./ideavimrc;
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
-
-  programs.emacs = {
-    enable = true;
-    package = emacs;
-    extraPackages = (epkgs: []);
-    extraConfig = ''
-(load-file (let ((coding-system-for-read 'utf-8))
-           (shell-command-to-string "agda-mode locate")))
-    '';
-  };
 }

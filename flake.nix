@@ -11,14 +11,16 @@
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    emacs.url = "github:nix-community/emacs-overlay/master";
   };
 
-  outputs = { self, darwin, nixpkgs, home-manager, emacs }: {
+  outputs = { self, darwin, nixpkgs, ...}@inputs: {
     darwinConfigurations = {
+        nixpkgs = import nixpkgs {
+            overlays = ./overlays inputs;
+        };
         patrick = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          modules = [ ./darwin-configuration.nix ]; # { pkgs = nixpkgs; home-manager = home-manager; emacs = emacs; }) ];
+          modules = [ ./darwin-configuration.nix inputs ];
         };
     };
   };
