@@ -20,7 +20,7 @@
         };
         patrick = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          modules = [ ./darwin-configuration.nix inputs ];
+          modules = [ ./darwin-configuration.nix ];
         };
     };
   };

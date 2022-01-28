@@ -13,7 +13,7 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.Patrick = import ./home.nix inputs;
+  home-manager.users.Patrick = import ./home.nix { pkgs = pkgs; };
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget

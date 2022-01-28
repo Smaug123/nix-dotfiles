@@ -1,4 +1,4 @@
-{ pkgs, emacs, ... }:
+{ pkgs, ... }:
 
 let username = "Patrick"; in
 let dotnet = pkgs.dotnet-sdk_6; in
