@@ -36,7 +36,7 @@ in
 
 dest="/Users/${config.rider.username}/Library/Application Support/JetBrains"
 if [ -e "$dest" ]; then
-  find "$dest" -type d -maxdepth 1 -name 'Rider*' -exec sh -c '${riderconfig}/link.sh "$0"' {} \;
+  find "$dest" -maxdepth 1 -type d -name 'Rider*' -exec sh -c '${riderconfig}/link.sh "$0"' {} \;
 fi
     '';
   };
