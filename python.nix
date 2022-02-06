@@ -9,7 +9,7 @@ in
 let packageOverrides = self: super: {
   # Test failures on darwin ("windows-1252"); just skip pytest
   # (required for elan)
-  beautifulsoup4 = super.beautifulsoup4.overridePythonAttrs(old: { pytestCheckPhase="true"; });
+  beautifulsoup4 = super.beautifulsoup4.overridePythonAttrs (old: { pytestCheckPhase = "true"; });
 };
 in
 

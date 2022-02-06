@@ -58,24 +58,24 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
     ];
 
   programs.vscode = {
-      enable = true;
-      package = nixpkgs.vscode;
-      extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
-      userSettings = {
-        workbench.colorTheme = "Default High Contrast";
-        "files.Exclude" = {
-          "**/.git" = true;
-          "**/.DS_Store" = true;
-          "**/Thumbs.db" = true;
-          "**/*.olean" = true;
-        };
-        "git.path" = "${nixpkgs.git}/bin/git";
-        "update.mode" = "none";
-        "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-        "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
-        "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
-        "lean.memoryLimit" = 8092;
+    enable = true;
+    package = nixpkgs.vscode;
+    extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
+    userSettings = {
+      workbench.colorTheme = "Default High Contrast";
+      "files.Exclude" = {
+        "**/.git" = true;
+        "**/.DS_Store" = true;
+        "**/Thumbs.db" = true;
+        "**/*.olean" = true;
       };
+      "git.path" = "${nixpkgs.git}/bin/git";
+      "update.mode" = "none";
+      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
+      "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
+      "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
+      "lean.memoryLimit" = 8092;
+    };
   };
 
   programs.tmux = {
@@ -142,10 +142,10 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
         addIgnoredFile = false;
       };
       "filter \"lfs\"" = {
-         clean = "${nixpkgs.git-lfs} clean -- %f";
-         smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
-         process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
-         required = true;
+        clean = "${nixpkgs.git-lfs} clean -- %f";
+        smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
+        process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
+        required = true;
       };
       pull = {
         twohead = "ort";
@@ -157,16 +157,22 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
   programs.neovim.plugins = with nixpkgs.vimPlugins; [
     molokai
     tagbar
-    { plugin = rust-vim;
-      config = "let g:rustfmt_autosave = 1"; }
-    { plugin = LanguageClient-neovim;
-      config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }"; }
-    { plugin = syntastic;
+    {
+      plugin = rust-vim;
+      config = "let g:rustfmt_autosave = 1";
+    }
+    {
+      plugin = LanguageClient-neovim;
+      config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }";
+    }
+    {
+      plugin = syntastic;
       config = ''let g:syntastic_rust_checkers = ['cargo']
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0''; }
+let g:syntastic_check_on_wq = 0'';
+    }
 
     YouCompleteMe
     tagbar
