@@ -47,7 +47,7 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
       nixpkgs.shellcheck
       nixpkgs.html-tidy
       nixpkgs.hugo
-      nixpkgs.agda
+      #nixpkgs.agda
       nixpkgs.pijul
       nixpkgs.universal-ctags
       nixpkgs.asciinema
