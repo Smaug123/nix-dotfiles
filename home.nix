@@ -72,8 +72,8 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
       "git.path" = "${nixpkgs.git}/bin/git";
       "update.mode" = "none";
       "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-      "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
-      "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
+      #"lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
+      "lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
       "lean.memoryLimit" = 8092;
     };
   };
