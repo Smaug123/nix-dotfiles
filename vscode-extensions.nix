@@ -88,12 +88,6 @@ with pkgs.vscode-extensions; [
     sha256 = "hXTVZ7gbu234zyAg0ZrZPUo6oULB98apxe79U2yQHD4=";
   }
   {
-    name = "remote-containers";
-    publisher = "ms-vscode-remote";
-    version = "0.212.0";
-    sha256 = "w7vQRwhqTXHnQDRVNUCMBdX/rP96IhL9ejn0uSTzyyw=";
-  }
-  {
     name = "mono-debug";
     publisher = "ms-vscode";
     version = "0.16.2";
