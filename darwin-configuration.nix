@@ -1,19 +1,9 @@
-{ pkgs, inputs, ... }:
-
-let
-  inherit (inputs) home-manager;
-in
+{ pkgs, ... }:
 
 let python = import ./python.nix { inherit pkgs; }; in
 
 {
-
   nix.useDaemon = true;
-  #imports = [ home-manager ];
-
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
-  home-manager.users.Patrick = import ./home.nix { pkgs = pkgs; };
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -34,12 +24,6 @@ let python = import ./python.nix { inherit pkgs; }; in
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
-
-  nixpkgs.overlays = import ./overlays.nix;
-
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-    "vscode"
-  ];
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;

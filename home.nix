@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ nixpkgs, ... }:
 
 let username = "Patrick"; in
-let dotnet = pkgs.dotnet-sdk_6; in
+let dotnet = nixpkgs.dotnet-sdk_6; in
 
 {
   imports = [ ./rider ];
@@ -27,40 +27,40 @@ let dotnet = pkgs.dotnet-sdk_6; in
 
   home.packages =
     [
-      pkgs.rust-analyzer
-      pkgs.tmux
-      pkgs.wget
-      pkgs.youtube-dl
-      pkgs.cmake
-      pkgs.gnumake
-      pkgs.gcc
-      pkgs.gdb
-      pkgs.hledger
-      pkgs.hledger-web
+      nixpkgs.rust-analyzer
+      nixpkgs.tmux
+      nixpkgs.wget
+      nixpkgs.youtube-dl
+      nixpkgs.cmake
+      nixpkgs.gnumake
+      nixpkgs.gcc
+      nixpkgs.gdb
+      nixpkgs.hledger
+      nixpkgs.hledger-web
       dotnet
-      pkgs.docker
-      pkgs.jitsi-meet
-      #pkgs.handbrake
-      pkgs.ripgrep
-      pkgs.elan
-      pkgs.coreutils-prefixed
-      pkgs.shellcheck
-      pkgs.html-tidy
-      pkgs.hugo
-      #pkgs.agda
-      pkgs.pijul
-      pkgs.universal-ctags
-      pkgs.asciinema
-      pkgs.git-lfs
-      pkgs.imagemagick
-      pkgs.nixpkgs-fmt
-      pkgs.rnix-lsp
+      nixpkgs.docker
+      nixpkgs.jitsi-meet
+      #nixpkgs.handbrake
+      nixpkgs.ripgrep
+      nixpkgs.elan
+      nixpkgs.coreutils-prefixed
+      nixpkgs.shellcheck
+      nixpkgs.html-tidy
+      nixpkgs.hugo
+      #nixpkgs.agda
+      nixpkgs.pijul
+      nixpkgs.universal-ctags
+      nixpkgs.asciinema
+      nixpkgs.git-lfs
+      nixpkgs.imagemagick
+      nixpkgs.nixpkgs-fmt
+      nixpkgs.rnix-lsp
     ];
 
   programs.vscode = {
       enable = true;
-      package = pkgs.vscode;
-      extensions = import ./vscode-extensions.nix { inherit pkgs; };
+      package = nixpkgs.vscode;
+      extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
       userSettings = {
         workbench.colorTheme = "Default High Contrast";
         "files.Exclude" = {
@@ -69,9 +69,9 @@ let dotnet = pkgs.dotnet-sdk_6; in
           "**/Thumbs.db" = true;
           "**/*.olean" = true;
         };
-        "git.path" = "${pkgs.git}/bin/git";
+        "git.path" = "${nixpkgs.git}/bin/git";
         "update.mode" = "none";
-        "docker.dockerPath" = "${pkgs.docker}/bin/docker";
+        "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
         "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
         "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
         "lean.memoryLimit" = 8092;
@@ -79,7 +79,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
   };
 
   programs.tmux = {
-    shell = "\${pkgs.zsh}/bin/zsh";
+    shell = "\${nixpkgs.zsh}/bin/zsh";
   };
 
   programs.zsh = {
@@ -99,15 +99,15 @@ let dotnet = pkgs.dotnet-sdk_6; in
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${pkgs.libiconv}/lib";
+      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib";
       RUST_BACKTRACE = "full";
     };
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
       nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
-      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${pkgs.gnumake}/bin/make -DCMAKE_AR=${pkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${pkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${pkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${pkgs.gmp}/lib/libgmp.10.dylib";
-      ar = "${pkgs.darwin.cctools}/bin/ar";
+      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${nixpkgs.gnumake}/bin/make -DCMAKE_AR=${nixpkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${nixpkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${nixpkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${nixpkgs.gmp}/lib/libgmp.10.dylib";
+      ar = "${nixpkgs.darwin.cctools}/bin/ar";
     };
   };
 
@@ -117,7 +117,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
   };
 
   programs.git = {
-    package = pkgs.gitAndTools.gitFull;
+    package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     userName = "Smaug123";
     userEmail = "patrick+github@patrickstevens.co.uk";
@@ -142,9 +142,9 @@ let dotnet = pkgs.dotnet-sdk_6; in
         addIgnoredFile = false;
       };
       "filter \"lfs\"" = {
-         clean = "${pkgs.git-lfs} clean -- %f";
-         smudge = "${pkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
-         process = "${pkgs.git-lfs}/bin/git-lfs filter-process";
+         clean = "${nixpkgs.git-lfs} clean -- %f";
+         smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
+         process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
          required = true;
       };
       pull = {
@@ -154,7 +154,7 @@ let dotnet = pkgs.dotnet-sdk_6; in
   };
 
   programs.neovim.enable = true;
-  programs.neovim.plugins = with pkgs.vimPlugins; [
+  programs.neovim.plugins = with nixpkgs.vimPlugins; [
     molokai
     tagbar
     { plugin = rust-vim;

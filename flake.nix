@@ -13,16 +13,29 @@
     };
   };
 
-  outputs = { self, darwin, nixpkgs, ...}@inputs: {
-    darwinConfigurations = {
-        #nixpkgs = import nixpkgs {
-        #    overlays = ./overlays inputs;
-        #};
+  outputs = { self, darwin, nixpkgs, home-manager, ... }@inputs:
+    let system = "aarch64-darwin"; in
+    let config = {
+      allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+        "vscode"
+      ];
+    }; in
+    let pkgs = (import nixpkgs { inherit system config; }); in
+    {
+      darwinConfigurations = {
+        nixpkgs = pkgs;
         patrick = darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          modules = [ ./darwin-configuration.nix ];
-          inputs = { inherit inputs; };
+          system = system;
+          modules = [
+            ./darwin-configuration.nix
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.Patrick = import ./home.nix { nixpkgs = pkgs; };
+            }
+          ];
         };
+      };
     };
-  };
 }
