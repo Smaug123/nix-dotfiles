@@ -47,7 +47,7 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
       nixpkgs.shellcheck
       nixpkgs.html-tidy
       nixpkgs.hugo
-      #nixpkgs.agda
+      nixpkgs.agda
       nixpkgs.pijul
       nixpkgs.universal-ctags
       nixpkgs.asciinema
@@ -68,6 +68,7 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
         "**/.DS_Store" = true;
         "**/Thumbs.db" = true;
         "**/*.olean" = true;
+        "**/result" = true;
       };
       "git.path" = "${nixpkgs.git}/bin/git";
       "update.mode" = "none";
