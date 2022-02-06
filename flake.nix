@@ -15,12 +15,13 @@
 
   outputs = { self, darwin, nixpkgs, ...}@inputs: {
     darwinConfigurations = {
-        nixpkgs = import nixpkgs {
-            overlays = ./overlays inputs;
-        };
+        #nixpkgs = import nixpkgs {
+        #    overlays = ./overlays inputs;
+        #};
         patrick = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [ ./darwin-configuration.nix ];
+          inputs = { inherit inputs; };
         };
     };
   };
