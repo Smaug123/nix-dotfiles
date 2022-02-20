@@ -111,7 +111,7 @@ type NixFile =
         let specificVersions =
             post.TrimEnd([| '\n' ; ']'|]).Split "}"
             |> Array.choose (fun contents ->
-                match contents.Trim([|'\n'|]).Split "\n" |> List.ofArray with
+                match contents.Trim([|'\n' ; ' '|]).Split "\n" |> List.ofArray with
                 | "{" :: rest ->
                     Some (Extension.Parse rest)
                 | [] ->
