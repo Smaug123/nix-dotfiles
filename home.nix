@@ -1,12 +1,19 @@
-{ nixpkgs, ... }:
-
-let username = "Patrick"; in
-let dotnet = nixpkgs.dotnet-sdk_6; in
-
 {
-  imports = [ ./rider ];
+  nixpkgs,
+  ...
+}:
+let
+  username = "Patrick";
+in let
+  dotnet = nixpkgs.dotnet-sdk_6;
+in {
+  imports = [./rider];
 
-  rider = { enable = true; username = username; dotnet = dotnet; };
+  rider = {
+    enable = true;
+    username = username;
+    dotnet = dotnet;
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -93,7 +100,7 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
     };
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "macos" "dircycle" "timer" ];
+      plugins = ["git" "macos" "dircycle" "timer"];
       theme = "robbyrussell";
     };
     sessionVariables = {
@@ -168,11 +175,11 @@ let dotnet = nixpkgs.dotnet-sdk_6; in
     }
     {
       plugin = syntastic;
-      config = ''let g:syntastic_rust_checkers = ['cargo']
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0'';
+      config = ''        let g:syntastic_rust_checkers = ['cargo']
+        let g:syntastic_always_populate_loc_list = 1
+        let g:syntastic_auto_loc_list = 1
+        let g:syntastic_check_on_open = 1
+        let g:syntastic_check_on_wq = 0'';
     }
 
     YouCompleteMe
@@ -193,7 +200,7 @@ let g:syntastic_check_on_wq = 0'';
   programs.emacs = {
     enable = true;
     package = nixpkgs.emacsGcc;
-    extraPackages = (epkgs: [ ]);
+    extraPackages = (epkgs: []);
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
                  (shell-command-to-string "agda-mode locate")))
