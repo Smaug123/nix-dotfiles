@@ -159,6 +159,12 @@ in {
       pull = {
         twohead = "ort";
       };
+      merge = {
+        conflictStyle = "zdiff3";
+      };
+      diff = {
+        colorMoved = "default";
+      };
     };
   };
 
