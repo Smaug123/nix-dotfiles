@@ -38,6 +38,7 @@ in {
       nixpkgs.tmux
       nixpkgs.wget
       nixpkgs.youtube-dl
+      nixpkgs.yt-dlp
       nixpkgs.cmake
       nixpkgs.gnumake
       nixpkgs.gcc
@@ -159,6 +160,12 @@ in {
       pull = {
         twohead = "ort";
       };
+      merge = {
+        conflictStyle = "zdiff3";
+      };
+      diff = {
+        colorMoved = "default";
+      };
     };
   };
 
@@ -198,6 +205,7 @@ in {
   home.file.".ideavimrc".source = ./ideavimrc;
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
+  home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   programs.emacs = {
     enable = true;
     package = nixpkgs.emacsGcc;
