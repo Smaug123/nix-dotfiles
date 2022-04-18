@@ -35,7 +35,7 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   nix.extraOptions = ''
     auto-optimise-store = true
-    experimental-features = nix-command flakes
+    experimental-features = nix-command flakes ca-derivations
     max-jobs = auto  # Allow building multiple derivations in parallel
     keep-outputs = true  # Do not garbage-collect build time-only dependencies (e.g. clang)
     # Allow fetching build results from the Lean Cachix cache
