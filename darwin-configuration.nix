@@ -1,22 +1,19 @@
-{ pkgs, ... }:
-
-let python = import ./python.nix { inherit pkgs; }; in
-
-{
+{pkgs, ...}: let
+  python = import ./python.nix {inherit pkgs;};
+in {
   nix.useDaemon = true;
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
 
-  environment.systemPackages =
-    [
-      pkgs.alacritty
-      pkgs.rustup
-      pkgs.libiconv
-      pkgs.clang
-      #pkgs.keepassxc
-      python
-    ];
+  environment.systemPackages = [
+    pkgs.alacritty
+    pkgs.rustup
+    pkgs.libiconv
+    pkgs.clang
+    #pkgs.keepassxc
+    python
+  ];
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;

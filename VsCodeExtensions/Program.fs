@@ -81,14 +81,14 @@ type NixFile =
 
     static member Parse (s : string) : NixFile =
         let pre, post =
-            s.Split "\n] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [\n"
+            s.Split "++ pkgs.vscode-utils.extensionsFromVscodeMarketplace ["
             |> function
                 | [| pre ; post |] -> pre, post
                 | _ -> failwith "Unexpected number of '++'"
 
         let verbatim, skipped =
             match pre.Split "\n" |> List.ofArray with
-            | "{ pkgs }:" :: "" :: "with pkgs.vscode-extensions; [" :: rest ->
+            | "{pkgs}:" :: "with pkgs.vscode-extensions;" :: "  [" :: rest ->
                 rest
                 |> List.map (fun s ->
                     if s.StartsWith '#' then Choice2Of2 (s.[2..].Trim()) else Choice1Of2 (s.Trim())

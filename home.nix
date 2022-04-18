@@ -1,8 +1,4 @@
-{
-  nixpkgs,
-  ...
-}:
-let
+{nixpkgs, ...}: let
   username = "Patrick";
 in let
   dotnet = nixpkgs.dotnet-sdk_6;
@@ -32,43 +28,42 @@ in {
   # changes in each release.
   home.stateVersion = "22.05";
 
-  home.packages =
-    [
-      nixpkgs.rust-analyzer
-      nixpkgs.tmux
-      nixpkgs.wget
-      nixpkgs.youtube-dl
-      nixpkgs.yt-dlp
-      nixpkgs.cmake
-      nixpkgs.gnumake
-      nixpkgs.gcc
-      nixpkgs.gdb
-      nixpkgs.hledger
-      nixpkgs.hledger-web
-      dotnet
-      nixpkgs.docker
-      nixpkgs.jitsi-meet
-      #nixpkgs.handbrake
-      nixpkgs.ripgrep
-      nixpkgs.elan
-      nixpkgs.coreutils-prefixed
-      nixpkgs.shellcheck
-      nixpkgs.html-tidy
-      nixpkgs.hugo
-      #nixpkgs.agda
-      nixpkgs.pijul
-      nixpkgs.universal-ctags
-      nixpkgs.asciinema
-      nixpkgs.git-lfs
-      nixpkgs.imagemagick
-      nixpkgs.nixpkgs-fmt
-      nixpkgs.rnix-lsp
-    ];
+  home.packages = [
+    nixpkgs.rust-analyzer
+    nixpkgs.tmux
+    nixpkgs.wget
+    nixpkgs.youtube-dl
+    nixpkgs.yt-dlp
+    nixpkgs.cmake
+    nixpkgs.gnumake
+    nixpkgs.gcc
+    nixpkgs.gdb
+    nixpkgs.hledger
+    nixpkgs.hledger-web
+    dotnet
+    nixpkgs.docker
+    nixpkgs.jitsi-meet
+    #nixpkgs.handbrake
+    nixpkgs.ripgrep
+    nixpkgs.elan
+    nixpkgs.coreutils-prefixed
+    nixpkgs.shellcheck
+    nixpkgs.html-tidy
+    nixpkgs.hugo
+    #nixpkgs.agda
+    nixpkgs.pijul
+    nixpkgs.universal-ctags
+    nixpkgs.asciinema
+    nixpkgs.git-lfs
+    nixpkgs.imagemagick
+    nixpkgs.nixpkgs-fmt
+    nixpkgs.rnix-lsp
+  ];
 
   programs.vscode = {
     enable = true;
     package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
+    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
       workbench.colorTheme = "Default High Contrast";
       "files.Exclude" = {
@@ -210,7 +205,7 @@ in {
   programs.emacs = {
     enable = true;
     package = nixpkgs.emacsGcc;
-    extraPackages = (epkgs: []);
+    extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
                  (shell-command-to-string "agda-mode locate")))
