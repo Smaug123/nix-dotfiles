@@ -29,6 +29,7 @@ in {
   home.stateVersion = "22.05";
 
   home.packages = [
+    nixpkgs.keepassxc
     nixpkgs.rust-analyzer
     nixpkgs.tmux
     nixpkgs.wget
@@ -204,7 +205,7 @@ in {
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacsGcc;
+    package = nixpkgs.emacsNativeComp;
     extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))

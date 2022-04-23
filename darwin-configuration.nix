@@ -11,7 +11,6 @@ in {
     pkgs.rustup
     pkgs.libiconv
     pkgs.clang
-    #pkgs.keepassxc
     python
   ];
 
