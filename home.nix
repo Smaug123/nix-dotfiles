@@ -29,7 +29,8 @@ in {
   home.stateVersion = "22.05";
 
   home.packages = [
-    nixpkgs.keepassxc
+    # Broken on Apple Silicon
+    #nixpkgs.keepassxc
     nixpkgs.rust-analyzer
     nixpkgs.tmux
     nixpkgs.wget
