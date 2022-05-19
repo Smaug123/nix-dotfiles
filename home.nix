@@ -159,7 +159,7 @@ in {
         twohead = "ort";
       };
       merge = {
-        conflictStyle = "zdiff3";
+        conflictStyle = "diff3";
       };
       diff = {
         colorMoved = "default";
