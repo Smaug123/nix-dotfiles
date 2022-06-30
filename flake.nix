@@ -28,10 +28,7 @@
     system = "aarch64-darwin";
   in let
     config = {
-      allowUnfreePredicate = pkg:
-        builtins.elem (nixpkgs.lib.getName pkg) [
-          "vscode"
-        ];
+      allowBroken = true;
     };
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;

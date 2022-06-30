@@ -64,7 +64,7 @@ in {
 
   programs.vscode = {
     enable = true;
-    package = nixpkgs.vscode;
+    package = nixpkgs.vscodium;
     extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
       workbench.colorTheme = "Default High Contrast";

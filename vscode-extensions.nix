@@ -13,13 +13,13 @@ with pkgs.vscode-extensions;
     {
       name = "remote-containers";
       publisher = "ms-vscode-remote";
-      version = "0.238.0";
+      version = "0.240.0";
       sha256 = "4Li0sYfHOsJMn5FJtvDTGKoGPcRmoosD9tZ7q9H9DfQ=";
     }
     {
       name = "remote-ssh";
       publisher = "ms-vscode-remote";
-      version = "0.81.2022060215";
+      version = "0.83.2022062315";
       sha256 = "hTRfoUHKrIOSV8eZ/62ewaII5291huXjOZ++dRUmKoI=";
     }
     {
@@ -37,7 +37,7 @@ with pkgs.vscode-extensions;
     {
       name = "rust-analyzer";
       publisher = "matklad";
-      version = "0.4.1081";
+      version = "0.4.1103";
       sha256 = "t5CCUdFCiSYrMsBHG5eOfg3sXMacFWiR0hmVa7S1i8Y=";
     }
     {
@@ -61,7 +61,7 @@ with pkgs.vscode-extensions;
     {
       name = "lean";
       publisher = "jroesch";
-      version = "0.16.52";
+      version = "0.16.53";
       sha256 = "hjflz5JHVr1YWq6QI9DpdNPY1uL7lAuQTMAdwCtLEfY=";
     }
     {
@@ -79,13 +79,13 @@ with pkgs.vscode-extensions;
     {
       name = "dotnet-interactive-vscode";
       publisher = "ms-dotnettools";
-      version = "1.0.3277041";
+      version = "1.0.3314011";
       sha256 = "a3u9NKsqHZKhZkKqJqo+LgJFTL2yhehBepTOFOXE+jY=";
     }
     {
       name = "python";
       publisher = "ms-python";
-      version = "2022.7.11541009";
+      version = "2022.9.11741005";
       sha256 = "hXTVZ7gbu234zyAg0ZrZPUo6oULB98apxe79U2yQHD4=";
     }
     {
