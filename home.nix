@@ -81,6 +81,7 @@ in {
       "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
       "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
       #"lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
+      "explorer.confirmDelete" = false;
       "lean.memoryLimit" = 16384;
       "latex-workshop.view.pdf.viewer" = "tab";
     };

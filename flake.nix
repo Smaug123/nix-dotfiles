@@ -28,7 +28,7 @@
     system = "aarch64-darwin";
   in let
     config = {
-      allowBroken = true;
+      #contentAddressedByDefault = true;
     };
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;
