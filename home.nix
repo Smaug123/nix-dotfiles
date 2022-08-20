@@ -1,8 +1,4 @@
-{
-  nixpkgs,
-  ...
-}:
-let
+{nixpkgs, ...}: let
   username = "Patrick";
 in let
   dotnet = nixpkgs.dotnet-sdk_6;
@@ -32,43 +28,44 @@ in {
   # changes in each release.
   home.stateVersion = "22.05";
 
-  home.packages =
-    [
-      nixpkgs.rust-analyzer
-      nixpkgs.tmux
-      nixpkgs.wget
-      nixpkgs.youtube-dl
-      nixpkgs.yt-dlp
-      nixpkgs.cmake
-      nixpkgs.gnumake
-      nixpkgs.gcc
-      nixpkgs.gdb
-      nixpkgs.hledger
-      nixpkgs.hledger-web
-      dotnet
-      nixpkgs.docker
-      nixpkgs.jitsi-meet
-      #nixpkgs.handbrake
-      nixpkgs.ripgrep
-      nixpkgs.elan
-      nixpkgs.coreutils-prefixed
-      nixpkgs.shellcheck
-      nixpkgs.html-tidy
-      nixpkgs.hugo
-      #nixpkgs.agda
-      nixpkgs.pijul
-      nixpkgs.universal-ctags
-      nixpkgs.asciinema
-      nixpkgs.git-lfs
-      nixpkgs.imagemagick
-      nixpkgs.nixpkgs-fmt
-      nixpkgs.rnix-lsp
-    ];
+  home.packages = [
+    # Broken on Apple Silicon
+    #nixpkgs.keepassxc
+    nixpkgs.rust-analyzer
+    nixpkgs.tmux
+    nixpkgs.wget
+    nixpkgs.youtube-dl
+    nixpkgs.yt-dlp
+    nixpkgs.cmake
+    nixpkgs.gnumake
+    nixpkgs.gcc
+    nixpkgs.gdb
+    nixpkgs.hledger
+    nixpkgs.hledger-web
+    dotnet
+    nixpkgs.docker
+    nixpkgs.jitsi-meet
+    #nixpkgs.handbrake
+    nixpkgs.ripgrep
+    nixpkgs.elan
+    nixpkgs.coreutils-prefixed
+    nixpkgs.shellcheck
+    nixpkgs.html-tidy
+    nixpkgs.hugo
+    #nixpkgs.agda
+    nixpkgs.pijul
+    nixpkgs.universal-ctags
+    nixpkgs.asciinema
+    nixpkgs.git-lfs
+    nixpkgs.imagemagick
+    nixpkgs.nixpkgs-fmt
+    nixpkgs.rnix-lsp
+  ];
 
   programs.vscode = {
     enable = true;
-    package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
+    package = nixpkgs.vscodium;
+    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
       workbench.colorTheme = "Default High Contrast";
       "files.Exclude" = {
@@ -81,9 +78,11 @@ in {
       "git.path" = "${nixpkgs.git}/bin/git";
       "update.mode" = "none";
       "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-      #"lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
-      "lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
-      "lean.memoryLimit" = 8092;
+      "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
+      "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
+      #"lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
+      "explorer.confirmDelete" = false;
+      "lean.memoryLimit" = 16384;
       "latex-workshop.view.pdf.viewer" = "tab";
     };
   };
@@ -161,7 +160,7 @@ in {
         twohead = "ort";
       };
       merge = {
-        conflictStyle = "zdiff3";
+        conflictStyle = "diff3";
       };
       diff = {
         colorMoved = "default";
@@ -208,8 +207,8 @@ in {
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacsGcc;
-    extraPackages = (epkgs: []);
+    package = nixpkgs.emacsNativeComp;
+    extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
                  (shell-command-to-string "agda-mode locate")))

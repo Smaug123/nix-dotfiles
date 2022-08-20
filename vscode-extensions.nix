@@ -13,19 +13,19 @@ with pkgs.vscode-extensions;
     {
       name = "remote-containers";
       publisher = "ms-vscode-remote";
-      version = "0.222.0";
+      version = "0.242.0";
       sha256 = "4Li0sYfHOsJMn5FJtvDTGKoGPcRmoosD9tZ7q9H9DfQ=";
     }
     {
       name = "remote-ssh";
       publisher = "ms-vscode-remote";
-      version = "0.75.2022021903";
+      version = "0.85.2022071315";
       sha256 = "hTRfoUHKrIOSV8eZ/62ewaII5291huXjOZ++dRUmKoI=";
     }
     {
       name = "vscode-docker";
       publisher = "ms-azuretools";
-      version = "1.19.0";
+      version = "1.22.1";
       sha256 = "UPUfTOc5xJhI5ACm2oyWqtZ4zNxZjy16D6Mf30eHFEI=";
     }
     {
@@ -37,14 +37,8 @@ with pkgs.vscode-extensions;
     {
       name = "rust-analyzer";
       publisher = "matklad";
-      version = "0.3.939";
+      version = "0.4.1128";
       sha256 = "t5CCUdFCiSYrMsBHG5eOfg3sXMacFWiR0hmVa7S1i8Y=";
-    }
-    {
-      name = "vscode-lldb";
-      publisher = "vadimcn";
-      version = "1.6.10";
-      sha256 = "CGVVs//jIZM8uX7Wc9gM4aQGwECi88eIpfPqU2hKbeA=";
     }
     {
       name = "toml";
@@ -61,13 +55,13 @@ with pkgs.vscode-extensions;
     {
       name = "lean";
       publisher = "jroesch";
-      version = "0.16.46";
+      version = "0.16.53";
       sha256 = "hjflz5JHVr1YWq6QI9DpdNPY1uL7lAuQTMAdwCtLEfY=";
     }
     {
       name = "language-haskell";
       publisher = "justusadam";
-      version = "3.4.0";
+      version = "3.6.0";
       sha256 = "0ab7m5jzxakjxaiwmg0jcck53vnn183589bbxh3iiylkpicrv67y";
     }
     {
@@ -79,13 +73,13 @@ with pkgs.vscode-extensions;
     {
       name = "dotnet-interactive-vscode";
       publisher = "ms-dotnettools";
-      version = "1.0.3103011";
+      version = "1.0.3362041";
       sha256 = "a3u9NKsqHZKhZkKqJqo+LgJFTL2yhehBepTOFOXE+jY=";
     }
     {
       name = "python";
       publisher = "ms-python";
-      version = "2022.0.1814523869";
+      version = "2022.11.11961004";
       sha256 = "hXTVZ7gbu234zyAg0ZrZPUo6oULB98apxe79U2yQHD4=";
     }
     {
@@ -103,13 +97,13 @@ with pkgs.vscode-extensions;
     {
       name = "trailing-spaces";
       publisher = "shardulm94";
-      version = "0.3.1";
+      version = "0.4.1";
       sha256 = "0h30zmg5rq7cv7kjdr5yzqkkc1bs20d72yz9rjqag32gwf46s8b8";
     }
     {
       name = "debug";
       publisher = "webfreak";
-      version = "0.25.1";
+      version = "0.26.0";
       sha256 = "1l01sv6kwh8dlv3kygkkd0z9m37hahflzd5bx1wwij5p61jg7np9";
     }
   ]
