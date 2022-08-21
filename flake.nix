@@ -40,7 +40,7 @@
         inherit pkgs;
 
         modules = [
-          import ./home.nix args
+          (import ./home.nix args)
           # home-manager.nixosModules.home-manager {
           #   home-manager.useGlobalPkgs = true;
           #   home-manager.useUserPackages = true;
