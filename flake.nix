@@ -35,7 +35,7 @@
       system = "x86_64-linux";
     in let
       pkgs = import nixpkgs {inherit system config overlays;};
-    in let args = { nixpkgs = pkgs; username = "patrick" }; in {
+    in let args = { nixpkgs = pkgs; username = "patrick"; }; in {
       patrick = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
