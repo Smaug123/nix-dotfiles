@@ -1,7 +1,5 @@
 {
   nixpkgs,
-  extras,
   ...
 }: {
-  inherit extras;
 }
