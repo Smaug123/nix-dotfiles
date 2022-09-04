@@ -45,6 +45,7 @@ in {
     nixpkgs.imagemagick
     nixpkgs.nixpkgs-fmt
     nixpkgs.rnix-lsp
+    nixpkgs.grpc-tools
   ];
 
   programs.vscode = {

@@ -41,7 +41,7 @@
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib";
+      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxxabi}/lib -L ${nixpkgs.libcxx}/lib";
       RUST_BACKTRACE = "full";
     };
     shellAliases = {
