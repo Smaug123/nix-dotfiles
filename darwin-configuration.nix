@@ -27,7 +27,7 @@ in {
   nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
-  nix.useSandbox = false;
+  # nix.settings.sandbox = false;
 
   nix.extraOptions = ''
     auto-optimise-store = true
