@@ -2,10 +2,10 @@
   description = "Patrick's Darwin Nix setup";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/9d6b46bbb26ac0b435e41a7f6e9e60bf1b43cbc2";
+    #nixpkgs.url = "github:nixos/nixpkgs/9d6b46bbb26ac0b435e41a7f6e9e60bf1b43cbc2";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
       url = "github:lnl7/nix-darwin/master";

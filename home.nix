@@ -120,7 +120,6 @@
         let g:syntastic_check_on_wq = 0'';
     }
 
-    YouCompleteMe
     tagbar
   ];
   programs.neovim.viAlias = true;

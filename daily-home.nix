@@ -46,6 +46,7 @@ in {
     nixpkgs.nixpkgs-fmt
     nixpkgs.rnix-lsp
     nixpkgs.grpc-tools
+    nixpkgs.element-desktop
   ];
 
   programs.vscode = {
