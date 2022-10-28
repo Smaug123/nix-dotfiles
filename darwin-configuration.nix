@@ -14,6 +14,11 @@ in {
     python
   ];
 
+  users.users.patrick = {
+    home = "/Users/patrick";
+    name = "patrick";
+  };
+
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
 
