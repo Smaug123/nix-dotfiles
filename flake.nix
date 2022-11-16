@@ -6,7 +6,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       # Can't take a version that includes https://github.com/nix-community/home-manager/pull/3233
-      url = "github:nix-community/home-manager/f17819f4f198a3973be76797aa8a9370e35c7ca6";
+      #url = "github:nix-community/home-manager/f17819f4f198a3973be76797aa8a9370e35c7ca6";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
@@ -62,7 +63,7 @@
         modules = let
           args = {
             nixpkgs = pkgs;
-            username = "Patrick";
+            username = "patrick";
           };
         in [
           ./darwin-configuration.nix
@@ -70,7 +71,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.Patrick = pkgs.lib.mkMerge [(import ./daily-home.nix args) (import ./home.nix args)];
+            home-manager.users.patrick = pkgs.lib.mkMerge [(import ./daily-home.nix args) (import ./home.nix args)];
           }
         ];
       };

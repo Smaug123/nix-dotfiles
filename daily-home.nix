@@ -3,7 +3,7 @@
   username,
   ...
 }: let
-  dotnet = nixpkgs.dotnet-sdk_6;
+  dotnet = nixpkgs.dotnet-sdk_7;
 in {
   imports = [./rider];
 
