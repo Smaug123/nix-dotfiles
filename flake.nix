@@ -2,16 +2,13 @@
   description = "Patrick's Darwin Nix setup";
 
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/9d6b46bbb26ac0b435e41a7f6e9e60bf1b43cbc2";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
-      # Can't take a version that includes https://github.com/nix-community/home-manager/pull/3233
-      #url = "github:nix-community/home-manager/f17819f4f198a3973be76797aa8a9370e35c7ca6";
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin/master";
+      url = "github:Smaug123/nix-darwin/extract";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
