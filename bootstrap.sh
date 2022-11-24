@@ -23,4 +23,4 @@ nix-channel --update || exit 1
 
 darwin-rebuild changelog || install_darwin_build || exit 1
 
-NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:/nix/var/nix/profiles/per-user/Patrick/channels:$NIX_PATH" darwin-rebuild switch || exit 1
+NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:/nix/var/nix/profiles/per-user/patrick/channels:$NIX_PATH" darwin-rebuild switch || exit 1
