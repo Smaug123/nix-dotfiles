@@ -45,7 +45,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.Patrick = import ./home.nix {nixpkgs = pkgs;};
+            home-manager.users.patrick = import ./home.nix {nixpkgs = pkgs;};
           }
         ];
       };

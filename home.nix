@@ -1,5 +1,5 @@
 {nixpkgs, ...}: let
-  username = "Patrick";
+  username = "patrick";
 in let
   dotnet = nixpkgs.dotnet-sdk_6;
 in {

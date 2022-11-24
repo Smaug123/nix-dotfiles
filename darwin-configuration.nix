@@ -14,6 +14,11 @@ in {
     python
   ];
 
+  users.users.patrick = {
+    home = "/Users/patrick";
+    name = "patrick";
+  };
+
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
 
@@ -27,7 +32,7 @@ in {
   nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
-  nix.useSandbox = false;
+  nix.settings.sandbox = false;
 
   nix.extraOptions = ''
     auto-optimise-store = true
