@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin/master";
+      url = "github:Smaug123/nix-darwin/extract";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
