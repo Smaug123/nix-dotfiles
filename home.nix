@@ -2,8 +2,7 @@
   nixpkgs,
   username,
   ...
-}:
-let
+}: let
   username = "patrick";
   dotnet = nixpkgs.dotnet-sdk_6;
 in {
