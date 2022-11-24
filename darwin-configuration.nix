@@ -28,7 +28,7 @@ in {
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
-  nix.package = pkgs.nixFlakes;
+  nix.package = pkgs.nixVersions.stable;
   nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
