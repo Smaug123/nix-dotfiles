@@ -2,3 +2,4 @@ result
 .idea/
 bin/
 obj/
+.DS_Store
