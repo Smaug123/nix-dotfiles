@@ -17,6 +17,12 @@ with pkgs.vscode-extensions;
       sha256 = "4Li0sYfHOsJMn5FJtvDTGKoGPcRmoosD9tZ7q9H9DfQ=";
     }
     {
+      name = "vscode-pull-request-github";
+      publisher = "GitHub";
+      version = "0.55.2022111609";
+      sha256 = "sha256-PSPvpIW6OC/mST9poirQKVub+PAvShI411w3SK4gH6I==";
+    }
+    {
       name = "remote-ssh";
       publisher = "ms-vscode-remote";
       version = "0.85.2022071315";
