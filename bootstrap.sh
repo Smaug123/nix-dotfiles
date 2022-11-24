@@ -2,7 +2,7 @@
 
 install_nix () {
   echo "Installing Nix..."
-  diskutil list > /dev/null || export PATH=/usr/sbin:$PATH
+  diskutil list > /dev/null || export PATH="/usr/sbin:$PATH"
   curl -L https://nixos.org/nix/install | sh -s -- --darwin-use-unencrypted-nix-store-volume --daemon || exit 1
   echo "Nix installed."
 }
