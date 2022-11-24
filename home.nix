@@ -1,10 +1,10 @@
 {
   nixpkgs,
   username,
+  dotnet,
   ...
 }: let
   username = "patrick";
-  dotnet = nixpkgs.dotnet-sdk_6;
 in {
   imports = [./rider];
 

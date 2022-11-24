@@ -1,10 +1,9 @@
 {
   nixpkgs,
   username,
+  dotnet,
   ...
-}: let
-  dotnet = nixpkgs.dotnet-sdk_7;
-in {
+}: {
   imports = [./rider];
 
   rider = {
