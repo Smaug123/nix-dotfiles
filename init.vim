@@ -359,6 +359,7 @@ function! VisualSelection(direction, extra_filter) range
 endfunction
 
 nnoremap <leader>c :!cargo clippy
+nnoremap <leader>j :%!python -m json.tool
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
