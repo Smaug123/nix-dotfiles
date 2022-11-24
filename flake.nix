@@ -39,7 +39,7 @@
       args = {
         nixpkgs = pkgs;
         username = "patrick";
-        dotnet = pkgs.dotnet_sdk_7;
+        dotnet = pkgs.dotnet-sdk_7;
       };
     in {
       patrick = home-manager.lib.homeManagerConfiguration {
@@ -67,7 +67,7 @@
           args = {
             nixpkgs = pkgs;
             username = "patrick";
-            dotnet = pkgs.dotnet_sdk_7;
+            dotnet = pkgs.dotnet-sdk_7;
           };
         in [
           ./darwin-configuration.nix
