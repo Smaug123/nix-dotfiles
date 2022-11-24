@@ -2,7 +2,7 @@
 
 install_nix () {
   echo "Installing Nix..."
-  diskutil list > /dev/null || export PATH=/usr/sbin:$PATH
+  diskutil list > /dev/null || export PATH="/usr/sbin:$PATH"
   curl -L https://nixos.org/nix/install | sh -s -- --darwin-use-unencrypted-nix-store-volume --daemon || exit 1
   echo "Nix installed."
 }
@@ -23,4 +23,4 @@ nix-channel --update || exit 1
 
 darwin-rebuild changelog || install_darwin_build || exit 1
 
-NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:/nix/var/nix/profiles/per-user/Patrick/channels:$NIX_PATH" darwin-rebuild switch || exit 1
+NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:/nix/var/nix/profiles/per-user/patrick/channels:$NIX_PATH" darwin-rebuild switch || exit 1

@@ -2,7 +2,19 @@
   nixpkgs,
   username,
   ...
-}: {
+}:
+let
+  username = "patrick";
+  dotnet = nixpkgs.dotnet-sdk_6;
+in {
+  imports = [./rider];
+
+  rider = {
+    enable = true;
+    username = username;
+    dotnet = dotnet;
+  };
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
