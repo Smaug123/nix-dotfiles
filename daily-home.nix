@@ -46,6 +46,8 @@
     nixpkgs.rnix-lsp
     nixpkgs.grpc-tools
     nixpkgs.element-desktop
+    nixpkgs.ihp-new
+    nixpkgs.direnv
   ];
 
   programs.vscode = {
@@ -70,6 +72,7 @@
       "explorer.confirmDelete" = false;
       "lean.memoryLimit" = 16384;
       "latex-workshop.view.pdf.viewer" = "tab";
+      "lean4.toolchainPath" = "/Users/${username}/.elan/toolchains/leanprover--lean4---nightly-2022-12-16";
     };
   };
 
@@ -88,7 +91,7 @@
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacsNativeComp;
+    package = nixpkgs.emacsUnstable;
     extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))

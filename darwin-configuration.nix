@@ -30,13 +30,15 @@ in {
   services.nix-daemon.enable = true;
   nix.package = pkgs.nixVersions.stable;
   nix.gc.automatic = true;
+  nix.nixPath = [ "darwin=/nix/store/zq4v3pi2wsfsrjkpk71kcn8srhbwjabf-nix-darwin" ];
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;
 
   nix.extraOptions = ''
     auto-optimise-store = true
-    experimental-features = nix-command flakes ca-derivations
+    experimental-features = nix-command flakes
+    extra-experimental-features = ca-derivations
     max-jobs = auto  # Allow building multiple derivations in parallel
     keep-outputs = true  # Do not garbage-collect build time-only dependencies (e.g. clang)
     keep-derivations = true
