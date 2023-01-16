@@ -48,6 +48,7 @@
     nixpkgs.element-desktop
     nixpkgs.ihp-new
     nixpkgs.direnv
+    nixpkgs.lnav
   ];
 
   programs.vscode = {

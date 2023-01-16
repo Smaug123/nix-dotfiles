@@ -13,8 +13,8 @@ with pkgs.vscode-extensions; [
 {
     name = "remote-containers";
     publisher = "ms-vscode-remote";
-    version = "0.266.0";
-    sha256 = "sha256-XTt3qRuNXw6IAFj9QrblX3SnWeX771Dw/nY7eq3v8gA=";
+    version = "0.270.0";
+    sha256 = "sha256-UQ9g/vogA0b7ZMmOiiCdqPNDZQUdPd+3riy8QISNW3U=";
 }
 {
     name = "nix-env-selector";
@@ -31,20 +31,20 @@ with pkgs.vscode-extensions; [
 {
     name = "vscode-pull-request-github";
     publisher = "GitHub";
-    version = "0.55.2022120109";
-    sha256 = "sha256-Ic7MubsL0xBqPRA8KupUNZ964B8dfnLk4OT7OORzzww=";
+    version = "0.57.2023011213";
+    sha256 = "sha256-BYQs2PblQPSC0/7g+8DIdggwPLp0vwbl6CtUv/21t0o=";
 }
 {
     name = "remote-ssh";
     publisher = "ms-vscode-remote";
-    version = "0.93.2022112815";
-    sha256 = "sha256-Uevadj2FTtP4zSRdlOt960sNWwW5z+K1d7dIZoyCkQs=";
+    version = "0.95.2023010915";
+    sha256 = "sha256-8mLNOt2BtinJFIERmw7LK0/D8ggNZhHfVFl0KbS85N0=";
 }
 {
     name = "vscode-docker";
     publisher = "ms-azuretools";
-    version = "1.23.1";
-    sha256 = "UPUfTOc5xJhI5ACm2oyWqtZ4zNxZjy16D6Mf30eHFEI=";
+    version = "1.23.3";
+    sha256 = "sha256-0qflugzWA1pV0PVWGTzOjdxM/0G8hTLOozoXCAdQnRY=";
 }
 {
     name = "code-gnu-global";
@@ -67,8 +67,8 @@ with pkgs.vscode-extensions; [
 {
     name = "lean";
     publisher = "jroesch";
-    version = "0.16.56";
-    sha256 = "sha256-BlANViRnZnZqEqOaLqyB+Shi6NjumSwVD/R19+cIgCI=";
+    version = "0.16.57";
+    sha256 = "sha256-oyvTXbclA25Ly4fK98dFebo23I+LP4zS2q8SwotWfbA=";
 }
 {
     name = "lean4";
@@ -91,14 +91,14 @@ with pkgs.vscode-extensions; [
 {
     name = "dotnet-interactive-vscode";
     publisher = "ms-dotnettools";
-    version = "1.0.3602041";
-    sha256 = "sha256-w1zhs5LoTieUe4PVfpCDCREPXYIXRiniRRBjgZtHr2Y=";
+    version = "1.0.3552060";
+    sha256 = "sha256-9KHPgE3B99cMkzbgxafGGW0zHNA684Gr8diq9GCRowQ=";
 }
 {
     name = "python";
     publisher = "ms-python";
-    version = "2022.19.13351014";
-    sha256 = "sha256-GvE4tWTnLMjDFvV3qGGZB6uDm/+FSbocD9ecDRZxwpQ=";
+    version = "2023.1.10111008";
+    sha256 = "sha256-cujwaooLD4fpJ8xiFKLtCX+iW/qGvJfLZhwwkQDtQr4=";
 }
 {
     name = "mono-debug";
@@ -121,7 +121,7 @@ with pkgs.vscode-extensions; [
 {
     name = "debug";
     publisher = "webfreak";
-    version = "0.26.0";
-    sha256 = "sha256-ZFrgsycm7/OYTN2sD3RGJG+yu0hTvADkHK1Gopm0XWc=";
+    version = "0.26.1";
+    sha256 = "sha256-lLLa8SN+Sf9Tbi7HeWYWa2KhPQFJyQWrf9l3EUljwYo=";
 }
 ]
