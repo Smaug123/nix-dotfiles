@@ -28,6 +28,7 @@
   } @ inputs: let
     config = {
       #contentAddressedByDefault = true;
+      allowUnfree = true;
     };
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;

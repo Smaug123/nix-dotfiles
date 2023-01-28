@@ -13,8 +13,8 @@ with pkgs.vscode-extensions; [
 {
     name = "remote-containers";
     publisher = "ms-vscode-remote";
-    version = "0.270.0";
-    sha256 = "sha256-UQ9g/vogA0b7ZMmOiiCdqPNDZQUdPd+3riy8QISNW3U=";
+    version = "0.269.0";
+    sha256 = "sha256-8HY46AKbAU5W01BN4iwCUSFqTXfRbC937Gy0kvPTmn4=";
 }
 {
     name = "nix-env-selector";
@@ -45,12 +45,6 @@ with pkgs.vscode-extensions; [
     publisher = "ms-azuretools";
     version = "1.23.3";
     sha256 = "sha256-0qflugzWA1pV0PVWGTzOjdxM/0G8hTLOozoXCAdQnRY=";
-}
-{
-    name = "code-gnu-global";
-    publisher = "austin";
-    version = "0.2.2";
-    sha256 = "1fz89m6ja25aif6wszg9h2fh5vajk6bj3lp1mh0l2b04nw2mzhd5";
 }
 {
     name = "toml";
@@ -95,12 +89,6 @@ with pkgs.vscode-extensions; [
     sha256 = "sha256-9KHPgE3B99cMkzbgxafGGW0zHNA684Gr8diq9GCRowQ=";
 }
 {
-    name = "python";
-    publisher = "ms-python";
-    version = "2023.1.10111008";
-    sha256 = "sha256-cujwaooLD4fpJ8xiFKLtCX+iW/qGvJfLZhwwkQDtQr4=";
-}
-{
     name = "mono-debug";
     publisher = "ms-vscode";
     version = "0.16.3";
@@ -123,5 +111,11 @@ with pkgs.vscode-extensions; [
     publisher = "webfreak";
     version = "0.26.1";
     sha256 = "sha256-lLLa8SN+Sf9Tbi7HeWYWa2KhPQFJyQWrf9l3EUljwYo=";
+}
+{
+    name = "rust-analyzer";
+    publisher = "rust-lang";
+    version = "0.4.1375";
+    sha256 = "sha256-27ccwxjLp5vKWMXfodL3j60tWhmUZN59IZLoJVgxYkE=";
 }
 ]

@@ -23,7 +23,7 @@
     nixpkgs.cmake
     nixpkgs.gnumake
     nixpkgs.gcc
-    nixpkgs.gdb
+    #nixpkgs.gdb
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
@@ -53,7 +53,7 @@
 
   programs.vscode = {
     enable = true;
-    package = nixpkgs.vscodium;
+    package = nixpkgs.vscode;
     extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
       workbench.colorTheme = "Default High Contrast";
