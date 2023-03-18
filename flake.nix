@@ -13,8 +13,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
-      url = "github:nix-community/emacs-overlay";
+      url = "github:nix-community/emacs-overlay/c8421fbdb7d831296ecb735c8a7f60964809c857";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+        url = github:Mic92/sops-nix;
     };
   };
 
@@ -24,6 +27,7 @@
     emacs,
     nixpkgs,
     home-manager,
+    sops-nix,
     ...
   } @ inputs: let
     config = {
@@ -73,6 +77,7 @@
           };
         in [
           ./darwin-configuration.nix
+          sops-nix.nixosModules.sops
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

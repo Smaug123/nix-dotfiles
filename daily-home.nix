@@ -49,6 +49,9 @@
     nixpkgs.ihp-new
     nixpkgs.direnv
     nixpkgs.lnav
+    nixpkgs.age
+    nixpkgs.nodejs
+    nixpkgs.sqlitebrowser
   ];
 
   programs.vscode = {
