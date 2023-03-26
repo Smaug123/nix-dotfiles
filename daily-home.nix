@@ -24,6 +24,7 @@
     nixpkgs.gnumake
     nixpkgs.gcc
     #nixpkgs.gdb
+    nixpkgs.lldb
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
@@ -59,7 +60,7 @@
     package = nixpkgs.vscode;
     extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
-      workbench.colorTheme = "Default High Contrast";
+      workbench.colorTheme = "Default";
       "files.Exclude" = {
         "**/.git" = true;
         "**/.DS_Store" = true;
