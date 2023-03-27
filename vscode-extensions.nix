@@ -118,6 +118,12 @@ with pkgs.vscode-extensions;
       version = "0.4.1440";
       sha256 = "sha256-SZCiP82UV5E6PZRduQGxvOhrZw5noH9Cr0cFpATDKqc=";
     }
+    {
+      name = "typst-lsp";
+      publisher = "nvarner";
+      version = "0.2.0";
+      sha256 = "sha256-FLFmXOGfFqZyf3YSMyVKwZh/tPdFCPY3Z++/6AI5FQc=";
+    }
   ]
   ++ [
     (let

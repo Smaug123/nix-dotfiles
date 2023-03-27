@@ -13,8 +13,9 @@
   };
 
   home.packages = [
-    # Broken on Apple Silicon
-    #nixpkgs.keepassxc
+    nixpkgs.keepassxc
+    # "Damaged and can't be opened"
+    #nixpkgs.bcompare
     nixpkgs.rust-analyzer
     nixpkgs.tmux
     nixpkgs.wget
@@ -53,6 +54,7 @@
     nixpkgs.age
     nixpkgs.nodejs
     nixpkgs.sqlitebrowser
+    nixpkgs.typst
   ];
 
   programs.vscode = {
@@ -88,6 +90,7 @@
   };
 
   home.file.".ssh/config".source = ./ssh.config;
+  home.file.".cargo/config.toml".source = ./cargo-config.toml;
 
   home.file.".ideavimrc".source = ./ideavimrc;
 
