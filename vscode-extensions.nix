@@ -13,38 +13,38 @@ with pkgs.vscode-extensions;
     {
       name = "remote-containers";
       publisher = "ms-vscode-remote";
-      version = "0.242.0";
-      sha256 = "4Li0sYfHOsJMn5FJtvDTGKoGPcRmoosD9tZ7q9H9DfQ=";
+      version = "0.285.0";
+      sha256 = "sha256-UHp6Ewx0bUvPjgaO0A5k77SGj8ovPFLl/WvxyLcZ4y0=";
+    }
+    {
+      name = "nix-env-selector";
+      publisher = "arrterian";
+      version = "1.0.9";
+      sha256 = "sha256-TkxqWZ8X+PAonzeXQ+sI9WI+XlqUHll7YyM7N9uErk0=";
+    }
+    {
+      name = "vscode-hsx";
+      publisher = "s0kil";
+      version = "0.4.0";
+      sha256 = "sha256-/WRy+cQBqzb6QB5+AizlyIcjqNpZ86o2at885hOcroM=";
     }
     {
       name = "vscode-pull-request-github";
       publisher = "GitHub";
-      version = "0.55.2022111609";
-      sha256 = "sha256-PSPvpIW6OC/mST9poirQKVub+PAvShI411w3SK4gH6I==";
+      version = "0.61.2023031710";
+      sha256 = "sha256-3CZYbEkpLaBkUexhdVdCevNNBHlu7EBszt5E1o4rif8=";
     }
     {
       name = "remote-ssh";
       publisher = "ms-vscode-remote";
-      version = "0.85.2022071315";
-      sha256 = "hTRfoUHKrIOSV8eZ/62ewaII5291huXjOZ++dRUmKoI=";
+      version = "0.99.2023031515";
+      sha256 = "sha256-X77QJER3u+MhhP87TBEw8S+mTDkUymQM0aanHipRod4=";
     }
     {
       name = "vscode-docker";
       publisher = "ms-azuretools";
-      version = "1.22.1";
-      sha256 = "UPUfTOc5xJhI5ACm2oyWqtZ4zNxZjy16D6Mf30eHFEI=";
-    }
-    {
-      name = "code-gnu-global";
-      publisher = "austin";
-      version = "0.2.2";
-      sha256 = "1fz89m6ja25aif6wszg9h2fh5vajk6bj3lp1mh0l2b04nw2mzhd5";
-    }
-    {
-      name = "rust-analyzer";
-      publisher = "matklad";
-      version = "0.4.1128";
-      sha256 = "t5CCUdFCiSYrMsBHG5eOfg3sXMacFWiR0hmVa7S1i8Y=";
+      version = "1.24.0";
+      sha256 = "sha256-zZ34KQrRPqVbfGdpYACuLMiMj4ZIWSnJIPac1yXD87k=";
     }
     {
       name = "toml";
@@ -61,8 +61,14 @@ with pkgs.vscode-extensions;
     {
       name = "lean";
       publisher = "jroesch";
-      version = "0.16.53";
-      sha256 = "hjflz5JHVr1YWq6QI9DpdNPY1uL7lAuQTMAdwCtLEfY=";
+      version = "0.16.58";
+      sha256 = "sha256-e5+C6dAcpet4xOiifmTJ1vm2pNrcPhx/mjl70il5NG0=";
+    }
+    {
+      name = "lean4";
+      publisher = "leanprover";
+      version = "0.0.101";
+      sha256 = "sha256-tHxP6X6qp3qVkkCn5TjhHrYHHvGGWJ4kYE7la6bPT6w=";
     }
     {
       name = "language-haskell";
@@ -79,20 +85,14 @@ with pkgs.vscode-extensions;
     {
       name = "dotnet-interactive-vscode";
       publisher = "ms-dotnettools";
-      version = "1.0.3362041";
-      sha256 = "a3u9NKsqHZKhZkKqJqo+LgJFTL2yhehBepTOFOXE+jY=";
-    }
-    {
-      name = "python";
-      publisher = "ms-python";
-      version = "2022.11.11961004";
-      sha256 = "hXTVZ7gbu234zyAg0ZrZPUo6oULB98apxe79U2yQHD4=";
+      version = "1.0.4165021";
+      sha256 = "sha256-P5EHc5t4UyKEfxIGNTg+SyQPFlrbwaNIaprPY63iJ/k=";
     }
     {
       name = "mono-debug";
       publisher = "ms-vscode";
-      version = "0.16.2";
-      sha256 = "10hixqkw5r3cg52xkbky395lv72sb9d9wrngdvmrwx62hkbk5465";
+      version = "0.16.3";
+      sha256 = "sha256-6IU8aP4FQVbEMZAgssGiyqM+PAbwipxou5Wk3Q2mjZg=";
     }
     {
       name = "Theme-MarkdownKit";
@@ -109,7 +109,39 @@ with pkgs.vscode-extensions;
     {
       name = "debug";
       publisher = "webfreak";
-      version = "0.26.0";
-      sha256 = "1l01sv6kwh8dlv3kygkkd0z9m37hahflzd5bx1wwij5p61jg7np9";
+      version = "0.26.1";
+      sha256 = "sha256-lLLa8SN+Sf9Tbi7HeWYWa2KhPQFJyQWrf9l3EUljwYo=";
     }
+    {
+      name = "rust-analyzer";
+      publisher = "rust-lang";
+      version = "0.4.1440";
+      sha256 = "sha256-SZCiP82UV5E6PZRduQGxvOhrZw5noH9Cr0cFpATDKqc=";
+    }
+    {
+      name = "typst-lsp";
+      publisher = "nvarner";
+      version = "0.2.0";
+      sha256 = "sha256-FLFmXOGfFqZyf3YSMyVKwZh/tPdFCPY3Z++/6AI5FQc=";
+    }
+  ]
+  ++ [
+    (let
+      vsix = builtins.fetchurl {
+        name = "vadimcn-vscode-lldb.zip";
+        url = "https://github.com/vadimcn/codelldb/releases/download/v1.9.0/codelldb-aarch64-darwin.vsix";
+        sha256 = "sha256:1kxrxxlzasa9jl73lqh3n36fzpdgh2hbxpzp8fk6xyzcc5vm9zfb";
+      };
+    in
+      pkgs.vscode-utils.buildVscodeExtension
+      {
+        vsix = vsix;
+        src = vsix;
+        vscodeExtPublisher = "vadimcn";
+        vscodeExtName = "vscode-lldb";
+        vscodeExtUniqueId = "vadimcn-vscode-lldb";
+        publisher = "vadimcn";
+        version = "1.9.0";
+        name = "vadimcn-vscode-lldb-1.9.0";
+      })
   ]

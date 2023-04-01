@@ -13,8 +13,9 @@
   };
 
   home.packages = [
-    # Broken on Apple Silicon
-    #nixpkgs.keepassxc
+    nixpkgs.keepassxc
+    # "Damaged and can't be opened"
+    #nixpkgs.bcompare
     nixpkgs.rust-analyzer
     nixpkgs.tmux
     nixpkgs.wget
@@ -23,7 +24,8 @@
     nixpkgs.cmake
     nixpkgs.gnumake
     nixpkgs.gcc
-    nixpkgs.gdb
+    #nixpkgs.gdb
+    nixpkgs.lldb
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
@@ -36,7 +38,7 @@
     nixpkgs.shellcheck
     nixpkgs.html-tidy
     nixpkgs.hugo
-    #nixpkgs.agda
+    nixpkgs.agda
     nixpkgs.pijul
     nixpkgs.universal-ctags
     nixpkgs.asciinema
@@ -46,14 +48,21 @@
     nixpkgs.rnix-lsp
     nixpkgs.grpc-tools
     nixpkgs.element-desktop
+    nixpkgs.ihp-new
+    nixpkgs.direnv
+    nixpkgs.lnav
+    nixpkgs.age
+    nixpkgs.nodejs
+    nixpkgs.sqlitebrowser
+    nixpkgs.typst
   ];
 
   programs.vscode = {
     enable = true;
-    package = nixpkgs.vscodium;
+    package = nixpkgs.vscode;
     extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
-      workbench.colorTheme = "Default High Contrast";
+      workbench.colorTheme = "Default";
       "files.Exclude" = {
         "**/.git" = true;
         "**/.DS_Store" = true;
@@ -66,10 +75,10 @@
       "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
       "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
       "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
-      #"lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
       "explorer.confirmDelete" = false;
       "lean.memoryLimit" = 16384;
       "latex-workshop.view.pdf.viewer" = "tab";
+      "lean4.toolchainPath" = "/Users/${username}/.elan/toolchains/leanprover--lean4---nightly-2022-12-16";
     };
   };
 
@@ -81,6 +90,7 @@
   };
 
   home.file.".ssh/config".source = ./ssh.config;
+  home.file.".cargo/config.toml".source = ./cargo-config.toml;
 
   home.file.".ideavimrc".source = ./ideavimrc;
 
@@ -88,7 +98,7 @@
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacsNativeComp;
+    package = nixpkgs.emacsUnstable;
     extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))

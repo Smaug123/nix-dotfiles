@@ -87,8 +87,8 @@ type NixFile =
                 | _ -> failwith "Unexpected number of '++'"
 
         let verbatim, skipped =
-            match pre.Split "\n" |> List.ofArray with
-            | "{pkgs}:" :: "with pkgs.vscode-extensions;" :: "  [" :: rest ->
+            match pre.Split "\n" |> Seq.filter (fun s -> s <> "") |> List.ofSeq with
+            | pkgsStr :: "with pkgs.vscode-extensions; [" :: rest when pkgsStr.Replace(" ", "") = "{pkgs}:" ->
                 rest
                 |> List.map (fun s ->
                     if s.StartsWith '#' then Choice2Of2 (s.[2..].Trim()) else Choice1Of2 (s.Trim())
@@ -146,7 +146,9 @@ let upgradeExtension (client : HttpClient) (e : Extension) : Extension Async =
             |> sprintf "[%s]"
             |> fun s -> JsonSerializer.Deserialize<Version array> (s, options)
             |> Seq.head
-        return { e with Version = latestVersion.Version }
+        if latestVersion.Version <> e.Version then
+            return { e with Version = latestVersion.Version ; Sha256 = "sha256-/000+cQBqzb6QB5+AizlyIcjqNpZ86o2at885hOcro0=" }
+        else return e
     }
 
 let upgrade (nixFile : NixFile) : NixFile =
@@ -170,7 +172,7 @@ module Program =
         File.ReadAllText sourceFile
         |> NixFile.Parse
         |> upgrade
-        |> sprintf "%O"
+        |> string<NixFile>
         |> fun s -> File.WriteAllText (sourceFile, s)
 
         0

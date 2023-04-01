@@ -8,12 +8,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:Smaug123/nix-darwin/extract";
+      url = "github:lnl7/nix-darwin/master";
+      # url = "github:Smaug123/nix-darwin/extract";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
-      url = "github:nix-community/emacs-overlay";
+      url = "github:nix-community/emacs-overlay/c8421fbdb7d831296ecb735c8a7f60964809c857";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+      url = github:Mic92/sops-nix;
     };
   };
 
@@ -23,10 +27,12 @@
     emacs,
     nixpkgs,
     home-manager,
+    sops-nix,
     ...
   } @ inputs: let
     config = {
       #contentAddressedByDefault = true;
+      allowUnfree = true;
     };
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;
@@ -71,6 +77,7 @@
           };
         in [
           ./darwin-configuration.nix
+          sops-nix.nixosModules.sops
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
