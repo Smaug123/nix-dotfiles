@@ -38,7 +38,7 @@
     nixpkgs.shellcheck
     nixpkgs.html-tidy
     nixpkgs.hugo
-    #nixpkgs.agda
+    nixpkgs.agda
     nixpkgs.pijul
     nixpkgs.universal-ctags
     nixpkgs.asciinema
