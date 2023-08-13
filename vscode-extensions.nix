@@ -13,6 +13,7 @@ with pkgs.vscode-extensions;
     github.vscode-pull-request-github
     shardulm94.trailing-spaces
     nvarner.typst-lsp
+    arrterian.nix-env-selector
   ]
   ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
@@ -20,12 +21,6 @@ with pkgs.vscode-extensions;
       publisher = "ms-vscode-remote";
       version = "0.285.0";
       sha256 = "sha256-UHp6Ewx0bUvPjgaO0A5k77SGj8ovPFLl/WvxyLcZ4y0=";
-    }
-    {
-      name = "nix-env-selector";
-      publisher = "arrterian";
-      version = "1.0.9";
-      sha256 = "sha256-TkxqWZ8X+PAonzeXQ+sI9WI+XlqUHll7YyM7N9uErk0=";
     }
     {
       name = "vscode-hsx";
