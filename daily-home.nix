@@ -105,7 +105,7 @@
   home.file.".config/ripgrep/config".source = ./ripgrep.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacs-unstable;
+    package = nixpkgs.emacs;
     extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
