@@ -115,8 +115,8 @@ with pkgs.vscode-extensions;
     {
       name = "rust-analyzer";
       publisher = "rust-lang";
-      version = "0.4.1440";
-      sha256 = "sha256-SZCiP82UV5E6PZRduQGxvOhrZw5noH9Cr0cFpATDKqc=";
+      version = "0.3.1549";
+      sha256 = "sha256-6GOnvAlSE9uZjFrr5zkFv7IQHp49aX5gVObLEJ2mi68=";
     }
     {
       name = "typst-lsp";

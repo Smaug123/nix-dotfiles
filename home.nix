@@ -82,6 +82,7 @@ in {
       };
       push = {
         default = "current";
+        autoSetupRemote = true;
       };
       pull = {
         rebase = false;

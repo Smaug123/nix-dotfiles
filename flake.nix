@@ -13,11 +13,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
-      url = "github:nix-community/emacs-overlay/c8421fbdb7d831296ecb735c8a7f60964809c857";
+      url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
-      url = github:Mic92/sops-nix;
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -31,7 +32,7 @@
     ...
   } @ inputs: let
     config = {
-      #contentAddressedByDefault = true;
+      # contentAddressedByDefault = true;
       allowUnfree = true;
     };
   in let
