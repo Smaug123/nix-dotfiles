@@ -112,7 +112,7 @@
           pkgs = import nixpkgs {inherit config system;};
         in {
           default = pkgs.mkShell {
-            buildInputs = [pkgs.alejandra];
+            buildInputs = [pkgs.alejandra pkgs.shellcheck];
           };
         }
       );
