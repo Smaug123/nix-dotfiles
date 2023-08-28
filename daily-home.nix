@@ -55,6 +55,8 @@
     nixpkgs.nodejs
     nixpkgs.sqlitebrowser
     nixpkgs.typst
+    nixpkgs.poetry
+    nixpkgs.woodpecker-agent
   ];
 
   programs.vscode = {
@@ -86,6 +88,10 @@
     shellAliases = {
       cmake = "cmake -DCMAKE_MAKE_PROGRAM=${nixpkgs.gnumake}/bin/make -DCMAKE_AR=${nixpkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${nixpkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${nixpkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${nixpkgs.gmp}/lib/libgmp.10.dylib";
       ar = "${nixpkgs.darwin.cctools}/bin/ar";
+      grep = "${nixpkgs.ripgrep}/bin/rg";
+    };
+    sessionVariables = {
+      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
     };
   };
 
@@ -96,9 +102,10 @@
 
   home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
+  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
   programs.emacs = {
     enable = true;
-    package = nixpkgs.emacsUnstable;
+    package = nixpkgs.emacs;
     extraPackages = epkgs: [];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
