@@ -4,14 +4,6 @@
   dotnet,
   ...
 }: {
-  imports = [./rider];
-
-  rider = {
-    enable = true;
-    username = username;
-    dotnet = dotnet;
-  };
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -59,6 +51,10 @@
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
+      grep = "${nixpkgs.ripgrep}/bin/rg";
+    };
+    sessionVariables = {
+      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
     };
   };
 
@@ -111,6 +107,28 @@
     };
   };
 
+  programs.vscode = {
+    enable = true;
+    enableExtensionUpdateCheck = true;
+    enableUpdateCheck = true;
+    package = nixpkgs.vscode;
+    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
+    userSettings = {
+      workbench.colorTheme = "Default";
+      "files.Exclude" = {
+        "**/.git" = true;
+        "**/.DS_Store" = true;
+        "**/Thumbs.db" = true;
+        "**/*.olean" = true;
+        "**/result" = true;
+      };
+      "git.path" = "${nixpkgs.git}/bin/git";
+      "update.mode" = "none";
+      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
+      "explorer.confirmDelete" = false;
+    };
+  };
+
   programs.neovim.enable = true;
   programs.neovim.plugins = with nixpkgs.vimPlugins; [
     molokai
@@ -141,4 +159,62 @@
   programs.neovim.withPython3 = true;
 
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
+
+  home.packages = [
+    nixpkgs.keepassxc
+    nixpkgs.rust-analyzer
+    nixpkgs.tmux
+    nixpkgs.wget
+    nixpkgs.yt-dlp
+    nixpkgs.cmake
+    nixpkgs.gnumake
+    nixpkgs.gcc
+    nixpkgs.lldb
+    nixpkgs.hledger
+    nixpkgs.hledger-web
+    dotnet
+    nixpkgs.docker
+    nixpkgs.jitsi-meet
+    nixpkgs.ripgrep
+    nixpkgs.elan
+    nixpkgs.coreutils-prefixed
+    nixpkgs.shellcheck
+    nixpkgs.html-tidy
+    nixpkgs.hugo
+    nixpkgs.agda
+    nixpkgs.pijul
+    nixpkgs.universal-ctags
+    nixpkgs.asciinema
+    nixpkgs.git-lfs
+    nixpkgs.imagemagick
+    nixpkgs.nixpkgs-fmt
+    nixpkgs.rnix-lsp
+    nixpkgs.grpc-tools
+    nixpkgs.element-desktop
+    nixpkgs.ihp-new
+    nixpkgs.direnv
+    nixpkgs.lnav
+    nixpkgs.age
+    nixpkgs.nodejs
+    nixpkgs.sqlitebrowser
+    nixpkgs.typst
+    nixpkgs.poetry
+    nixpkgs.woodpecker-agent
+    nixpkgs.alacritty
+  ];
+
+  home.file.".ideavimrc".source = ./ideavimrc;
+  home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
+  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
+  programs.emacs = {
+    enable = true;
+    package = nixpkgs.emacs;
+    extraPackages = epkgs: [];
+    extraConfig = ''
+      (load-file (let ((coding-system-for-read 'utf-8))
+                 (shell-command-to-string "agda-mode locate")))
+    '';
+  };
+
+  home.file.".cargo/config.toml".source = ./cargo-config.toml;
 }

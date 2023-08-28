@@ -13,69 +13,14 @@
   };
 
   home.packages = [
-    nixpkgs.keepassxc
     # "Damaged and can't be opened"
     #nixpkgs.bcompare
-    nixpkgs.rust-analyzer
-    nixpkgs.tmux
-    nixpkgs.wget
-    nixpkgs.youtube-dl
-    nixpkgs.yt-dlp
-    nixpkgs.cmake
-    nixpkgs.gnumake
-    nixpkgs.gcc
     #nixpkgs.gdb
-    nixpkgs.lldb
-    nixpkgs.hledger
-    nixpkgs.hledger-web
-    dotnet
-    nixpkgs.docker
-    nixpkgs.jitsi-meet
     #nixpkgs.handbrake
-    nixpkgs.ripgrep
-    nixpkgs.elan
-    nixpkgs.coreutils-prefixed
-    nixpkgs.shellcheck
-    nixpkgs.html-tidy
-    nixpkgs.hugo
-    nixpkgs.agda
-    nixpkgs.pijul
-    nixpkgs.universal-ctags
-    nixpkgs.asciinema
-    nixpkgs.git-lfs
-    nixpkgs.imagemagick
-    nixpkgs.nixpkgs-fmt
-    nixpkgs.rnix-lsp
-    nixpkgs.grpc-tools
-    nixpkgs.element-desktop
-    nixpkgs.ihp-new
-    nixpkgs.direnv
-    nixpkgs.lnav
-    nixpkgs.age
-    nixpkgs.nodejs
-    nixpkgs.sqlitebrowser
-    nixpkgs.typst
-    nixpkgs.poetry
-    nixpkgs.woodpecker-agent
   ];
 
   programs.vscode = {
-    enable = true;
-    package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
     userSettings = {
-      workbench.colorTheme = "Default";
-      "files.Exclude" = {
-        "**/.git" = true;
-        "**/.DS_Store" = true;
-        "**/Thumbs.db" = true;
-        "**/*.olean" = true;
-        "**/result" = true;
-      };
-      "git.path" = "${nixpkgs.git}/bin/git";
-      "update.mode" = "none";
-      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-      "explorer.confirmDelete" = false;
       "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
       "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
       "lean.memoryLimit" = 16384;
@@ -88,28 +33,8 @@
     shellAliases = {
       cmake = "cmake -DCMAKE_MAKE_PROGRAM=${nixpkgs.gnumake}/bin/make -DCMAKE_AR=${nixpkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${nixpkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${nixpkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${nixpkgs.gmp}/lib/libgmp.10.dylib";
       ar = "${nixpkgs.darwin.cctools}/bin/ar";
-      grep = "${nixpkgs.ripgrep}/bin/rg";
-    };
-    sessionVariables = {
-      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
     };
   };
 
   home.file.".ssh/config".source = ./ssh.config;
-  home.file.".cargo/config.toml".source = ./cargo-config.toml;
-
-  home.file.".ideavimrc".source = ./ideavimrc;
-
-  home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
-  home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
-  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
-  programs.emacs = {
-    enable = true;
-    package = nixpkgs.emacs;
-    extraPackages = epkgs: [];
-    extraConfig = ''
-      (load-file (let ((coding-system-for-read 'utf-8))
-                 (shell-command-to-string "agda-mode locate")))
-    '';
-  };
 }

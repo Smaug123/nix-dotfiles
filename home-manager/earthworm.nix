@@ -4,6 +4,9 @@
   dotnet,
   ...
 }: {
+  home.packages = [nixpkgs.firefox-wayland];
+  nixpkgs.config.firefox.speechSynthesisSupport = true;
+
   wayland.windowManager.sway = {
     enable = true;
     config = {
@@ -22,27 +25,5 @@
     lowLevelPercent = 20;
     iconType = "standard";
     enable = true;
-  };
-
-  programs.vscode = {
-    enable = true;
-    enableExtensionUpdateCheck = true;
-    enableUpdateCheck = true;
-    package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
-    userSettings = {
-      workbench.colorTheme = "Default";
-      "files.Exclude" = {
-        "**/.git" = true;
-        "**/.DS_Store" = true;
-        "**/Thumbs.db" = true;
-        "**/*.olean" = true;
-        "**/result" = true;
-      };
-      "git.path" = "${nixpkgs.git}/bin/git";
-      "update.mode" = "none";
-      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-      "explorer.confirmDelete" = false;
-    };
   };
 }
