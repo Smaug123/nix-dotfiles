@@ -9,38 +9,83 @@
     };
     darwin = {
       url = "github:lnl7/nix-darwin/master";
+      # url = "github:Smaug123/nix-darwin/extract";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs = {
-      url = "github:nix-community/emacs-overlay";
+      url = "github:nix-community/emacs-overlay/c8421fbdb7d831296ecb735c8a7f60964809c857";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+      url = github:Mic92/sops-nix;
     };
   };
 
-  outputs = { self, darwin, emacs, nixpkgs, home-manager, ... }@inputs:
-    let system = "aarch64-darwin"; in
-    let config = {
-      allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-        "vscode"
-      ];
-    }; in
-    let overlays = [ emacs.overlay ] ++ import ./overlays.nix; in
-    let pkgs = (import nixpkgs { inherit system config overlays; }); in
-    {
-      darwinConfigurations = {
+  outputs = {
+    self,
+    darwin,
+    emacs,
+    nixpkgs,
+    home-manager,
+    sops-nix,
+    ...
+  } @ inputs: let
+    config = {
+      #contentAddressedByDefault = true;
+      allowUnfree = true;
+    };
+  in let
+    overlays = [emacs.overlay] ++ import ./overlays.nix;
+  in {
+    homeConfigurations = let
+      system = "x86_64-linux";
+    in let
+      pkgs = import nixpkgs {inherit system config overlays;};
+    in let
+      args = {
         nixpkgs = pkgs;
-        patrick = darwin.lib.darwinSystem {
-          system = system;
-          modules = [
-            ./darwin-configuration.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.Patrick = import ./home.nix { nixpkgs = pkgs; };
-            }
-          ];
-        };
+        username = "patrick";
+        dotnet = pkgs.dotnet-sdk_7;
+      };
+    in {
+      patrick = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        modules = [
+          (import ./home.nix args)
+          # home-manager.nixosModules.home-manager {
+          #   home-manager.useGlobalPkgs = true;
+          #   home-manager.useUserPackages = true;
+          #   home-manager.users.patrick = pkgs.lib.mkMerge [(import ./server-home.nix args) (import ./home.nix args)];
+          # }
+        ];
       };
     };
+    darwinConfigurations = let
+      system = "aarch64-darwin";
+    in let
+      pkgs = import nixpkgs {inherit system config overlays;};
+    in {
+      nixpkgs = pkgs;
+      patrick = darwin.lib.darwinSystem {
+        system = system;
+        modules = let
+          args = {
+            nixpkgs = pkgs;
+            username = "patrick";
+            dotnet = pkgs.dotnet-sdk_7;
+          };
+        in [
+          ./darwin-configuration.nix
+          sops-nix.nixosModules.sops
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.patrick = pkgs.lib.mkMerge [(import ./daily-home.nix args) (import ./home.nix args)];
+          }
+        ];
+      };
+    };
+  };
 }

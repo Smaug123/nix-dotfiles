@@ -1,11 +1,10 @@
 {
   nixpkgs,
+  username,
+  dotnet,
   ...
-}:
-let
-  username = "Patrick";
-in let
-  dotnet = nixpkgs.dotnet-sdk_6;
+}: let
+  username = "patrick";
 in {
   imports = [./rider];
 
@@ -32,61 +31,6 @@ in {
   # changes in each release.
   home.stateVersion = "22.05";
 
-  home.packages =
-    [
-      nixpkgs.rust-analyzer
-      nixpkgs.tmux
-      nixpkgs.wget
-      nixpkgs.youtube-dl
-      nixpkgs.cmake
-      nixpkgs.gnumake
-      nixpkgs.gcc
-      nixpkgs.gdb
-      nixpkgs.hledger
-      nixpkgs.hledger-web
-      dotnet
-      nixpkgs.docker
-      nixpkgs.jitsi-meet
-      #nixpkgs.handbrake
-      nixpkgs.ripgrep
-      nixpkgs.elan
-      nixpkgs.coreutils-prefixed
-      nixpkgs.shellcheck
-      nixpkgs.html-tidy
-      nixpkgs.hugo
-      #nixpkgs.agda
-      nixpkgs.pijul
-      nixpkgs.universal-ctags
-      nixpkgs.asciinema
-      nixpkgs.git-lfs
-      nixpkgs.imagemagick
-      nixpkgs.nixpkgs-fmt
-      nixpkgs.rnix-lsp
-    ];
-
-  programs.vscode = {
-    enable = true;
-    package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix { pkgs = nixpkgs; };
-    userSettings = {
-      workbench.colorTheme = "Default High Contrast";
-      "files.Exclude" = {
-        "**/.git" = true;
-        "**/.DS_Store" = true;
-        "**/Thumbs.db" = true;
-        "**/*.olean" = true;
-        "**/result" = true;
-      };
-      "git.path" = "${nixpkgs.git}/bin/git";
-      "update.mode" = "none";
-      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
-      #"lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
-      "lean.executablePath" = "/Users/${username}/.elan/toolchains/lean4/bin/lean";
-      "lean.memoryLimit" = 8092;
-      "latex-workshop.view.pdf.viewer" = "tab";
-    };
-  };
-
   programs.tmux = {
     shell = "\${nixpkgs.zsh}/bin/zsh";
   };
@@ -108,15 +52,13 @@ in {
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib";
+      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxxabi}/lib -L ${nixpkgs.libcxx}/lib";
       RUST_BACKTRACE = "full";
     };
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
       nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
-      cmake = "cmake -DCMAKE_MAKE_PROGRAM=${nixpkgs.gnumake}/bin/make -DCMAKE_AR=${nixpkgs.darwin.cctools}/bin/ar -DCMAKE_RANLIB=${nixpkgs.darwin.cctools}/bin/ranlib -DGMP_INCLUDE_DIR=${nixpkgs.gmp.dev}/include/ -DGMP_LIBRARIES=${nixpkgs.gmp}/lib/libgmp.10.dylib";
-      ar = "${nixpkgs.darwin.cctools}/bin/ar";
     };
   };
 
@@ -160,7 +102,7 @@ in {
         twohead = "ort";
       };
       merge = {
-        conflictStyle = "zdiff3";
+        conflictStyle = "diff3";
       };
       diff = {
         colorMoved = "default";
@@ -198,19 +140,4 @@ in {
   programs.neovim.withPython3 = true;
 
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
-
-  home.file.".ssh/config".source = ./ssh.config;
-
-  home.file.".ideavimrc".source = ./ideavimrc;
-
-  home.file.".config/youtube-dl/config".source = ./youtube-dl.conf;
-  programs.emacs = {
-    enable = true;
-    package = nixpkgs.emacsGcc;
-    extraPackages = (epkgs: []);
-    extraConfig = ''
-      (load-file (let ((coding-system-for-read 'utf-8))
-                 (shell-command-to-string "agda-mode locate")))
-    '';
-  };
 }

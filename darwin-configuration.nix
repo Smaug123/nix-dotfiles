@@ -1,22 +1,23 @@
-{ pkgs, ... }:
-
-let python = import ./python.nix { inherit pkgs; }; in
-
-{
+{pkgs, ...}: let
+  python = import ./python.nix {inherit pkgs;};
+in {
   nix.useDaemon = true;
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
 
-  environment.systemPackages =
-    [
-      pkgs.alacritty
-      pkgs.rustup
-      pkgs.libiconv
-      pkgs.clang
-      #pkgs.keepassxc
-      python
-    ];
+  environment.systemPackages = [
+    pkgs.alacritty
+    pkgs.rustup
+    pkgs.libiconv
+    pkgs.clang
+    python
+  ];
+
+  users.users.patrick = {
+    home = "/Users/patrick";
+    name = "patrick";
+  };
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
@@ -27,17 +28,20 @@ let python = import ./python.nix { inherit pkgs; }; in
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
-  nix.package = pkgs.nixFlakes;
+  nix.package = pkgs.nixVersions.stable;
   nix.gc.automatic = true;
+  nix.nixPath = ["darwin=/nix/store/zq4v3pi2wsfsrjkpk71kcn8srhbwjabf-nix-darwin"];
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
-  nix.useSandbox = false;
+  nix.settings.sandbox = false;
 
   nix.extraOptions = ''
     auto-optimise-store = true
     experimental-features = nix-command flakes
+    extra-experimental-features = ca-derivations
     max-jobs = auto  # Allow building multiple derivations in parallel
     keep-outputs = true  # Do not garbage-collect build time-only dependencies (e.g. clang)
+    keep-derivations = true
     # Allow fetching build results from the Lean Cachix cache
     trusted-substituters = https://lean4.cachix.org/
     trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= lean4.cachix.org-1:mawtxSxcaiWE24xCXXgh3qnvlTkyU7evRRnGeAhD4Wk=
