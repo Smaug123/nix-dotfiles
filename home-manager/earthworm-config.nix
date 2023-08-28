@@ -8,7 +8,7 @@
     ../hardware/earthworm.nix
   ];
 
-  hardware.asahi.peripheralFirmwareDirectory = ./firmware;
+  hardware.asahi.peripheralFirmwareDirectory = "/etc/nixos/firmware";
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
