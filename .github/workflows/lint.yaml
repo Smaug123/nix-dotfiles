@@ -43,7 +43,7 @@ jobs:
   all-required-checks-complete:
     runs-on: "ubuntu-latest"
     steps:
-      run: "echo \"All required checks complete.\""
+      - run: "echo \"All required checks complete.\""
     needs:
       - "shellcheck"
       - "format"
