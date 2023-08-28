@@ -20,6 +20,9 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    apple-silicon = {
+      url = "github:tpwrules/nixos-apple-silicon";
+    };
   };
 
   outputs = {
@@ -29,6 +32,7 @@
     nixpkgs,
     home-manager,
     sops-nix,
+    apple-silicon,
     ...
   } @ inputs: let
     config = {
@@ -37,30 +41,44 @@
     };
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;
+    recursiveMerge = attrList: let
+      f = attrPath:
+        builtins.zipAttrsWith (n: values:
+          if builtins.tail values == []
+          then builtins.head values
+          else if builtins.all builtins.isList values
+          then nixpkgs.lib.unique (builtins.concatLists values)
+          else if builtins.all builtins.isAttrs values
+          then f (attrPath ++ [n]) values
+          else builtins.last values);
+    in
+      f [] attrList;
   in {
-    homeConfigurations = let
-      system = "x86_64-linux";
-    in let
-      pkgs = import nixpkgs {inherit system config overlays;};
-    in let
-      args = {
-        nixpkgs = pkgs;
-        username = "patrick";
-        dotnet = pkgs.dotnet-sdk_7;
-      };
-    in {
-      patrick = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-
-        modules = [
-          (import ./home.nix args)
-          # home-manager.nixosModules.home-manager {
-          #   home-manager.useGlobalPkgs = true;
-          #   home-manager.useUserPackages = true;
-          #   home-manager.users.patrick = pkgs.lib.mkMerge [(import ./server-home.nix args) (import ./home.nix args)];
-          # }
-        ];
-      };
+    nixosConfigurations = {
+      earthworm = let
+        system = "aarch64-linux";
+      in let
+        pkgs = import nixpkgs {inherit system config overlays;};
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = let
+            args = {
+              nixpkgs = pkgs;
+              username = "patrick";
+              dotnet = pkgs.dotnet-sdk_7;
+            };
+          in [
+            ./home-manager/earthworm-config.nix
+            apple-silicon.nixosModules.default
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.patrick = recursiveMerge [(import ./home-manager/earthworm.nix args) (import ./home-manager/home.nix args)];
+            }
+          ];
+        };
     };
     darwinConfigurations = let
       system = "aarch64-darwin";
@@ -83,7 +101,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.patrick = pkgs.lib.mkMerge [(import ./daily-home.nix args) (import ./home.nix args)];
+            home-manager.users.patrick = recursiveMerge [(import ./home-manager/darwin.nix args) (import ./home-manager/home.nix args)];
           }
         ];
       };
