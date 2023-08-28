@@ -17,7 +17,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
-      url = github:Mic92/sops-nix;
+      url = "github:Mic92/sops-nix";
+    };
+    apple-silicon = {
+      url = "github:tpwrules/nixos-apple-silicon";
     };
   };
 
@@ -28,6 +31,7 @@
     nixpkgs,
     home-manager,
     sops-nix,
+    apple-silicon,
     ...
   } @ inputs: let
     config = {
@@ -61,6 +65,32 @@
         ];
       };
     };
+    nixosConfigurations = {
+      earthworm = let
+        system = "aarch64-linux";
+      in let
+        pkgs = import nixpkgs {inherit system config overlays;};
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = let
+            args = {
+              nixpkgs = pkgs;
+              username = "patrick";
+              dotnet = pkgs.dotnet-sdk_7;
+            };
+          in [
+            ./home-manager/earthworm-config.nix
+            apple-silicon.nixosModules.default
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.patrick = pkgs.lib.mkMerge [(import ./home-manager/earthworm.nix args) (import ./home-manager/home.nix args)];
+            }
+          ];
+        };
+    };
     darwinConfigurations = let
       system = "aarch64-darwin";
     in let
@@ -82,7 +112,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.patrick = pkgs.lib.mkMerge [(import ./daily-home.nix args) (import ./home.nix args)];
+            home-manager.users.patrick = pkgs.lib.mkMerge [(import ./home-manager/darwin.nix args) (import ./home-manager/home.nix args)];
           }
         ];
       };

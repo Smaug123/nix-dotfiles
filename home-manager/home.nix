@@ -3,9 +3,7 @@
   username,
   dotnet,
   ...
-}: let
-  username = "patrick";
-in {
+}: {
   imports = [./rider];
 
   rider = {
@@ -33,6 +31,9 @@ in {
 
   programs.tmux = {
     shell = "\${nixpkgs.zsh}/bin/zsh";
+    escapeTime = 50;
+    mouse = false;
+    prefix = "C-b";
   };
 
   programs.zsh = {
@@ -58,7 +59,6 @@ in {
     shellAliases = {
       vim = "nvim";
       view = "vim -R";
-      nix-upgrade = "sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'";
     };
   };
 
