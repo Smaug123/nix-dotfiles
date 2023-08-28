@@ -106,5 +106,20 @@
         ];
       };
     };
+    devShells = let
+      devShell = system: (
+        let
+          pkgs = import nixpkgs {inherit config system;};
+        in {
+          default = pkgs.mkShell {
+            buildInputs = [pkgs.alejandra pkgs.shellcheck];
+          };
+        }
+      );
+    in
+      builtins.listToAttrs (builtins.map (system: {
+        name = system;
+        value = devShell system;
+      }) ["aarch64-darwin" "aarch64-linux" "x86_64-linux"]);
   };
 }
