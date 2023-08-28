@@ -10,7 +10,7 @@ in let
 in let
   riderconfig = pkgs.stdenv.mkDerivation {
     name = "rider-config";
-    version = "2021.2";
+    version = "2023.1";
     __contentAddressed = true;
 
     src = src;
