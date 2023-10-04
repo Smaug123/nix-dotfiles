@@ -1,13 +1,13 @@
 #!/bin/sh
 
-install_nix () {
+install_nix() {
   echo "Installing Nix..."
-  diskutil list > /dev/null || export PATH="/usr/sbin:$PATH"
+  diskutil list >/dev/null || export PATH="/usr/sbin:$PATH"
   curl -L https://nixos.org/nix/install | sh -s -- --darwin-use-unencrypted-nix-store-volume --daemon || exit 1
   echo "Nix installed."
 }
 
-install_darwin_build () {
+install_darwin_build() {
   echo "Installing nix-darwin..."
   nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer || exit 1
   ./result/bin/darwin-installer || exit 1
