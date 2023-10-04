@@ -354,4 +354,18 @@ set statusline+=%*
 " Format the status line
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
-set fileformats=unix
+set fileformat=unix
+
+let g:fsharp#fsautocomplete_command =
+    \ [ 'dotnet',
+    \   'fsautocomplete',
+    \   '--background-service-enabled'
+    \ ]
+
+let g:fsharp#show_signature_on_cursor_move = 1
+if has('nvim') && exists('*nvim_open_win')
+  augroup FSharpGroup
+    autocmd!
+    autocmd FileType fsharp nnoremap <leader>t :call fsharp#showTooltip()<CR>
+  augroup END
+endif
