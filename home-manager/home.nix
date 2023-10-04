@@ -217,6 +217,7 @@
     nixpkgs.pandoc
   ];
 
+  home.file.".mailcap".source = ./mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   home.file.".config/ripgrep/config".source = ./ripgrep.conf;
