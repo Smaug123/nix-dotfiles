@@ -41,6 +41,7 @@
       # contentAddressedByDefault = true;
       allowUnfree = true;
     };
+    systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
     overlays = [emacs.overlay] ++ import ./overlays.nix;
     recursiveMerge = attrList: let
@@ -108,6 +109,29 @@
         ];
       };
     };
+    checks = let
+      fmt-check = system: let
+        pkgs = import nixpkgs {inherit config system;};
+      in
+        pkgs.stdenvNoCC.mkDerivation {
+          name = "fmt-check";
+          src = ./.;
+          nativeBuildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.shfmt];
+          checkPhase = ''
+            find . -type f -name '*.sh' | xargs shfmt -d -s -i 2 -ci
+            alejandra -c .
+            find . -type f -name '*.sh' -exec shellcheck -x {} \;
+          '';
+          installPhase = "mkdir $out";
+          dontBuild = true;
+          doCheck = true;
+        };
+    in
+      builtins.listToAttrs (builtins.map (system: {
+          name = system;
+          value = {fmt-check = fmt-check system;};
+        })
+        systems);
     devShells = let
       devShell = system: (
         let
@@ -120,8 +144,9 @@
       );
     in
       builtins.listToAttrs (builtins.map (system: {
-        name = system;
-        value = devShell system;
-      }) ["aarch64-darwin" "aarch64-linux" "x86_64-linux"]);
+          name = system;
+          value = devShell system;
+        })
+        systems);
   };
 }
