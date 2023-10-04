@@ -72,7 +72,11 @@
       co = "checkout";
       st = "status";
     };
+    delta = {enable = true;};
     extraConfig = {
+      core = {
+        autocrlf = "input";
+      };
       rerere = {
         enabled = true;
       };
@@ -104,6 +108,9 @@
       diff = {
         colorMoved = "default";
       };
+      "protocol.file" = {
+        allow = "always";
+      };
     };
   };
 
@@ -133,6 +140,8 @@
   programs.neovim.plugins = with nixpkgs.vimPlugins; [
     molokai
     tagbar
+    fzf-vim
+    Ionide-vim
     {
       plugin = rust-vim;
       config = "let g:rustfmt_autosave = 1";
@@ -201,6 +210,11 @@
     nixpkgs.poetry
     nixpkgs.woodpecker-agent
     nixpkgs.alacritty
+    nixpkgs.lynx
+    nixpkgs.alejandra
+    nixpkgs.ffmpeg
+    nixpkgs.bat
+    nixpkgs.pandoc
   ];
 
   home.file.".ideavimrc".source = ./ideavimrc;

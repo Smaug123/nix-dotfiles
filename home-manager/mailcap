@@ -1,0 +1,3 @@
+text/html; lynx -force_html %s; needsterminal
+image/png; qlmanage -p %s
+image/jpeg; qlmanage -p %s
