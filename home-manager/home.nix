@@ -131,7 +131,6 @@
       };
       "git.path" = "${nixpkgs.git}/bin/git";
       "update.mode" = "none";
-      "docker.dockerPath" = "${nixpkgs.docker}/bin/docker";
       "explorer.confirmDelete" = false;
     };
   };
@@ -159,7 +158,7 @@
         let g:syntastic_check_on_wq = 0'';
     }
 
-    YouCompleteMe
+    # YouCompleteMe
     tagbar
   ];
   programs.neovim.viAlias = true;
@@ -168,6 +167,12 @@
   programs.neovim.withPython3 = true;
 
   programs.neovim.extraConfig = builtins.readFile ./init.vim;
+
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
 
   home.packages = [
     nixpkgs.keepassxc
@@ -182,7 +187,6 @@
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
-    nixpkgs.docker
     nixpkgs.jitsi-meet
     nixpkgs.ripgrep
     nixpkgs.elan
