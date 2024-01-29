@@ -2,6 +2,7 @@
   nixpkgs,
   username,
   dotnet,
+  whisper,
   ...
 }: {
   imports = [./rider];
@@ -13,6 +14,8 @@
   };
 
   home.packages = [
+    whisper.default
+    whisper.normalize
     # "Damaged and can't be opened"
     #nixpkgs.bcompare
     #nixpkgs.gdb
