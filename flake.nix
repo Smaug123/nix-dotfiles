@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
+      url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -25,6 +25,9 @@
     apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
+    whisper = {
+      url = "github:Smaug123/whisper.cpp/nix";
+    };
   };
 
   outputs = {
@@ -35,6 +38,7 @@
     home-manager,
     sops-nix,
     apple-silicon,
+    whisper,
     ...
   } @ inputs: let
     config = {
@@ -69,7 +73,7 @@
             args = {
               nixpkgs = pkgs;
               username = "patrick";
-              dotnet = pkgs.dotnet-sdk_7;
+              dotnet = pkgs.dotnet-sdk_8;
             };
           in [
             ./home-manager/earthworm-config.nix
@@ -95,7 +99,8 @@
           args = {
             nixpkgs = pkgs;
             username = "patrick";
-            dotnet = pkgs.dotnet-sdk_7;
+            dotnet = pkgs.dotnet-sdk_8;
+            whisper = whisper.packages.${system};
           };
         in [
           ./darwin-configuration.nix
