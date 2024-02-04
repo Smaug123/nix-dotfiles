@@ -4,8 +4,10 @@
   dotnet,
   ...
 }: {
-  home.packages = [nixpkgs.firefox-wayland];
-  nixpkgs.config.firefox.speechSynthesisSupport = true;
+  home.packages = [nixpkgs.firefox-wayland nixpkgs.wl-clipboard];
+  nixpkgs.config.firefox = {
+    speechSynthesisSupport = true;
+  };
 
   wayland.windowManager.sway = {
     enable = true;
