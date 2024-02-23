@@ -22,10 +22,15 @@
   home.stateVersion = "22.05";
 
   programs.tmux = {
-    shell = "\${nixpkgs.zsh}/bin/zsh";
+    shell = "${nixpkgs.zsh}/bin/zsh";
     escapeTime = 50;
     mouse = false;
     prefix = "C-b";
+    enable = true;
+    terminal = "screen-256color";
+    extraConfig = ''
+      set-option -sa terminal-features ',xterm-256color:RGB'
+    '';
   };
 
   programs.zsh = {
@@ -135,38 +140,67 @@
     };
   };
 
-  programs.neovim.enable = true;
-  programs.neovim.plugins = with nixpkgs.vimPlugins; [
-    molokai
-    tagbar
-    fzf-vim
-    Ionide-vim
-    {
-      plugin = rust-vim;
-      config = "let g:rustfmt_autosave = 1";
-    }
-    {
-      plugin = LanguageClient-neovim;
-      config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }";
-    }
-    {
-      plugin = syntastic;
-      config = ''        let g:syntastic_rust_checkers = ['cargo']
-        let g:syntastic_always_populate_loc_list = 1
-        let g:syntastic_auto_loc_list = 1
-        let g:syntastic_check_on_open = 1
-        let g:syntastic_check_on_wq = 0'';
-    }
+  programs.neovim = let
+    pythonEnv = nixpkgs.python3.withPackages (ps: [
+      ps.pynvim
+      ps.pynvim-pp
+      ps.pyyaml
+      ps.std2
+    ]);
+  in {
+    enable = true;
+    plugins = [
+      nixpkgs.vimPlugins.molokai
+      nixpkgs.vimPlugins.tagbar
+      nixpkgs.vimPlugins.fzf-vim
+      {
+        plugin = nixpkgs.vimPlugins.Ionide-vim;
+        config = ''
+          let g:fsharp#fsautocomplete_command = ['dotnet', 'fsautocomplete', '--background-service-enabled']
+          let g:fsharp#show_signature_on_cursor_move = 1
+          if has('nvim') && exists('*nvim_open_win')
+            augroup FSharpGroup
+              autocmd!
+              autocmd FileType fsharp nnoremap <leader>t :call fsharp#showTooltip()<CR>
+            augroup END
+          endif
+        '';
+      }
+      {
+        plugin = nixpkgs.vimPlugins.chadtree;
+        config = "let g:chadtree_settings = {'xdg': v:true}";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.coq_nvim;
+        config = ''let g:coq_settings = { 'auto_start': v:true, 'xdg': v:true }'';
+      }
+      {
+        plugin = nixpkgs.vimPlugins.rust-vim;
+        config = "let g:rustfmt_autosave = 1";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
+        config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.syntastic;
+        config = ''          let g:syntastic_rust_checkers = ['cargo']
+          let g:syntastic_always_populate_loc_list = 1
+          let g:syntastic_auto_loc_list = 1
+          let g:syntastic_check_on_open = 1
+          let g:syntastic_check_on_wq = 0'';
+      }
 
-    # YouCompleteMe
-    tagbar
-  ];
-  programs.neovim.viAlias = true;
-  programs.neovim.vimAlias = true;
-  programs.neovim.vimdiffAlias = true;
-  programs.neovim.withPython3 = true;
+      nixpkgs.vimPlugins.tagbar
+    ];
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+    withPython3 = true;
 
-  programs.neovim.extraConfig = builtins.readFile ./init.vim;
+    extraLuaConfig = ''vim.g.python3_host_prog="${pythonEnv}/bin/python"'';
+    extraConfig = builtins.readFile ./init.vim;
+  };
 
   programs.direnv = {
     enable = true;
