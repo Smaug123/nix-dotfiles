@@ -21,6 +21,8 @@
   # changes in each release.
   home.stateVersion = "22.05";
 
+  fonts.fontconfig.enable = true;
+
   programs.tmux = {
     shell = "${nixpkgs.zsh}/bin/zsh";
     escapeTime = 50;
@@ -208,6 +210,17 @@
     nix-direnv.enable = true;
   };
 
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      font = {
+        normal = {
+          family = "FiraCode Nerd Font Mono";
+        };
+      };
+    };
+  };
+
   home.packages = [
     nixpkgs.keepassxc
     nixpkgs.rust-analyzer
@@ -253,6 +266,7 @@
     nixpkgs.ffmpeg
     nixpkgs.bat
     nixpkgs.pandoc
+    (nixpkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
   ];
 
   home.file.".mailcap".source = ./mailcap;
