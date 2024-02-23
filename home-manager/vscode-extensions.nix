@@ -41,22 +41,16 @@ with pkgs.vscode-extensions;
       sha256 = "yk7buEyQIw6aiUizAm+sgalWxUibIuP9crhyBaOjC2E=";
     }
     {
-      name = "Ionide-Paket";
-      publisher = "Ionide";
-      version = "2.0.0";
-      sha256 = "1455zx5p0d30b1agdi1zw22hj0d3zqqglw98ga8lj1l1d757gv6v";
-    }
-    {
-      name = "lean";
-      publisher = "jroesch";
-      version = "0.16.58";
-      sha256 = "sha256-e5+C6dAcpet4xOiifmTJ1vm2pNrcPhx/mjl70il5NG0=";
+      name = "ionide-fsharp";
+      publisher = "ionide";
+      version = "7.18.1";
+      sha256 = "sha256-6NPMQncoZhZYtx5c+qzarjuSzUXMb5HdKCzcHPCFUhU=";
     }
     {
       name = "lean4";
       publisher = "leanprover";
-      version = "0.0.101";
-      sha256 = "sha256-tHxP6X6qp3qVkkCn5TjhHrYHHvGGWJ4kYE7la6bPT6w=";
+      version = "0.0.128";
+      sha256 = "sha256-odRDOrlDFahweLzoQtpufY8UUwAutPFunqg7atTxnPo=";
     }
     {
       name = "vscode-clang";
