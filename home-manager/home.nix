@@ -43,11 +43,6 @@
     history = {
       expireDuplicatesFirst = true;
     };
-    oh-my-zsh = {
-      enable = true;
-      plugins = ["git" "macos" "dircycle" "timer"];
-      theme = "robbyrussell";
-    };
     sessionVariables = {
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
@@ -63,6 +58,7 @@
     sessionVariables = {
       RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
     };
+    initExtra = builtins.readFile ./.zshrc;
   };
 
   programs.fzf = {
