@@ -266,7 +266,7 @@
     nixpkgs.ffmpeg
     nixpkgs.bat
     nixpkgs.pandoc
-    (nixpkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
   home.file.".mailcap".source = ./mailcap;
