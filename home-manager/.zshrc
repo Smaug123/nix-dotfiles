@@ -1,0 +1,23 @@
+prompt_custom() {
+  local cyan='%F{cyan}'
+  local red='%F{red}'
+  local blue='%F{blue}'
+  local reset_color='%f'
+
+  local git_info=$(git symbolic-ref --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null || git rev-parse --short HEAD 2> /dev/null)
+  if [[ -n "$git_info" ]]; then
+    # escape the percent character, which is the only zsh prompt metacharacter
+    git_info=$git_info:s/%/%%/
+    git_info=" ${blue}git:${reset_color}${red}(${git_info})${reset_color}"
+  else
+    git_info=""
+  fi
+
+  # %1 is the name of cwd
+  PROMPT="${cyan}%1~${reset_color}${git_info} > "
+}
+
+# Full path to cwd, with `~` for any initial home component, in light green,
+RPROMPT='%F{155}%~%f'
+
+precmd_functions+=(prompt_custom)
