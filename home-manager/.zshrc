@@ -21,3 +21,5 @@ prompt_custom() {
 RPROMPT='%F{155}%~%f'
 
 precmd_functions+=(prompt_custom)
+
+export WORDCHARS=''
