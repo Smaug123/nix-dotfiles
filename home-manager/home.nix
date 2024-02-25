@@ -148,7 +148,12 @@
   in {
     enable = true;
     plugins = [
-      nixpkgs.vimPlugins.molokai
+      {
+        plugin = nixpkgs.vimPlugins.molokai;
+        config = ''
+          colorscheme molokai
+	'';
+      }
       nixpkgs.vimPlugins.tagbar
       nixpkgs.vimPlugins.fzf-vim
       {
@@ -188,8 +193,6 @@
           let g:syntastic_check_on_open = 1
           let g:syntastic_check_on_wq = 0'';
       }
-
-      nixpkgs.vimPlugins.tagbar
     ];
     viAlias = true;
     vimAlias = true;
