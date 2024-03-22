@@ -188,7 +188,7 @@
       {
         plugin = nixpkgs.vimPlugins.Ionide-vim;
         config = ''
-          let g:fsharp#fsautocomplete_command = ['dotnet', 'fsautocomplete', '--background-service-enabled']
+          let g:fsharp#fsautocomplete_command = ['fsautocomplete']
           let g:fsharp#show_signature_on_cursor_move = 1
           if has('nvim') && exists('*nvim_open_win')
             augroup FSharpGroup
@@ -249,6 +249,7 @@
   };
 
   home.packages = [
+    nixpkgs.fsautocomplete
     nixpkgs.keepassxc
     nixpkgs.rust-analyzer
     nixpkgs.tmux
