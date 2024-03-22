@@ -18,10 +18,6 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
@@ -36,7 +32,6 @@
     emacs,
     nixpkgs,
     home-manager,
-    sops-nix,
     apple-silicon,
     whisper,
     ...
@@ -104,7 +99,6 @@
           };
         in [
           ./darwin-configuration.nix
-          sops-nix.nixosModules.sops
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
