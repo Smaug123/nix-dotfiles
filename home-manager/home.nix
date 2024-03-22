@@ -207,8 +207,7 @@
         config = ''let g:coq_settings = { 'auto_start': v:true, 'xdg': v:true }'';
       }
       {
-        plugin = nixpkgs.vimPlugins.rust-vim;
-        config = "let g:rustfmt_autosave = 1";
+        plugin = nixpkgs.vimPlugins.rustaceanvim;
       }
       {
         plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
