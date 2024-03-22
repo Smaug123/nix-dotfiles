@@ -1,6 +1,8 @@
 set nu
 colorscheme molokai
 
+set mouse=
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maintainer: 
 "       Amir Salihefendic — @amix3k

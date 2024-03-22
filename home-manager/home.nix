@@ -152,10 +152,39 @@
         plugin = nixpkgs.vimPlugins.molokai;
         config = ''
           colorscheme molokai
-	'';
+        '';
       }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+        config = builtins.readFile ./nvim/treesitter.lua;
+        type = "lua";
+      }
+
+      {
+        plugin = nixpkgs.vimPlugins.nvim-lspconfig;
+        config = builtins.readFile ./nvim/lspconfig.lua;
+        type = "lua";
+      }
+      nixpkgs.vimPlugins.telescope-nvim
       nixpkgs.vimPlugins.tagbar
       nixpkgs.vimPlugins.fzf-vim
+      {
+        plugin = let
+          name = "venv-selector.nvim";
+          rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "linux-cultist";
+              repo = name;
+              rev = rev;
+              hash = "sha256-aOga7kJ1y3T2vDyYFl/XHOwk35ZqeUcfPUk+Pr1mIeo=";
+            };
+          };
+        config = builtins.readFile ./nvim/venv-selector.lua;
+	type = "lua";
+      }
       {
         plugin = nixpkgs.vimPlugins.Ionide-vim;
         config = ''
@@ -198,8 +227,8 @@
     vimdiffAlias = true;
     withPython3 = true;
 
-    extraLuaConfig = ''vim.g.python3_host_prog="${pythonEnv}/bin/python"'';
-    extraConfig = builtins.readFile ./init.vim;
+    extraLuaConfig = builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
+    # extraConfig = builtins.readFile ./nvim/init.vim;
   };
 
   programs.direnv = {
@@ -253,6 +282,7 @@
     nixpkgs.lnav
     nixpkgs.age
     nixpkgs.nodejs
+    nixpkgs.nodePackages.pyright
     nixpkgs.sqlitebrowser
     nixpkgs.typst
     nixpkgs.poetry
@@ -263,6 +293,7 @@
     nixpkgs.ffmpeg
     nixpkgs.bat
     nixpkgs.pandoc
+    nixpkgs.fd
     (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
@@ -281,7 +312,7 @@
       (require 'evil)
       (evil-mode 1)
       (evil-set-undo-system 'undo-redo)
-      ;; Allow hash to be entered  
+      ;; Allow hash to be entered
       (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
     '';
   };
