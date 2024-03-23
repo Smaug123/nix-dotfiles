@@ -170,6 +170,23 @@
       nixpkgs.vimPlugins.fzf-vim
       {
         plugin = let
+          name = "coq.artifacts";
+          rev = "9c5067a471322c6bb866545e88e5b28c82511865";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "ms-jpq";
+              repo = name;
+              rev = rev;
+              hash = "sha256-BHm7U3pINtYamY7m26I4lQee7ccJ6AcHmYx7j1MRFDA=";
+            };
+          };
+        config = builtins.readFile ./nvim/venv-selector.lua;
+        type = "lua";
+      }
+      {
+        plugin = let
           name = "venv-selector.nvim";
           rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
         in
@@ -183,7 +200,7 @@
             };
           };
         config = builtins.readFile ./nvim/venv-selector.lua;
-	type = "lua";
+        type = "lua";
       }
       {
         plugin = nixpkgs.vimPlugins.Ionide-vim;
@@ -200,25 +217,17 @@
       }
       {
         plugin = nixpkgs.vimPlugins.chadtree;
-        config = "let g:chadtree_settings = {'xdg': v:true}";
+        config = builtins.readFile ./nvim/chadtree.vim;
       }
       {
         plugin = nixpkgs.vimPlugins.coq_nvim;
-        config = ''let g:coq_settings = { 'auto_start': v:true, 'xdg': v:true }'';
+        config = ''let g:coq_settings = { 'auto_start': 'shut-up', 'xdg': v:true }'';
       }
       {
         plugin = nixpkgs.vimPlugins.rustaceanvim;
       }
       {
         plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
-      }
-      {
-        plugin = nixpkgs.vimPlugins.syntastic;
-        config = ''          let g:syntastic_rust_checkers = ['cargo']
-          let g:syntastic_always_populate_loc_list = 1
-          let g:syntastic_auto_loc_list = 1
-          let g:syntastic_check_on_open = 1
-          let g:syntastic_check_on_wq = 0'';
       }
     ];
     viAlias = true;
@@ -227,7 +236,7 @@
     withPython3 = true;
 
     extraLuaConfig = builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
-    # extraConfig = builtins.readFile ./nvim/init.vim;
+    extraConfig = builtins.readFile ./nvim/init.vim;
   };
 
   programs.direnv = {
@@ -248,6 +257,7 @@
   };
 
   home.packages = [
+    nixpkgs.nil
     nixpkgs.fsautocomplete
     nixpkgs.keepassxc
     nixpkgs.rust-analyzer

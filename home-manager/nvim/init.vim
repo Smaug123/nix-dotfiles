@@ -328,3 +328,22 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 
 set fileformat=unix
 set fileformats=unix
+
+function MarkdownPreview()
+    let temp_file = tempname() . ".md"
+    let file_name = substitute(tolower(expand('%:t')), '\W', '_', 'g')
+    let temp_html = "/tmp/" . file_name . "_tmp.html"
+
+    execute 'write! ' . temp_file
+
+    let pandoc_cmd = 'pandoc ' . temp_file . ' -o ' . temp_html
+
+    call system(pandoc_cmd)
+
+    " Use tmux and lynx to preview the HTML file
+    let lynx_cmd = 'tmux split-window -h lynx ' . temp_html
+    execute "silent call jobstart(split('" . lynx_cmd . "', ' '))"
+
+    silent! execute "call delete('" . temp_file . "')"
+endfunction
+nnoremap <localleader>mp :call MarkdownPreview()<CR>
