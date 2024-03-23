@@ -144,9 +144,6 @@ if status then
             "View all mappings"
         },
       }, { prefix = vim.api.nvim_get_var("maplocalleader") })
-
-    -- Let's document some stuff!
-    whichkey.register({ g = { T = "Go to previous tab", t = "Go to next tab", } })
 else
   vim.api.nvim_set_keymap('n', '<localleader>mp', ':lua MarkdownPreview()<CR>', { noremap = true, silent = true })
   -- Remove the Windows ^M - when the encodings gets messed up
