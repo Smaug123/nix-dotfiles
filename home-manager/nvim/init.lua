@@ -67,9 +67,7 @@ function RemoveCarriageReturn()
 end
 
 function FormatJson()
-    local curpos = vim.api.nvim_win_get_cursor(0)
     vim.cmd("%!python -m json.tool")
-    vim.api.nvim_win_set_cursor(0, curpos)
 end
 
 function ChangeToCurrentDirectory()
@@ -89,18 +87,19 @@ if status then
     function DisplayAllMappingsWithTelescope()
         local mappings = {}
         local commands = {} -- Store commands keyed by the display string
-        for _, tree in pairs(require('which-key.keys').mappings) do
-            -- TODO: annotate with mode info
-            tree.tree:walk(function(node)
-                if node.mapping then
-                    local mapping = node.mapping
-                    local description = mapping.desc or mapping.cmd or "No description"
-                    local displayString = description .. " | " .. mapping.prefix
-                    commands[displayString] = mapping.prefix
-                    mappings[#mappings + 1] = displayString
-                end
-            end)
-        end
+
+        require('which-key.keys').get_tree('n').tree:walk(function(node)
+            if node.mapping then
+                local mapping = node.mapping
+                -- for key, value in pairs(mapping) do
+                --     print('Key: ' .. key)
+                -- end
+                local description = mapping.desc or mapping.label or mapping.cmd or "No description"
+                local displayString = description .. " | " .. mapping.prefix
+                commands[displayString] = mapping.prefix
+                mappings[#mappings + 1] = displayString
+            end
+        end)
 
         pickers.new({}, {
             prompt_title = "Actions",
@@ -114,8 +113,8 @@ if status then
                     actions.close(bufnr)
                     local cmd = commands[selection.value]
                     if cmd then
-                        -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(cmd, true, false, true), "n", false)
-                        vim.api.nvim_command(":normal " .. cmd)
+                        vim.api.nvim_command(":normal " .. vim.api.nvim_replace_termcodes(cmd, true, true, true))
+                        -- vim.api.nvim_feedkeys(cmd, 'n', false)
                     else
                         print("no command found")
                     end
@@ -143,8 +142,11 @@ if status then
         -- whereas if we map it separately and *document* it in here then only the documentation doesn't work.
         ["s"] = {
             "View all mappings"
-        }
+        },
       }, { prefix = vim.api.nvim_get_var("maplocalleader") })
+
+    -- Let's document some stuff!
+    whichkey.register({ g = { T = "Go to previous tab", t = "Go to next tab", } })
 else
   vim.api.nvim_set_keymap('n', '<localleader>mp', ':lua MarkdownPreview()<CR>', { noremap = true, silent = true })
   -- Remove the Windows ^M - when the encodings gets messed up
