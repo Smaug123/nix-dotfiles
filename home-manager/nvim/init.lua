@@ -79,18 +79,70 @@ end
 
 local status, whichkey = pcall(require, "which-key")
 if status then
+    local telescope = require('telescope')
+    local pickers = require('telescope.pickers')
+    local action_state = require('telescope.actions.state')
+    local actions = require('telescope.actions')
+    local finders = require('telescope.finders')
+    local conf = require('telescope.config').values
+
+    function DisplayAllMappingsWithTelescope()
+        local mappings = {}
+        local commands = {} -- Store commands keyed by the display string
+        for _, tree in pairs(require('which-key.keys').mappings) do
+            -- TODO: annotate with mode info
+            tree.tree:walk(function(node)
+                if node.mapping then
+                    local mapping = node.mapping
+                    local description = mapping.desc or mapping.cmd or "No description"
+                    local displayString = description .. " | " .. mapping.prefix
+                    commands[displayString] = mapping.prefix
+                    mappings[#mappings + 1] = displayString
+                end
+            end)
+        end
+
+        pickers.new({}, {
+            prompt_title = "Actions",
+            finder = finders.new_table({
+                results = mappings,
+            }),
+            sorter = conf.generic_sorter({}),
+            attach_mappings = function(_, map)
+                map('i', '<CR>', function(bufnr)
+                    local selection = action_state.get_selected_entry()
+                    actions.close(bufnr)
+                    local cmd = commands[selection.value]
+                    if cmd then
+                        -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(cmd, true, false, true), "n", false)
+                        vim.api.nvim_command(":normal " .. cmd)
+                    else
+                        print("no command found")
+                    end
+                end)
+                return true
+            end
+        }):find()
+    end
+
+    vim.api.nvim_set_keymap('n', '<localleader>s', ':lua DisplayAllMappingsWithTelescope()<CR>', {})
     whichkey.register({
         ["mp"] = {
             MarkdownPreview, "Preview Markdown in Lynx"
         },
         ["md"] = {
-            RemoveCarriageReturns, "Delete carriage returns from file"
+            RemoveCarriageReturn, "Delete carriage returns from file"
         },
         ["j"] = {
             FormatJson, "Auto-format JSON"
         },
         ["cd"] = {
             ChangeToCurrentDirectory, "Switch CWD to the directory of the open buffer"
+        },
+        -- For some reason the command doesn't work at all if I map it in here,
+        -- whereas if we map it separately and *document* it in here then only the documentation doesn't work.
+        ["s"] = {
+            "View all mappings"
         }
       }, { prefix = vim.api.nvim_get_var("maplocalleader") })
 else
