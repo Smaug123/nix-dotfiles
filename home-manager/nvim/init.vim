@@ -1,5 +1,4 @@
 set nu
-colorscheme molokai
 
 set mouse=
 

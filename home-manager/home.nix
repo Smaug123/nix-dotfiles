@@ -149,10 +149,9 @@
     enable = true;
     plugins = [
       {
-        plugin = nixpkgs.vimPlugins.molokai;
-        config = ''
-          colorscheme molokai
-        '';
+        plugin = nixpkgs.vimPlugins.tokyonight-nvim;
+        config = builtins.readFile ./nvim/tokyonight.lua;
+        type = "lua";
       }
       {
         plugin = nixpkgs.vimPlugins.nvim-treesitter.withAllGrammars;
