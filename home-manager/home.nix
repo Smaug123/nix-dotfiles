@@ -149,6 +149,11 @@
     enable = true;
     plugins = [
       {
+          plugin = nixpkgs.vimPlugins.which-key-nvim;
+          type = "lua";
+          config = builtins.readFile ./nvim/which-key.lua;
+      }
+      {
         plugin = nixpkgs.vimPlugins.tokyonight-nvim;
         config = builtins.readFile ./nvim/tokyonight.lua;
         type = "lua";
