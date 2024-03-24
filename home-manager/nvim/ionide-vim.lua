@@ -256,6 +256,8 @@ local function SetupFSharpKeyBindings()
 		vim.api.nvim_set_keymap("n", "<localleader>ft", ":call fsharp#showTooltip()<CR>", { noremap = true })
 		vim.api.nvim_set_keymap("n", "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", { noremap = true })
 		vim.api.nvim_set_keymap("n", "<localleader>fsl", ":call fsharp#sendLineToFsi()<CR>", { noremap = true })
+		vim.api.nvim_set_keymap("n", "<localleader>bpa", BuildFSharpProjects, { noremap = true })
+		vim.api.nvim_set_keymap("n", "<localleader>bps", ":BuildFSharpProject", { noremap = true })
 	end
 end
 
