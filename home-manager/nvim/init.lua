@@ -3,7 +3,32 @@ vim.opt.mouse = ""
 vim.opt.history = 500
 vim.opt.background = "dark"
 
+vim.opt.wildmenu = true
+vim.opt.wildignore = vim.opt.wildignore + { "*/.git/*", "*/.hg/*", "*/.svn/*", "*/.DS_Store" }
+
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.incsearch = true
+vim.opt.magic = true
+vim.opt.hlsearch = true
+
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.textwidth = 500
+
+vim.opt.switchbuf = "useopen"
+
+vim.opt.laststatus = 2
+-- I don't use tabs, but one day I might!
+vim.opt.showtabline = 2
+
 vim.opt.langmenu = "en"
+
+vim.opt.ffs = "unix"
+vim.opt.encoding = "utf8"
 
 -- Always show current position
 vim.opt.ruler = true
@@ -14,7 +39,10 @@ vim.opt.foldcolumn = "1"
 
 vim.opt.autoread = true
 vim.opt.backup = false
+vim.opt.writebackup = true
 vim.opt.swapfile = false
+
+vim.opt.cmdheight = 2
 
 -- Use spaces instead of tabs
 vim.opt.expandtab = true
@@ -22,9 +50,6 @@ vim.opt.smarttab = true
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 
-vim.opt.hlsearch = true
-
--- Don't redraw while executing macros
 vim.opt.lazyredraw = true
 
 -- Show matching brackets when text indicator is on one of them
@@ -34,6 +59,49 @@ vim.opt.mat = 2
 -- Turn off sound
 vim.opt.errorbells = false
 vim.opt.visualbell = false
+
+vim.opt.timeoutlen = 500
+
+vim.opt.scrolloff = 2
+
+-- Return to last edit position when opening files
+vim.api.nvim_create_autocmd("BufReadPost", {
+    pattern = "*",
+    callback = function()
+        local line = vim.fn.line
+        local last_pos = line("'\"")
+        if last_pos > 1 and last_pos <= line("$") then
+            vim.cmd("normal! g'\"")
+        end
+    end,
+})
+
+-- Trim trailing whitespace on save
+function CleanExtraSpaces()
+    local save_cursor = vim.api.nvim.win_get_cursor(0)
+    local old_query = vim.fn.getreg('/')
+    vim.cmd('%s/\\s\\+$//e')
+    vim.api.nvim_win_set_cursor(0, save_cursor)
+    vim.fn.setreg('/', old_query)
+end
+vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = {"*.fs", "*.fsi", "*.txt", "*.js", "*.py", "*.wiki", "*.sh", "*.coffee"},
+    callback = CleanExtraSpaces,
+})
+
+-- Status line
+
+-- Returns true if paste mode is enabled
+function HasPaste()
+    if vim.opt.paste:get() then
+        return 'PASTE MODE  '
+    end
+    return ''
+end
+
+vim.o.statusline = vim.o.statusline .. "%{v:lua.HasPaste()}%F%m%r%h %w  CWD: %r%{getcwd()}%h   Line: %l  Column: %c"
+
+--------------------------------------------------------------
 
 vim.api.nvim_set_keymap('n', ';', '<Nop>', { noremap = true })
 vim.api.nvim_set_var("maplocalleader", ";")
@@ -77,7 +145,6 @@ end
 
 local status, whichkey = pcall(require, "which-key")
 if status then
-    local telescope = require('telescope')
     local pickers = require('telescope.pickers')
     local action_state = require('telescope.actions.state')
     local actions = require('telescope.actions')
@@ -124,7 +191,11 @@ if status then
         }):find()
     end
 
-    vim.api.nvim_set_keymap('n', '<localleader>s', ':lua DisplayAllMappingsWithTelescope()<CR>', {})
+    function ToggleSpell()
+        vim.cmd('setlocal spell!')
+    end
+
+    vim.api.nvim_set_keymap('n', '<localleader><localleader>', ':lua DisplayAllMappingsWithTelescope()<CR>', {})
     whichkey.register({
         ["mp"] = {
             MarkdownPreview, "Preview Markdown in Lynx"
@@ -140,8 +211,11 @@ if status then
         },
         -- For some reason the command doesn't work at all if I map it in here,
         -- whereas if we map it separately and *document* it in here then only the documentation doesn't work.
-        ["s"] = {
+        [vim.api.nvim_get_var("maplocalleader")] = {
             "View all mappings"
+        },
+        ["ss"] = {
+            ToggleSpell, "Toggle spell-checker on or off"
         },
       }, { prefix = vim.api.nvim_get_var("maplocalleader") })
 else

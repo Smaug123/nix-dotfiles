@@ -240,7 +240,6 @@
     withPython3 = true;
 
     extraLuaConfig = builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
-    extraConfig = builtins.readFile ./nvim/init.vim;
   };
 
   programs.direnv = {
@@ -308,6 +307,7 @@
     nixpkgs.bat
     nixpkgs.pandoc
     nixpkgs.fd
+    nixpkgs.sumneko-lua-language-server
     (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
