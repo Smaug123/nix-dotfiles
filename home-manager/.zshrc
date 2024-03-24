@@ -27,3 +27,5 @@ export WORDCHARS=''
 autoload edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
+
+PATH="$PATH:$HOME/.cargo/bin"

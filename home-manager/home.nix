@@ -38,7 +38,7 @@
   programs.zsh = {
     enable = true;
     autocd = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     enableCompletion = true;
     history = {
       expireDuplicatesFirst = true;
@@ -47,7 +47,7 @@
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxxabi}/lib -L ${nixpkgs.libcxx}/lib";
+      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxx}/lib";
       RUST_BACKTRACE = "full";
     };
     shellAliases = {
@@ -139,9 +139,26 @@
   };
 
   programs.neovim = let
+    pynvimpp = nixpkgs.python3.pkgs.buildPythonPackage {
+      pname = "pynvim-pp";
+      version = "unstable-2024-03-24";
+      pyproject = true;
+
+      src = nixpkgs.fetchFromGitHub {
+        owner = "ms-jpq";
+        repo = "pynvim_pp";
+        rev = "34e3a027c595981886d7efd1c91071f3eaa4715d";
+        hash = "sha256-2+jDRJXlg9q4MN9vOhmeq4cWVJ0wp5r5xAh3G8lqgOg=";
+      };
+
+      nativeBuildInputs = [nixpkgs.python3.pkgs.setuptools];
+
+      propagatedBuildInputs = [nixpkgs.python3.pkgs.pynvim];
+    };
+  in let
     pythonEnv = nixpkgs.python3.withPackages (ps: [
       ps.pynvim
-      ps.pynvim-pp
+      pynvimpp
       ps.pyyaml
       ps.std2
     ]);
@@ -149,9 +166,9 @@
     enable = true;
     plugins = [
       {
-          plugin = nixpkgs.vimPlugins.which-key-nvim;
-          type = "lua";
-          config = builtins.readFile ./nvim/which-key.lua;
+        plugin = nixpkgs.vimPlugins.which-key-nvim;
+        type = "lua";
+        config = builtins.readFile ./nvim/which-key.lua;
       }
       {
         plugin = nixpkgs.vimPlugins.tokyonight-nvim;
@@ -208,16 +225,8 @@
       }
       {
         plugin = nixpkgs.vimPlugins.Ionide-vim;
-        config = ''
-          let g:fsharp#fsautocomplete_command = ['fsautocomplete']
-          let g:fsharp#show_signature_on_cursor_move = 1
-          if has('nvim') && exists('*nvim_open_win')
-            augroup FSharpGroup
-              autocmd!
-              autocmd FileType fsharp nnoremap <leader>t :call fsharp#showTooltip()<CR>
-            augroup END
-          endif
-        '';
+        type = "lua";
+        config = builtins.readFile ./nvim/ionide-vim.lua;
       }
       {
         plugin = nixpkgs.vimPlugins.chadtree;
@@ -232,6 +241,11 @@
       }
       {
         plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-dap;
+        config = builtins.readFile ./nvim/nvim-dap.lua;
+        type = "lua";
       }
     ];
     viAlias = true;
@@ -260,6 +274,7 @@
   };
 
   home.packages = [
+    nixpkgs.netcoredbg
     nixpkgs.nil
     nixpkgs.fsautocomplete
     nixpkgs.keepassxc
