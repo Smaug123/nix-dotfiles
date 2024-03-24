@@ -78,7 +78,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 -- Trim trailing whitespace on save
 function CleanExtraSpaces()
-	local save_cursor = vim.api.nvim.win_get_cursor(0)
+	local save_cursor = vim.api.nvim_win_get_cursor(0)
 	local old_query = vim.fn.getreg("/")
 	vim.cmd("%s/\\s\\+$//e")
 	vim.api.nvim_win_set_cursor(0, save_cursor)

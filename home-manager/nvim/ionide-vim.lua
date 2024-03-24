@@ -183,7 +183,7 @@ end
 -- 	if handle then
 -- 		local stdout = handle:read("*all")
 -- 		handle:close()
--- 
+--
 -- 		local allResults = {}
 -- 		for match in string.gmatch(stdout, "([^%z]+)") do
 -- 			table.insert(allResults, match)
@@ -199,7 +199,7 @@ end
 -- 				return a < b -- If both or neither end with 'proj', sort alphabetically
 -- 			end
 -- 		end)
--- 
+--
 -- 		for _, line in ipairs(allResults) do
 -- 			table.insert(results, line)
 -- 		end
@@ -234,7 +234,7 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 			})
 			:find()
 	end
-end, { nargs = "?", complete = 'file' })
+end, { nargs = "?", complete = "file" })
 
 local function SetupFSharpKeyBindings()
 	local status, whichkey = pcall(require, "which-key")
