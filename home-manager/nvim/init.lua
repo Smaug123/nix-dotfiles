@@ -143,6 +143,17 @@ function ChangeToCurrentDirectory()
 	vim.cmd(":pwd")
 end
 
+local function close_loclist_if_orphaned()
+	local win = vim.fn.expand("<afile>")
+	vim.fn.win_execute(win, "lclose")
+end
+
+-- Set up an autocmd using the nvim_create_autocmd API
+vim.api.nvim_create_autocmd("WinClosed", {
+	pattern = "*",
+	callback = close_loclist_if_orphaned,
+})
+
 local status, whichkey = pcall(require, "which-key")
 if status then
 	local pickers = require("telescope.pickers")

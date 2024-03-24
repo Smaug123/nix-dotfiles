@@ -40,7 +40,7 @@ require("lspconfig").pyright.setup(coq.lsp_ensure_capabilities({
 			vim.lsp.diagnostic.on_publish_diagnostics(...)
 
 			local window = vim.api.nvim_get_current_win()
-			vim.diagnostic.setloclist({ open_loclist = false })
+			vim.diagnostic.setloclist({ open_loclist = true })
 			vim.api.nvim_set_current_win(window)
 		end,
 	},
@@ -59,7 +59,9 @@ require("lspconfig").nil_ls.setup(coq.lsp_ensure_capabilities({
 function ToggleLocList()
 	local winid = vim.fn.getloclist(0, { winid = 0 }).winid
 	if winid == 0 then
+		local window = vim.api.nvim_get_current_win()
 		vim.cmd.lopen()
+		vim.api.nvim_set_current_win(window)
 	else
 		vim.cmd.lclose()
 	end
