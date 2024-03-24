@@ -162,6 +162,7 @@
       ps.pyyaml
       ps.std2
     ]);
+    debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
   in {
     enable = true;
     plugins = [
@@ -245,6 +246,11 @@
       {
         plugin = nixpkgs.vimPlugins.nvim-dap;
         config = builtins.readFile ./nvim/nvim-dap.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-dap-python;
+        config = builtins.replaceStrings ["%PYTHONENV%"] ["${debugPyEnv}"] (builtins.readFile ./nvim/nvim-dap-python.lua);
         type = "lua";
       }
     ];
