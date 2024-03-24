@@ -67,21 +67,23 @@ function ToggleLocList()
 	end
 end
 
-local whichkey_status, whichkey = pcall(require, "which-key")
-if whichkey_status then
-	whichkey.register({
-		l = {
-			p = { vim.diagnostic.goto_prev, "Go to previous entry in loclist" },
-			n = { vim.diagnostic.goto_next, "Go to next entry in loclist" },
-			l = { ToggleLocList, "Toggle loclist" },
-			f = { vim.diagnostic.open_float, "Open current loclist entry in floating window" },
-		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
-else
-	vim.keymap.set("n", "<localleader>lp", vim.diagnostic.goto_prev)
-	vim.keymap.set("n", "<localleader>ln", vim.diagnostic.goto_next)
-	vim.keymap.set("n", "<localleader>ll", ToggleLocList)
-	vim.keymap.set("n", "<localleader>lf", vim.diagnostic.open_float)
+do
+	local whichkey_status, whichkey = pcall(require, "which-key")
+	if whichkey_status then
+		whichkey.register({
+			l = {
+				p = { vim.diagnostic.goto_prev, "Go to previous entry in loclist" },
+				n = { vim.diagnostic.goto_next, "Go to next entry in loclist" },
+				l = { ToggleLocList, "Toggle loclist" },
+				f = { vim.diagnostic.open_float, "Open current loclist entry in floating window" },
+			},
+		}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+	else
+		vim.keymap.set("n", "<localleader>lp", vim.diagnostic.goto_prev)
+		vim.keymap.set("n", "<localleader>ln", vim.diagnostic.goto_next)
+		vim.keymap.set("n", "<localleader>ll", ToggleLocList)
+		vim.keymap.set("n", "<localleader>lf", vim.diagnostic.open_float)
+	end
 end
 
 -- Use LspAttach autocommand to only map the following keys
@@ -89,6 +91,7 @@ end
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
+		local whichkey_status, whichkey = pcall(require, "which-key")
 		-- Enable completion triggered by <c-x><c-o>
 		vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
 

@@ -166,19 +166,35 @@ if status then
 		local mappings = {}
 		local commands = {} -- Store commands keyed by the display string
 
-		require("which-key.keys").get_tree("n").tree:walk(function(node)
-			if node.mapping then
-				local mapping = node.mapping
-				local description = mapping.desc or mapping.label or mapping.cmd
-				-- Some actions are just there for which-key to hook into to display prefixes; they don't have a description.
-				if description then
-					local displayString = description .. " | " .. mapping.prefix
-					commands[displayString] = mapping.prefix
-					mappings[#mappings + 1] = displayString
+		function accumulate(tree)
+			tree:walk(function(node)
+				-- Note: we could (if desired) view all groups, because the `node.mapping` table looks like this:
+				-- { prefix = "g", group = true, keys = {...}}
+				if node.mapping then
+					local mapping = node.mapping
+					if not mapping.group then
+						local description = mapping.desc or mapping.label or mapping.cmd
+						-- Some actions are just there for which-key to hook into to display prefixes; they don't have a description.
+						if description then
+							local displayString = description .. " | " .. mapping.prefix
+							commands[displayString] = mapping.prefix
+							mappings[#mappings + 1] = displayString
+						else
+							for k, v in pairs(mapping) do
+								print("Nothing: " .. k .. " : " .. tostring(v) .. " (type: " .. type(v) .. ")")
+							end
+							print("-----")
+						end
+					end
+					-- TODO: If a command is a prefix of an existing command, prepend its description to those commands' descriptions, and append a '...' to the parent's description.
 				end
-				-- TODO: If a command is a prefix of an existing command, prepend its description to those commands' descriptions, and append a '...' to the parent's description.
-			end
-		end)
+			end)
+		end
+
+		local cur_buf = vim.api.nvim_win_get_buf(0)
+
+		accumulate(require("which-key.keys").get_tree("n").tree)
+		accumulate(require("which-key.keys").get_tree("n", cur_buf).tree)
 
 		pickers
 			.new({}, {
@@ -208,8 +224,12 @@ if status then
 		vim.cmd("setlocal spell!")
 	end
 
-	vim.api.nvim_set_keymap("n", "<localleader><localleader>", ":lua DisplayAllMappingsWithTelescope()<CR>", {})
 	whichkey.register({
+		-- TODO: this isn't working for the FSI ones - maybe we've moved to a different buffer by the time we ask for the keymap?
+		[vim.api.nvim_get_var("maplocalleader")] = {
+			DisplayAllMappingsWithTelescope,
+			"View all mappings",
+		},
 		["mp"] = {
 			MarkdownPreview,
 			"Preview Markdown in Lynx",
@@ -225,11 +245,6 @@ if status then
 		["cd"] = {
 			ChangeToCurrentDirectory,
 			"Switch CWD to the directory of the open buffer",
-		},
-		-- For some reason the command doesn't work at all if I map it in here,
-		-- whereas if we map it separately and *document* it in here then only the documentation doesn't work.
-		[vim.api.nvim_get_var("maplocalleader")] = {
-			"View all mappings",
 		},
 		["ss"] = {
 			ToggleSpell,

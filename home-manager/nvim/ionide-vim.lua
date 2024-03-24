@@ -2,8 +2,6 @@ vim.g["fsharp#fsautocomplete_command"] = { "fsautocomplete" }
 vim.g["fsharp#show_signature_on_cursor_move"] = 1
 vim.g["fsharp#fsi_keymap"] = "none"
 
-vim.api.nvim_create_augroup("FSharpGroup", {})
-
 -- MASSIVE HACK - raised https://github.com/ionide/Ionide-vim/pull/78
 local function captureLoadedProjects()
 	vim.fn.execute("redir => g:massive_hack_patrick_capture")
@@ -236,33 +234,30 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 	end
 end, { nargs = "?", complete = "file" })
 
-local function SetupFSharpKeyBindings()
-	local status, whichkey = pcall(require, "which-key")
-	if status then
-		whichkey.register({
-			["f"] = {
-				t = { ":call fsharp#showTooltip()<CR>", "Show F# Tooltip" },
-				["si"] = { ":call fsharp#toggleFsi()<CR>", "Toggle FSI (F# Interactive)" },
-				["sl"] = { ":call fsharp#sendLineToFsi()<cr>", "Send line to FSI (F# Interactive)" },
-			},
-			["b"] = {
-				p = {
-					a = { BuildFSharpProjects, "Build all projects" },
-					s = { ":BuildFSharpProject", "Build specified project" },
-				},
-			},
-		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
-	else
-		vim.api.nvim_set_keymap("n", "<localleader>ft", ":call fsharp#showTooltip()<CR>", { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>fsl", ":call fsharp#sendLineToFsi()<CR>", { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>bpa", BuildFSharpProjects, { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>bps", ":BuildFSharpProject", { noremap = true })
-	end
-end
-
 vim.api.nvim_create_autocmd("FileType", {
-	group = "FSharpGroup",
 	pattern = "fsharp",
-	callback = SetupFSharpKeyBindings,
+	callback = function()
+		local status, whichkey = pcall(require, "which-key")
+		if status then
+			whichkey.register({
+				f = {
+					t = { ":call fsharp#showTooltip()<CR>", "Show F# Tooltip" },
+					["si"] = { ":call fsharp#toggleFsi()<CR>", "Toggle FSI (F# Interactive)" },
+					["sl"] = { ":call fsharp#sendLineToFsi()<cr>", "Send line to FSI (F# Interactive)" },
+				},
+				b = {
+					p = {
+						a = { BuildFSharpProjects, "Build all projects" },
+						s = { ":BuildFSharpProject", "Build specified project" },
+					},
+				},
+			}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+		else
+			vim.api.nvim_set_keymap("n", "<localleader>ft", ":call fsharp#showTooltip()<CR>", { noremap = true })
+			vim.api.nvim_set_keymap("n", "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", { noremap = true })
+			vim.api.nvim_set_keymap("n", "<localleader>fsl", ":call fsharp#sendLineToFsi()<CR>", { noremap = true })
+			vim.api.nvim_set_keymap("n", "<localleader>bpa", BuildFSharpProjects, { noremap = true })
+			vim.api.nvim_set_keymap("n", "<localleader>bps", ":BuildFSharpProject", { noremap = true })
+		end
+	end,
 })
