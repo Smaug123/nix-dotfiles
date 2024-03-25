@@ -230,13 +230,9 @@ if status then
 			DisplayAllMappingsWithTelescope,
 			"View all mappings",
 		},
-		["mp"] = {
-			MarkdownPreview,
-			"Preview Markdown in Lynx",
-		},
-		["md"] = {
-			RemoveCarriageReturn,
-			"Delete carriage returns from file",
+		m = {
+			p = { MarkdownPreview, "Preview Markdown in Lynx" },
+			d = { RemoveCarriageReturn, "Delete carriage returns from file" },
 		},
 		["j"] = {
 			FormatJson,

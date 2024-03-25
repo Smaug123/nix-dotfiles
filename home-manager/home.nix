@@ -191,6 +191,11 @@
       nixpkgs.vimPlugins.tagbar
       nixpkgs.vimPlugins.fzf-vim
       {
+        plugin = nixpkgs.vimPlugins.roslyn-nvim;
+        config = builtins.readFile ./nvim/roslyn-nvim.lua;
+        type = "lua";
+      }
+      {
         plugin = let
           name = "coq.artifacts";
           rev = "9c5067a471322c6bb866545e88e5b28c82511865";
@@ -204,8 +209,6 @@
               hash = "sha256-BHm7U3pINtYamY7m26I4lQee7ccJ6AcHmYx7j1MRFDA=";
             };
           };
-        config = builtins.readFile ./nvim/venv-selector.lua;
-        type = "lua";
       }
       {
         plugin = let
@@ -260,6 +263,8 @@
     withPython3 = true;
 
     extraLuaConfig = builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
+
+    package = nixpkgs.neovim-nightly;
   };
 
   programs.direnv = {

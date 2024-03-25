@@ -24,10 +24,14 @@
     whisper = {
       url = "github:Smaug123/whisper.cpp/nix";
     };
+    neovim-nightly = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
-    self,
+    neovim-nightly,
     darwin,
     emacs,
     nixpkgs,
@@ -35,14 +39,14 @@
     apple-silicon,
     whisper,
     ...
-  } @ inputs: let
+  }: let
     config = {
       # contentAddressedByDefault = true;
       allowUnfree = true;
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay] ++ import ./overlays.nix;
+    overlays = [emacs.overlay neovim-nightly.overlay] ++ import ./overlays.nix;
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:

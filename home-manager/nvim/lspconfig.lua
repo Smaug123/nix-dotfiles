@@ -1,8 +1,8 @@
 local coq = require("coq")
 
 -- Using rustaceanvim means we shouldn't set up the LSP for Rust manually.
-
-require("lspconfig")["csharp_ls"].setup({})
+-- Similarly csharp_ls is unnecessary given roslyn.nvim
+-- require("lspconfig")["csharp_ls"].setup({})
 
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
@@ -74,6 +74,7 @@ do
 	if whichkey_status then
 		whichkey.register({
 			l = {
+				name = "loclist-related commands",
 				p = { vim.diagnostic.goto_prev, "Go to previous entry in loclist" },
 				n = { vim.diagnostic.goto_next, "Go to next entry in loclist" },
 				l = { ToggleLocList, "Toggle loclist" },
@@ -103,6 +104,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		if whichkey_status then
 			whichkey.register({
 				g = {
+					name = "Go-to related commands",
 					D = { vim.lsp.buf.declaration, "Go to declaration" },
 					d = { vim.lsp.buf.definition, "Go to definition" },
 					i = { vim.lsp.buf.implementation, "Go to implementation" },

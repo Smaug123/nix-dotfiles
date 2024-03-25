@@ -177,7 +177,9 @@ do
 	if status then
 		whichkey.register({
 			p = {
+				name = "Python-related commands",
 				v = {
+					name = "Virtual environment-related commands",
 					c = { CreateVenv, "Create virtual environment" },
 					l = { SelectVenv, "Load virtual environment" },
 					o = {

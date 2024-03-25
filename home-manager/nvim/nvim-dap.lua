@@ -33,6 +33,7 @@ do
 	if status then
 		whichkey.register({
 			d = {
+				name = "Debugger-related commands",
 				o = { dap.step_over, "Step over" },
 				i = { dap.step_into, "Step into" },
 				c = { dap.continue, "Continue" },
@@ -40,6 +41,7 @@ do
 				b = { dap.toggle_breakpoint, "Toggle breakpoint" },
 				r = { dap.repl.open, "Open debug repl" },
 				v = {
+					name = "Commands to view debugger state",
 					v = {
 						function()
 							dap_ui.hover()
