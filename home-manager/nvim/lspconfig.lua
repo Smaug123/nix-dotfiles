@@ -2,6 +2,8 @@ local coq = require("coq")
 
 -- Using rustaceanvim means we shouldn't set up the LSP for Rust manually.
 
+require("lspconfig")["csharp_ls"].setup({})
+
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
 		local path = client.workspace_folders[1].name

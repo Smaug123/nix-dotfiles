@@ -3,10 +3,21 @@ local dap_ui = require("dap.ui.widgets")
 dap.adapters.coreclr = {
 	type = "executable",
 	command = "netcoredbg",
-	args = { "--interpreter=vscode", "--", "dotnet" },
+	args = { "--interpreter=vscode" },
 }
 
 dap.configurations.fsharp = {
+	{
+		type = "coreclr",
+		name = "launch - netcoredbg",
+		request = "launch",
+		program = function()
+			return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/bin/Debug/", "file")
+		end,
+	},
+}
+
+dap.configurations.cs = {
 	{
 		type = "coreclr",
 		name = "launch - netcoredbg",

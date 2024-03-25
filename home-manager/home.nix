@@ -280,6 +280,7 @@
   };
 
   home.packages = [
+    nixpkgs.csharp-ls
     nixpkgs.netcoredbg
     nixpkgs.nil
     nixpkgs.fsautocomplete
