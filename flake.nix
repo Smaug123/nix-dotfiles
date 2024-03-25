@@ -38,7 +38,7 @@
     apple-silicon,
     whisper,
     ...
-  } : let
+  }: let
     config = {
       # contentAddressedByDefault = true;
       allowUnfree = true;
