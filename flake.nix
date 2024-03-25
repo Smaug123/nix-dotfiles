@@ -31,16 +31,14 @@
   };
 
   outputs = {
-    self,
     darwin,
     emacs,
     nixpkgs,
     home-manager,
-    sops-nix,
     apple-silicon,
     whisper,
     ...
-  } @ inputs: let
+  } : let
     config = {
       # contentAddressedByDefault = true;
       allowUnfree = true;
@@ -104,7 +102,6 @@
           };
         in [
           ./darwin-configuration.nix
-          sops-nix.nixosModules.sops
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
