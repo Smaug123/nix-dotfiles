@@ -354,7 +354,7 @@
       (evil-mode 1)
       (evil-set-undo-system 'undo-redo)
       ;; Allow hash to be entered
-      (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
+      (global set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
     '';
   };
 
