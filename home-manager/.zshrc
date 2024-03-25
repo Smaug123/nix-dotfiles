@@ -21,3 +21,11 @@ prompt_custom() {
 RPROMPT='%F{155}%~%f'
 
 precmd_functions+=(prompt_custom)
+
+export WORDCHARS=''
+
+autoload edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+PATH="$PATH:$HOME/.cargo/bin"
