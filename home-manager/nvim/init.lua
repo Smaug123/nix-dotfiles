@@ -166,7 +166,7 @@ if status then
 		local mappings = {}
 		local commands = {} -- Store commands keyed by the display string
 
-		function accumulate(tree)
+		local function accumulate(tree)
 			tree:walk(function(node)
 				-- Note: we could (if desired) view all groups, because the `node.mapping` table looks like this:
 				-- { prefix = "g", group = true, keys = {...}}
