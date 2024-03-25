@@ -273,10 +273,15 @@
   programs.emacs = {
     enable = true;
     package = nixpkgs.emacs;
-    extraPackages = epkgs: [];
+    extraPackages = epkgs: [epkgs.evil];
     extraConfig = ''
       (load-file (let ((coding-system-for-read 'utf-8))
                  (shell-command-to-string "agda-mode locate")))
+      (require 'evil)
+      (evil-mode 1)
+      (evil-set-undo-system 'undo-redo)
+      ;; Allow hash to be entered
+      (global set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
     '';
   };
 
