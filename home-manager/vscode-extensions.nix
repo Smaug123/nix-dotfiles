@@ -14,6 +14,8 @@ with pkgs.vscode-extensions;
     shardulm94.trailing-spaces
     nvarner.typst-lsp
     arrterian.nix-env-selector
+    # Doesn't build on arm64
+    # vadimcn.vscode-lldb
   ]
   ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
@@ -82,24 +84,4 @@ with pkgs.vscode-extensions;
       version = "0.26.1";
       sha256 = "sha256-lLLa8SN+Sf9Tbi7HeWYWa2KhPQFJyQWrf9l3EUljwYo=";
     }
-  ]
-  ++ [
-    (let
-      vsix = builtins.fetchurl {
-        name = "vadimcn-vscode-lldb.zip";
-        url = "https://github.com/vadimcn/codelldb/releases/download/v1.9.0/codelldb-aarch64-darwin.vsix";
-        sha256 = "sha256:1kxrxxlzasa9jl73lqh3n36fzpdgh2hbxpzp8fk6xyzcc5vm9zfb";
-      };
-    in
-      pkgs.vscode-utils.buildVscodeExtension
-      {
-        vsix = vsix;
-        src = vsix;
-        vscodeExtPublisher = "vadimcn";
-        vscodeExtName = "vscode-lldb";
-        vscodeExtUniqueId = "vadimcn-vscode-lldb";
-        publisher = "vadimcn";
-        version = "1.9.0";
-        name = "vadimcn-vscode-lldb-1.9.0";
-      })
   ]
