@@ -119,11 +119,12 @@
         pkgs.stdenvNoCC.mkDerivation {
           name = "fmt-check";
           src = ./.;
-          nativeBuildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.shfmt];
+          nativeBuildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.shfmt pkgs.stylua];
           checkPhase = ''
             find . -type f -name '*.sh' | xargs shfmt -d -s -i 2 -ci
             alejandra -c .
             find . -type f -name '*.sh' -exec shellcheck -x {} \;
+            find . -type f -name '*.lua' -exec stylua --check {} \;
           '';
           installPhase = "mkdir $out";
           dontBuild = true;
@@ -141,7 +142,7 @@
           pkgs = import nixpkgs {inherit config system;};
         in {
           default = pkgs.mkShell {
-            buildInputs = [pkgs.alejandra pkgs.shellcheck];
+            buildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.stylua];
           };
         }
       );
