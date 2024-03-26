@@ -225,7 +225,6 @@ if status then
 	end
 
 	whichkey.register({
-		-- TODO: this isn't working for the FSI ones - maybe we've moved to a different buffer by the time we ask for the keymap?
 		[vim.api.nvim_get_var("maplocalleader")] = {
 			DisplayAllMappingsWithTelescope,
 			"View all mappings",

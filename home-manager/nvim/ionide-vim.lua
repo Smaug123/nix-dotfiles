@@ -64,16 +64,16 @@ local function BuildFSharpProjects(projects)
 				local cur_win = vim.api.nvim_get_current_win()
 				local cur_buf = vim.api.nvim_win_get_buf(cur_win)
 				if cur_buf ~= context.buf then
-					vim.api.nvim_win_close(context.window, 1)
+					vim.api.nvim_win_close(context.window, true)
 				end
 				print("All builds successful")
 			end
 		else
 			local handle
-			local stdout = vim.loop.new_pipe(false)
-			local stderr = vim.loop.new_pipe(false)
+			local stdout = vim.uv.new_pipe(false)
+			local stderr = vim.uv.new_pipe(false)
 
-			handle, _ = vim.loop.spawn(
+			handle, _ = vim.uv.spawn(
 				"dotnet",
 				{
 					args = { "build", context.projects[context.completed + 1] },
@@ -112,10 +112,10 @@ local function BuildFSharpProjects(projects)
 				return
 			end
 
-			vim.loop.read_start(stdout, function(err, data)
+			vim.uv.read_start(stdout, function(err, data)
 				on_output(context, "OUT", err, data)
 			end)
-			vim.loop.read_start(stderr, function(err, data)
+			vim.uv.read_start(stderr, function(err, data)
 				on_output(context, "ERR", err, data)
 			end)
 		end
@@ -134,8 +134,8 @@ local function BuildFSharpProjects(projects)
 		local buf = vim.api.nvim_create_buf(false, true) -- No listed, scratch buffer
 
 		-- Calculate window size and position here (example: full width, 10 lines high at the bottom)
-		local width = vim.api.nvim_get_option("columns")
-		local height = vim.api.nvim_get_option("lines")
+		local width = vim.api.nvim_get_option_value("columns", {})
+		local height = vim.api.nvim_get_option_value("lines", {})
 		local win_height = math.min(10, math.floor(height * 0.2)) -- 20% of total height or 10 lines
 		local original_win = vim.api.nvim_get_current_win()
 		local win_opts = {
