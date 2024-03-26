@@ -181,7 +181,6 @@
         config = builtins.readFile ./nvim/treesitter.lua;
         type = "lua";
       }
-
       {
         plugin = nixpkgs.vimPlugins.nvim-lspconfig;
         config = builtins.readFile ./nvim/lspconfig.lua;
@@ -285,6 +284,8 @@
   };
 
   home.packages = [
+    nixpkgs.nodePackages_latest.vscode-json-languageserver
+    nixpkgs.yaml-language-server
     nixpkgs.csharp-ls
     nixpkgs.netcoredbg
     nixpkgs.nil
