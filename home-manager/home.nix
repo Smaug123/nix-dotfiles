@@ -38,7 +38,7 @@
   programs.zsh = {
     enable = true;
     autocd = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     enableCompletion = true;
     history = {
       expireDuplicatesFirst = true;
@@ -47,7 +47,7 @@
       EDITOR = "vim";
       LC_ALL = "en_US.UTF-8";
       LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxxabi}/lib -L ${nixpkgs.libcxx}/lib";
+      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxx}/lib";
       RUST_BACKTRACE = "full";
     };
     shellAliases = {
@@ -139,65 +139,132 @@
   };
 
   programs.neovim = let
+    pynvimpp = nixpkgs.python3.pkgs.buildPythonPackage {
+      pname = "pynvim-pp";
+      version = "unstable-2024-03-24";
+      pyproject = true;
+
+      src = nixpkgs.fetchFromGitHub {
+        owner = "ms-jpq";
+        repo = "pynvim_pp";
+        rev = "34e3a027c595981886d7efd1c91071f3eaa4715d";
+        hash = "sha256-2+jDRJXlg9q4MN9vOhmeq4cWVJ0wp5r5xAh3G8lqgOg=";
+      };
+
+      nativeBuildInputs = [nixpkgs.python3.pkgs.setuptools];
+
+      propagatedBuildInputs = [nixpkgs.python3.pkgs.pynvim];
+    };
+  in let
     pythonEnv = nixpkgs.python3.withPackages (ps: [
       ps.pynvim
-      ps.pynvim-pp
+      pynvimpp
       ps.pyyaml
       ps.std2
     ]);
+    debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
   in {
     enable = true;
     plugins = [
-      nixpkgs.vimPlugins.molokai
+      {
+        plugin = nixpkgs.vimPlugins.which-key-nvim;
+        type = "lua";
+        config = builtins.readFile ./nvim/which-key.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.tokyonight-nvim;
+        config = builtins.readFile ./nvim/tokyonight.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+        config = builtins.readFile ./nvim/treesitter.lua;
+        type = "lua";
+      }
+
+      {
+        plugin = nixpkgs.vimPlugins.nvim-lspconfig;
+        config = builtins.readFile ./nvim/lspconfig.lua;
+        type = "lua";
+      }
+      nixpkgs.vimPlugins.telescope-nvim
       nixpkgs.vimPlugins.tagbar
       nixpkgs.vimPlugins.fzf-vim
       {
+        plugin = nixpkgs.vimPlugins.roslyn-nvim;
+        config = builtins.readFile ./nvim/roslyn-nvim.lua;
+        type = "lua";
+      }
+      {
+        plugin = let
+          name = "coq.artifacts";
+          rev = "9c5067a471322c6bb866545e88e5b28c82511865";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "ms-jpq";
+              repo = name;
+              rev = rev;
+              hash = "sha256-BHm7U3pINtYamY7m26I4lQee7ccJ6AcHmYx7j1MRFDA=";
+            };
+          };
+      }
+      {
+        plugin = let
+          name = "venv-selector.nvim";
+          rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "linux-cultist";
+              repo = name;
+              rev = rev;
+              hash = "sha256-aOga7kJ1y3T2vDyYFl/XHOwk35ZqeUcfPUk+Pr1mIeo=";
+            };
+          };
+        config = builtins.readFile ./nvim/venv-selector.lua;
+        type = "lua";
+      }
+      {
         plugin = nixpkgs.vimPlugins.Ionide-vim;
-        config = ''
-          let g:fsharp#fsautocomplete_command = ['dotnet', 'fsautocomplete', '--background-service-enabled']
-          let g:fsharp#show_signature_on_cursor_move = 1
-          if has('nvim') && exists('*nvim_open_win')
-            augroup FSharpGroup
-              autocmd!
-              autocmd FileType fsharp nnoremap <leader>t :call fsharp#showTooltip()<CR>
-            augroup END
-          endif
-        '';
+        type = "lua";
+        config = builtins.readFile ./nvim/ionide-vim.lua;
       }
       {
         plugin = nixpkgs.vimPlugins.chadtree;
-        config = "let g:chadtree_settings = {'xdg': v:true}";
+        config = builtins.readFile ./nvim/chadtree.vim;
       }
       {
         plugin = nixpkgs.vimPlugins.coq_nvim;
-        config = ''let g:coq_settings = { 'auto_start': v:true, 'xdg': v:true }'';
+        config = ''let g:coq_settings = { 'auto_start': 'shut-up', 'xdg': v:true }'';
       }
       {
-        plugin = nixpkgs.vimPlugins.rust-vim;
-        config = "let g:rustfmt_autosave = 1";
+        plugin = nixpkgs.vimPlugins.rustaceanvim;
       }
       {
         plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
-        config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }";
       }
       {
-        plugin = nixpkgs.vimPlugins.syntastic;
-        config = ''          let g:syntastic_rust_checkers = ['cargo']
-          let g:syntastic_always_populate_loc_list = 1
-          let g:syntastic_auto_loc_list = 1
-          let g:syntastic_check_on_open = 1
-          let g:syntastic_check_on_wq = 0'';
+        plugin = nixpkgs.vimPlugins.nvim-dap;
+        config = builtins.readFile ./nvim/nvim-dap.lua;
+        type = "lua";
       }
-
-      nixpkgs.vimPlugins.tagbar
+      {
+        plugin = nixpkgs.vimPlugins.nvim-dap-python;
+        config = builtins.replaceStrings ["%PYTHONENV%"] ["${debugPyEnv}"] (builtins.readFile ./nvim/nvim-dap-python.lua);
+        type = "lua";
+      }
     ];
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
     withPython3 = true;
 
-    extraLuaConfig = ''vim.g.python3_host_prog="${pythonEnv}/bin/python"'';
-    extraConfig = builtins.readFile ./init.vim;
+    extraLuaConfig = builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
+
+    package = nixpkgs.neovim-nightly;
   };
 
   programs.direnv = {
@@ -218,6 +285,10 @@
   };
 
   home.packages = [
+    nixpkgs.csharp-ls
+    nixpkgs.netcoredbg
+    nixpkgs.nil
+    nixpkgs.fsautocomplete
     nixpkgs.keepassxc
     nixpkgs.rust-analyzer
     nixpkgs.tmux
@@ -244,7 +315,6 @@
     nixpkgs.git-lfs
     nixpkgs.imagemagick
     nixpkgs.nixpkgs-fmt
-    nixpkgs.rnix-lsp
     nixpkgs.grpc-tools
     nixpkgs.element-desktop
     nixpkgs.ihp-new
@@ -252,6 +322,7 @@
     nixpkgs.lnav
     nixpkgs.age
     nixpkgs.nodejs
+    nixpkgs.nodePackages.pyright
     nixpkgs.sqlitebrowser
     nixpkgs.typst
     nixpkgs.poetry
@@ -262,6 +333,8 @@
     nixpkgs.ffmpeg
     nixpkgs.bat
     nixpkgs.pandoc
+    nixpkgs.fd
+    nixpkgs.sumneko-lua-language-server
     (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 

@@ -18,19 +18,20 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
     whisper = {
       url = "github:Smaug123/whisper.cpp/nix";
     };
+    neovim-nightly = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
+    neovim-nightly,
     darwin,
     emacs,
     nixpkgs,
@@ -45,7 +46,7 @@
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay] ++ import ./overlays.nix;
+    overlays = [emacs.overlay neovim-nightly.overlay] ++ import ./overlays.nix;
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:
