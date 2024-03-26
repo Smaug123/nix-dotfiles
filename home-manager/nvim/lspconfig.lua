@@ -3,6 +3,43 @@ local coq = require("coq")
 -- Using rustaceanvim means we shouldn't set up the LSP for Rust manually.
 -- Similarly csharp_ls is unnecessary given roslyn.nvim
 -- require("lspconfig")["csharp_ls"].setup({})
+local schemas = {
+	["https://raw.githubusercontent.com/docker/compose/master/compose/config/compose_spec.json"] = "docker-compose*.{yml,yaml}",
+	["https://json.schemastore.org/github-workflow.json"] = ".github/**/*.{yml,yaml}",
+	["https://json.schemastore.org/package.json"] = "package.json",
+	["https://json.schemastore.org/global.json"] = "global.json",
+	["https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json"] = "version.json",
+	["https://json-schema.org/draft/2020-12/schema"] = "*.schema.json",
+	["https://json.schemastore.org/dotnet-tools.json"] = "dotnet-tools.json",
+}
+
+require("lspconfig")["yamlls"].setup({
+	settings = {
+		yaml = {
+			validate = true,
+			-- disable the schema store
+			schemaStore = {
+				enable = false,
+				url = "",
+			},
+			-- manually select schemas
+			schemas = schemas,
+		},
+	},
+	filetypes = { "yaml", "json", "jsonc" },
+})
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+require("lspconfig")["jsonls"].setup({
+	capabilities = capabilities,
+	cmd = { "vscode-json-languageserver", "--stdio" },
+	settings = {
+		json = {
+			validate = { enable = true },
+		},
+	},
+})
 
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
