@@ -186,7 +186,6 @@ if status then
 							print("-----")
 						end
 					end
-					-- TODO: If a command is a prefix of an existing command, prepend its description to those commands' descriptions, and append a '...' to the parent's description.
 				end
 			end)
 		end
