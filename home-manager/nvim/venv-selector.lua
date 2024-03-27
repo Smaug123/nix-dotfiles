@@ -82,27 +82,21 @@ function CreateVenv()
 end
 
 do
-	local status, whichkey = pcall(require, "which-key")
-	if status then
-		whichkey.register({
-			p = {
-				name = "Python-related commands",
-				v = {
-					name = "Virtual environment-related commands",
-					c = { CreateVenv, "Create virtual environment" },
-					l = { SelectVenv, "Load virtual environment" },
-					o = {
-						function()
-							vim.cmd("VenvSelect")
-						end,
-						"Choose (override) new virtual environment",
-					},
+	local whichkey = require("which-key")
+	whichkey.register({
+		p = {
+			name = "Python-related commands",
+			v = {
+				name = "Virtual environment-related commands",
+				c = { CreateVenv, "Create virtual environment" },
+				l = { SelectVenv, "Load virtual environment" },
+				o = {
+					function()
+						vim.cmd("VenvSelect")
+					end,
+					"Choose (override) new virtual environment",
 				},
 			},
-		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
-	else
-		vim.api.nvim_set_keymap("n", "<localleader>pvc", ":lua CreateVenv()<CR>", { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>pvl", ":lua SelectVenv()<CR>", { noremap = true })
-		vim.api.nvim_set_keymap("n", "<localleader>pvo", ":VenvSelect<CR>", { noremap = true })
-	end
+		},
+	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
 end

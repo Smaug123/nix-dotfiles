@@ -155,101 +155,95 @@ vim.api.nvim_create_autocmd("WinClosed", {
 	callback = close_loclist_if_orphaned,
 })
 
-local status, whichkey = pcall(require, "which-key")
-if status then
-	local pickers = require("telescope.pickers")
-	local action_state = require("telescope.actions.state")
-	local actions = require("telescope.actions")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
+local whichkey = require("which-key")
+local pickers = require("telescope.pickers")
+local action_state = require("telescope.actions.state")
+local actions = require("telescope.actions")
+local finders = require("telescope.finders")
+local conf = require("telescope.config").values
 
-	function DisplayAllMappingsWithTelescope()
-		local mappings = {}
-		local commands = {} -- Store commands keyed by the display string
+function DisplayAllMappingsWithTelescope()
+	local mappings = {}
+	local commands = {} -- Store commands keyed by the display string
 
-		local function accumulate(tree)
-			tree:walk(function(node)
-				-- Note: we could (if desired) view all groups, because the `node.mapping` table looks like this:
-				-- { prefix = "g", group = true, keys = {...}}
-				if node.mapping then
-					local mapping = node.mapping
-					if not mapping.group then
-						local description = mapping.desc or mapping.label or mapping.cmd
-						-- Some actions are just there for which-key to hook into to display prefixes; they don't have a description.
-						if description then
-							local displayString = description .. " | " .. mapping.prefix
-							commands[displayString] = mapping.prefix
-							mappings[#mappings + 1] = displayString
-						else
-							for k, v in pairs(mapping) do
-								print("Nothing: " .. k .. " : " .. tostring(v) .. " (type: " .. type(v) .. ")")
-							end
-							print("-----")
+	local function accumulate(tree)
+		tree:walk(function(node)
+			-- Note: we could (if desired) view all groups, because the `node.mapping` table looks like this:
+			-- { prefix = "g", group = true, keys = {...}}
+			if node.mapping then
+				local mapping = node.mapping
+				if not mapping.group then
+					local description = mapping.desc or mapping.label or mapping.cmd
+					-- Some actions are just there for which-key to hook into to display prefixes; they don't have a description.
+					if description then
+						local displayString = description .. " | " .. mapping.prefix
+						commands[displayString] = mapping.prefix
+						mappings[#mappings + 1] = displayString
+					else
+						for k, v in pairs(mapping) do
+							print("Nothing: " .. k .. " : " .. tostring(v) .. " (type: " .. type(v) .. ")")
 						end
+						print("-----")
 					end
 				end
-			end)
-		end
-
-		local cur_buf = vim.api.nvim_win_get_buf(0)
-
-		accumulate(require("which-key.keys").get_tree("n").tree)
-		accumulate(require("which-key.keys").get_tree("n", cur_buf).tree)
-
-		pickers
-			.new({}, {
-				prompt_title = "Actions",
-				finder = finders.new_table({
-					results = mappings,
-				}),
-				sorter = conf.generic_sorter({}),
-				attach_mappings = function(_, map)
-					map("i", "<CR>", function(bufnr)
-						local selection = action_state.get_selected_entry()
-						actions.close(bufnr)
-						local cmd = commands[selection.value]
-						if cmd then
-							vim.api.nvim_command(":normal " .. vim.api.nvim_replace_termcodes(cmd, true, true, true))
-						else
-							print("no command found")
-						end
-					end)
-					return true
-				end,
-			})
-			:find()
+			end
+		end)
 	end
 
-	function ToggleSpell()
-		vim.cmd("setlocal spell!")
-	end
+	local cur_buf = vim.api.nvim_win_get_buf(0)
 
-	whichkey.register({
-		[vim.api.nvim_get_var("maplocalleader")] = {
-			DisplayAllMappingsWithTelescope,
-			"View all mappings",
-		},
-		m = {
-			p = { MarkdownPreview, "Preview Markdown in Lynx" },
-			d = { RemoveCarriageReturn, "Delete carriage returns from file" },
-		},
-		["j"] = {
-			FormatJson,
-			"Auto-format JSON",
-		},
-		["cd"] = {
-			ChangeToCurrentDirectory,
-			"Switch CWD to the directory of the open buffer",
-		},
-		["ss"] = {
-			ToggleSpell,
-			"Toggle spell-checker on or off",
-		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
-else
-	vim.api.nvim_set_keymap("n", "<localleader>mp", ":lua MarkdownPreview()<CR>", { noremap = true, silent = true })
-	-- Remove the Windows ^M - when the encodings gets messed up
-	vim.api.nvim_set_keymap("n", "<localleader>md", ":lua RemoveCarriageReturn()<CR>", { noremap = true })
-	vim.api.nvim_set_keymap("n", "<localleader>j", ":lua FormatJson()<CR>", { noremap = true })
-	vim.api.nvim_set_keymap("n", "<localleader>cd", ":lua ChangeToCurrentDirectory()<CR>", { noremap = true })
+	accumulate(require("which-key.keys").get_tree("n").tree)
+	accumulate(require("which-key.keys").get_tree("n", cur_buf).tree)
+
+	pickers
+		.new({}, {
+			prompt_title = "Actions",
+			finder = finders.new_table({
+				results = mappings,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(_, map)
+				map("i", "<CR>", function(bufnr)
+					local selection = action_state.get_selected_entry()
+					actions.close(bufnr)
+					local cmd = commands[selection.value]
+					if cmd then
+						vim.api.nvim_command(":normal " .. vim.api.nvim_replace_termcodes(cmd, true, true, true))
+					else
+						print("no command found")
+					end
+				end)
+				return true
+			end,
+		})
+		:find()
 end
+
+function ToggleSpell()
+	vim.cmd("setlocal spell!")
+end
+
+whichkey.register({
+	[vim.api.nvim_get_var("maplocalleader")] = {
+		DisplayAllMappingsWithTelescope,
+		"View all mappings",
+	},
+	m = {
+		p = { MarkdownPreview, "Preview Markdown in Lynx" },
+		d = { RemoveCarriageReturn, "Delete carriage returns from file" },
+	},
+	["j"] = {
+		FormatJson,
+		"Auto-format JSON",
+	},
+}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+whichkey.register({
+	["cd"] = {
+		ChangeToCurrentDirectory,
+		"Switch CWD to the directory of the open buffer",
+	},
+	["ss"] = {
+		ToggleSpell,
+		"Toggle spell-checker on or off",
+	},
+}, { prefix = vim.api.nvim_get_var("mapleader") })

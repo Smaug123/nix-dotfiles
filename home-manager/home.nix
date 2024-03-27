@@ -167,9 +167,9 @@
     enable = true;
     plugins = [
       {
-          plugin = nixpkgs.vimPlugins.nvim-lightbulb;
-          type = "lua";
-          config = builtins.readFile ./nvim/nvim-lightbulb.lua;
+        plugin = nixpkgs.vimPlugins.nvim-lightbulb;
+        type = "lua";
+        config = builtins.readFile ./nvim/nvim-lightbulb.lua;
       }
       {
         plugin = nixpkgs.vimPlugins.lean-nvim;
