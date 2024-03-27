@@ -105,6 +105,7 @@ vim.o.statusline = vim.o.statusline .. "%{v:lua.HasPaste()}%F%m%r%h %w  Line: %l
 
 vim.api.nvim_set_keymap("n", ";", "<Nop>", { noremap = true })
 vim.api.nvim_set_var("maplocalleader", ";")
+vim.api.nvim_set_var("mapleader", " ")
 
 function MarkdownPreview()
 	local temp_file = vim.fn.tempname() .. ".md"
