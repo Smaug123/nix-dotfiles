@@ -65,7 +65,7 @@ local function BuildFSharpProjects(projects)
 				-- cursor is in it)
 				local cur_win = vim.api.nvim_get_current_win()
 				local cur_buf = vim.api.nvim_win_get_buf(cur_win)
-				if cur_buf ~= context.buf then
+				if cur_buf ~= context.buffer then
 					vim.api.nvim_win_close(context.window, true)
 				end
 				print("All builds successful")
@@ -94,45 +94,6 @@ local function BuildFSharpProjects(projects)
 	end
 end
 
--- local function fsprojAndDirCompletion(ArgLead, _, _)
--- 	local results = {}
--- 	local loc = ArgLead
--- 	if not loc then
--- 		loc = "."
--- 	end
--- 	local command = string.format(
--- 		"find "
--- 			.. vim.fn.shellescape(loc)
--- 			.. " -maxdepth 2 \\( -type f -name '*.fsproj' -o -type d \\) -print0 2> /dev/null"
--- 	)
--- 	local handle = io.popen(command)
--- 	if handle then
--- 		local stdout = handle:read("*all")
--- 		handle:close()
---
--- 		local allResults = {}
--- 		for match in string.gmatch(stdout, "([^%z]+)") do
--- 			table.insert(allResults, match)
--- 		end
--- 		table.sort(allResults, function(a, b)
--- 			local aEndsWithProj = a:match("proj$")
--- 			local bEndsWithProj = b:match("proj$")
--- 			if aEndsWithProj and not bEndsWithProj then
--- 				return true
--- 			elseif not aEndsWithProj and bEndsWithProj then
--- 				return false
--- 			else
--- 				return a < b -- If both or neither end with 'proj', sort alphabetically
--- 			end
--- 		end)
---
--- 		for _, line in ipairs(allResults) do
--- 			table.insert(results, line)
--- 		end
--- 	end
--- 	return results
--- end
-
 vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 	if opts.fargs and opts.fargs[1] then
 		BuildFSharpProjects(opts.fargs)
@@ -144,7 +105,7 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 		local actions = require("telescope.actions")
 		pickers
 			.new({}, {
-				prompt_title = "Actions",
+				prompt_title = "Projects",
 				finder = finders.new_table({
 					results = captureLoadedProjects(),
 				}),
@@ -162,6 +123,101 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 	end
 end, { nargs = "?", complete = "file" })
 
+local function TableConcat(tables)
+	local result = {}
+	for _, tab in ipairs(tables) do
+		for _, v in ipairs(tab) do
+			table.insert(result, v)
+		end
+	end
+	return result
+end
+
+-- args is a table that will be splatted into the command line and will be immediately
+-- followed by the project.
+local function RunDotnet(command, args, project, configuration)
+	local function on_line(data, _, context) end
+
+	local function on_complete(context, code, signal) end
+
+	local context = BuildUtils.create_window()
+
+	BuildUtils.run(
+		"dotnet",
+		TableConcat({ { command }, args, { project, "--configuration", configuration } }),
+		"dotnet",
+		context,
+		on_line,
+		on_complete
+	)
+end
+
+-- Call this as:
+-- RunFSharpProject path/to/fsproj
+-- RunFSharpProject Debug path/to/fsproj
+vim.api.nvim_create_user_command("RunFSharpProject", function(opts)
+	local configuration = "Release"
+	if opts.fargs and opts.fargs[1] and opts.fargs[1]:match("sproj$") then
+		RunDotnet("run", { "--project" }, opts.fargs[1], configuration)
+	elseif opts.fargs and opts.fargs[1] and opts.fargs[2] then
+		configuration = opts.fargs[1]
+		RunDotnet("run", { "--project" }, opts.fargs[2], configuration)
+	else
+		configuration = opts.fargs[1]
+		local pickers = require("telescope.pickers")
+		local finders = require("telescope.finders")
+		local conf = require("telescope.config").values
+		local action_state = require("telescope.actions.state")
+		local actions = require("telescope.actions")
+		pickers
+			.new({}, {
+				prompt_title = "Projects",
+				finder = finders.new_table({
+					results = captureLoadedProjects(),
+				}),
+				sorter = conf.generic_sorter({}),
+				attach_mappings = function(prompt_buf, _)
+					actions.select_default:replace(function()
+						actions.close(prompt_buf)
+						local selection = action_state.get_selected_entry()
+						RunDotnet("run", { "--project" }, selection.value, configuration)
+					end)
+					return true
+				end,
+			})
+			:find()
+	end
+end, { nargs = "*", complete = "file" })
+
+vim.api.nvim_create_user_command("PublishFSharpProject", function(opts)
+	if opts.fargs and opts.fargs[1] then
+		RunDotnet("publish", {}, opts.fargs[1], "Release")
+	else
+		local pickers = require("telescope.pickers")
+		local finders = require("telescope.finders")
+		local conf = require("telescope.config").values
+		local action_state = require("telescope.actions.state")
+		local actions = require("telescope.actions")
+		pickers
+			.new({}, {
+				prompt_title = "Projects",
+				finder = finders.new_table({
+					results = captureLoadedProjects(),
+				}),
+				sorter = conf.generic_sorter({}),
+				attach_mappings = function(prompt_buf, _)
+					actions.select_default:replace(function()
+						actions.close(prompt_buf)
+						local selection = action_state.get_selected_entry()
+						RunDotnet("publish", {}, selection.value, "Release")
+					end)
+					return true
+				end,
+			})
+			:find()
+	end
+end, { nargs = "*", complete = "file" })
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "fsharp",
 	callback = function()
@@ -169,12 +225,21 @@ vim.api.nvim_create_autocmd("FileType", {
 		if status then
 			whichkey.register({
 				f = {
+					name = "F#",
 					t = { ":call fsharp#showTooltip()<CR>", "Show F# Tooltip" },
 					["si"] = { ":call fsharp#toggleFsi()<CR>", "Toggle FSI (F# Interactive)" },
 					["sl"] = { ":call fsharp#sendLineToFsi()<cr>", "Send line to FSI (F# Interactive)" },
-				},
-				b = {
+					r = {
+						name = "Run F# project",
+						d = { ":RunFSharpProject Debug", "Run F# project in debug configuration" },
+						r = { ":RunFSharpProject Release", "Run F# project in release configuration" },
+					},
 					p = {
+						":PublishFSharpProject",
+						"Publish F# project",
+					},
+					b = {
+						"Build F# project",
 						a = { BuildFSharpProjects, "Build all projects" },
 						s = { ":BuildFSharpProject", "Build specified project" },
 					},
@@ -184,7 +249,7 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.api.nvim_set_keymap("n", "<localleader>ft", ":call fsharp#showTooltip()<CR>", { noremap = true })
 			vim.api.nvim_set_keymap("n", "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", { noremap = true })
 			vim.api.nvim_set_keymap("n", "<localleader>fsl", ":call fsharp#sendLineToFsi()<CR>", { noremap = true })
-			vim.api.nvim_set_keymap("n", "<localleader>bpa", BuildFSharpProjects, { noremap = true })
+			vim.api.nvim_set_keymap("n", "<localleader>bpa", ":lua BuildFSharpProjects()", { noremap = true })
 			vim.api.nvim_set_keymap("n", "<localleader>bps", ":BuildFSharpProject", { noremap = true })
 		end
 	end,
