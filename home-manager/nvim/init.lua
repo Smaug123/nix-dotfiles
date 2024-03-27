@@ -238,6 +238,39 @@ whichkey.register({
 	},
 }, { prefix = vim.api.nvim_get_var("maplocalleader") })
 whichkey.register({
+	g = {
+		function()
+			require("telescope.builtin").grep_string()
+		end,
+		"Find instances of text under cursor",
+	},
+	h = {
+		name = "Find historical...",
+		f = {
+			function()
+				require("telescope.builtin").oldfiles()
+			end,
+			"List previously open files",
+		},
+		c = {
+			function()
+				require("telescope.builtin").command_history()
+			end,
+			"List previously run commands",
+		},
+		s = {
+			function()
+				require("telescope.builtin").search_history()
+			end,
+			"List previously run searches",
+		},
+	},
+	m = {
+		function()
+			require("telescope.builtin").marks()
+		end,
+		"List marks",
+	},
 	["cd"] = {
 		ChangeToCurrentDirectory,
 		"Switch CWD to the directory of the open buffer",
@@ -245,5 +278,11 @@ whichkey.register({
 	["ss"] = {
 		ToggleSpell,
 		"Toggle spell-checker on or off",
+	},
+	[vim.api.nvim_get_var("mapleader")] = {
+		function()
+			require("telescope.builtin").find_files()
+		end,
+		"Find files by name",
 	},
 }, { prefix = vim.api.nvim_get_var("mapleader") })
