@@ -261,7 +261,7 @@
     vimdiffAlias = true;
     withPython3 = true;
 
-    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
+    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua);
 
     package = nixpkgs.neovim-nightly;
   };

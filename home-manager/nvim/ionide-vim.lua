@@ -65,7 +65,7 @@ local function BuildFSharpProjects(projects)
 				-- cursor is in it)
 				local cur_win = vim.api.nvim_get_current_win()
 				local cur_buf = vim.api.nvim_win_get_buf(cur_win)
-				if cur_buf ~= context.buf then
+				if cur_buf ~= context.buffer then
 					vim.api.nvim_win_close(context.window, true)
 				end
 				print("All builds successful")

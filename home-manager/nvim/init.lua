@@ -99,7 +99,7 @@ function HasPaste()
 	return ""
 end
 
-vim.o.statusline = vim.o.statusline .. "%{v:lua.HasPaste()}%F%m%r%h %w  CWD: %r%{getcwd()}%h   Line: %l  Column: %c"
+vim.o.statusline = vim.o.statusline .. "%{v:lua.HasPaste()}%F%m%r%h %w  Line: %l  Column: %c"
 
 --------------------------------------------------------------
 
