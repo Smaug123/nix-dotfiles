@@ -167,6 +167,16 @@
     enable = true;
     plugins = [
       {
+        plugin = nixpkgs.vimPlugins.nvim-lightbulb;
+        type = "lua";
+        config = builtins.readFile ./nvim/nvim-lightbulb.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.lean-nvim;
+        type = "lua";
+        config = builtins.readFile ./nvim/lean.lua;
+      }
+      {
         plugin = nixpkgs.vimPlugins.which-key-nvim;
         type = "lua";
         config = builtins.readFile ./nvim/which-key.lua;
@@ -284,7 +294,12 @@
   };
 
   home.packages = [
+    nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
+    nixpkgs.nodePackages_latest.bash-language-server
     nixpkgs.nodePackages_latest.vscode-json-languageserver
+    nixpkgs.nodePackages_latest.vscode-langservers-extracted
+    nixpkgs.hadolint
+    nixpkgs.ltex-ls
     nixpkgs.yaml-language-server
     nixpkgs.csharp-ls
     nixpkgs.netcoredbg

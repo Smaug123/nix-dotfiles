@@ -72,18 +72,14 @@ function RegisterSolution(sln_path)
 		vim.o.statusline = vim.o.statusline .. "  %{v:lua.CurrentSlnOrEmpty()}"
 	end
 
-	local status, whichkey = pcall(require, "which-key")
-	if status then
-		whichkey.register({
-			s = {
-				name = ".NET solution",
-				b = { BuildDotNetSolution, "Build .NET solution" },
-				t = { TestDotNetSolution, "Test .NET solution" },
-			},
-		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
-	else
-		vim.api.nvim_set_keymap("n", "<localleader>sb", ":call BuildDotNetSolution", { noremap = true })
-	end
+	local whichkey = require("which-key")
+	whichkey.register({
+		s = {
+			name = ".NET solution",
+			b = { BuildDotNetSolution, "Build .NET solution" },
+			t = { TestDotNetSolution, "Test .NET solution" },
+		},
+	}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
 end
 
 local function find_nearest_slns()
@@ -100,7 +96,11 @@ local function find_nearest_slns()
 	return {}
 end
 
-local function FindAndRegisterSolution()
+local function FindAndRegisterSolution(should_override)
+	if not should_override and GetCurrentSln() ~= nil then
+		RegisterSolution(GetCurrentSln())
+	end
+
 	local solutions = find_nearest_slns()
 	if not solutions or #solutions == 0 then
 		print("No .sln file found in any parent directory.")
@@ -146,13 +146,15 @@ end
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
 	pattern = "*.sln",
 	callback = function()
-		RegisterSolution(vim.fn.expand("%:p"))
+		if GetCurrentSln() == nil then
+			RegisterSolution(vim.fn.expand("%:p"))
+		end
 	end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "fsharp", "cs" },
 	callback = function()
-		FindAndRegisterSolution()
+		FindAndRegisterSolution(false)
 	end,
 })

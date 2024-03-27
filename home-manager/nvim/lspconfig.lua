@@ -41,6 +41,13 @@ require("lspconfig")["jsonls"].setup({
 	},
 })
 
+require("lspconfig")["bashls"].setup({})
+require("lspconfig")["dockerls"].setup({})
+require("lspconfig")["html"].setup({
+	capabilities = capabilities,
+})
+require("lspconfig")["ltex"].setup({})
+
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
 		local path = client.workspace_folders[1].name
@@ -117,12 +124,12 @@ do
 				l = { ToggleLocList, "Toggle loclist" },
 				f = { vim.diagnostic.open_float, "Open current loclist entry in floating window" },
 			},
-		}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+		}, { prefix = vim.api.nvim_get_var("mapleader") })
 	else
-		vim.keymap.set("n", "<localleader>lp", vim.diagnostic.goto_prev)
-		vim.keymap.set("n", "<localleader>ln", vim.diagnostic.goto_next)
-		vim.keymap.set("n", "<localleader>ll", ToggleLocList)
-		vim.keymap.set("n", "<localleader>lf", vim.diagnostic.open_float)
+		vim.keymap.set("n", "<leader>lp", vim.diagnostic.goto_prev)
+		vim.keymap.set("n", "<leader>ln", vim.diagnostic.goto_next)
+		vim.keymap.set("n", "<leader>ll", ToggleLocList)
+		vim.keymap.set("n", "<leader>lf", vim.diagnostic.open_float)
 	end
 end
 
@@ -131,77 +138,54 @@ end
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
-		local whichkey_status, whichkey = pcall(require, "which-key")
+		local whichkey = require("which-key")
 		-- Enable completion triggered by <c-x><c-o>
 		vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
 
 		-- Buffer local mappings.
 		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		local opts = { buffer = ev.buf }
-		if whichkey_status then
-			whichkey.register({
-				g = {
-					name = "Go-to related commands",
-					D = { vim.lsp.buf.declaration, "Go to declaration" },
-					d = { vim.lsp.buf.definition, "Go to definition" },
-					i = { vim.lsp.buf.implementation, "Go to implementation" },
-					r = {
-						function()
-							require("telescope.builtin").lsp_references()
-						end,
-						"Find references",
-					},
-				},
-				K = { vim.lsp.buf.hover, "Display information about symbol under cursor" },
-			})
-			whichkey.register({
-				["<C-k>"] = { vim.lsp.buf.signature_help, "Display signature information about symbol under cursor" },
-			})
-			whichkey.register({
-				w = {
-					a = { vim.lsp.buf.add_workspace_folder, "Add a path to the workspace folders list" },
-					r = { vim.lsp.buf.add_workspace_folder, "Remove a path from the workspace folders list" },
-					l = {
-						function()
-							print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-						end,
-						"Show the workspace folders list",
-					},
-				},
-				f = {
-					function()
-						vim.lsp.buf.format({ async = true })
-					end,
-					"Autoformat",
-				},
-				c = {
-					a = { vim.lsp.buf.code_action, "Select a code action" },
-				},
+		whichkey.register({
+			g = {
+				name = "Go-to related commands",
+				D = { vim.lsp.buf.declaration, "Go to declaration" },
+				d = { vim.lsp.buf.definition, "Go to definition" },
+				i = { vim.lsp.buf.implementation, "Go to implementation" },
 				r = {
-					n = { vim.lsp.buf.rename, "Rename variable" },
+					function()
+						require("telescope.builtin").lsp_references()
+					end,
+					"Find references",
 				},
-				D = { vim.lsp.buf.type_definition, "Go to type definition" },
-			}, { prefix = "<space>" })
-		else
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-			vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-			vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-			vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-			vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-			vim.keymap.set("n", "<space>wl", function()
-				print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-			end, opts)
-			vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, opts)
-			vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
-			vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
-			vim.keymap.set("n", "gr", function()
-				require("telescope.builtin").lsp_references()
-			end, opts)
-			vim.keymap.set("n", "<space>f", function()
-				vim.lsp.buf.format({ async = true })
-			end, opts)
-		end
+			},
+			K = { vim.lsp.buf.hover, "Display information about symbol under cursor" },
+		})
+		whichkey.register({
+			["<C-k>"] = { vim.lsp.buf.signature_help, "Display signature information about symbol under cursor" },
+		})
+		whichkey.register({
+			w = {
+				a = { vim.lsp.buf.add_workspace_folder, "Add a path to the workspace folders list" },
+				r = { vim.lsp.buf.add_workspace_folder, "Remove a path from the workspace folders list" },
+				l = {
+					function()
+						print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+					end,
+					"Show the workspace folders list",
+				},
+			},
+			f = {
+				function()
+					vim.lsp.buf.format({ async = true })
+				end,
+				"Autoformat",
+			},
+			c = {
+				a = { vim.lsp.buf.code_action, "Select a code action" },
+			},
+			r = {
+				n = { vim.lsp.buf.rename, "Rename variable" },
+			},
+			D = { vim.lsp.buf.type_definition, "Go to type definition" },
+		}, { prefix = vim.api.nvim_get_var("mapleader") })
 	end,
 })
