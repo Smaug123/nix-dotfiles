@@ -243,7 +243,8 @@
       }
       {
         plugin = nixpkgs.vimPlugins.chadtree;
-        config = builtins.readFile ./nvim/chadtree.vim;
+        config = builtins.readFile ./nvim/chadtree.lua;
+        type = "lua";
       }
       {
         plugin = nixpkgs.vimPlugins.coq_nvim;
