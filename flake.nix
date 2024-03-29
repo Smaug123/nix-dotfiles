@@ -46,7 +46,7 @@
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay neovim-nightly.overlay] ++ import ./overlays.nix;
+    overlays = [emacs.overlay neovim-nightly.overlay];
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:
