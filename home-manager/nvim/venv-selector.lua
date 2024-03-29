@@ -3,6 +3,7 @@ local venv_selector = require("venv-selector")
 venv_selector.setup({
 	changed_venv_hooks = { venv_selector.hooks.pyright },
 	name = { "venv", ".venv" },
+	search_venv_managers = true,
 })
 
 vim.api.nvim_create_autocmd("VimEnter", {
