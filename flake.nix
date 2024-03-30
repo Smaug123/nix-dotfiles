@@ -61,6 +61,29 @@
       f [] attrList;
   in {
     nixosConfigurations = {
+      capybara = let
+        system = "x86_64-linux";
+      in let
+        pkgs = import nixpkgs {inherit system config overlays;};
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = let
+            args = {
+              nixpkgs = pkgs;
+              username = "patrick";
+              dotnet = pkgs.dotnet-sdk_8;
+            };
+          in [
+            ./home-manager/capybara-config.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.patrick = recursiveMerge [(import ./home-manager/linux.nix args) (import ./home-manager/home.nix args)];
+            }
+          ];
+        };
       earthworm = let
         system = "aarch64-linux";
       in let
@@ -81,7 +104,7 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.patrick = recursiveMerge [(import ./home-manager/earthworm.nix args) (import ./home-manager/home.nix args)];
+              home-manager.users.patrick = recursiveMerge [(import ./home-manager/linux.nix args) (import ./home-manager/home.nix args)];
             }
           ];
         };
