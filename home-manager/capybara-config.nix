@@ -1,18 +1,20 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
-    ../hardware/earthworm.nix
+    ../hardware/capybara.nix
   ];
 
-  hardware.asahi.peripheralFirmwareDirectory = ../firmware;
-
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = false;
-  boot.extraModprobeConfig = ''
-    options hid_apple iso_layout=0
-  '';
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.useOSProber = true;
+
+  boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
 
   networking = {
-    hostName = "earthworm";
+    hostName = "capybara";
     networkmanager.enable = true;
   };
 
@@ -31,6 +33,9 @@
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
+    pkgs.tmux
+    pkgs.home-manager
+    pkgs.firefox
   ];
 
   environment.loginShellInit = ''

@@ -1,9 +1,4 @@
-{
-  nixpkgs,
-  username,
-  dotnet,
-  ...
-}: {
+{nixpkgs, ...}: {
   home.packages = [nixpkgs.firefox-wayland];
   nixpkgs.config.firefox.speechSynthesisSupport = true;
 
