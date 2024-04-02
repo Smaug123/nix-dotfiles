@@ -3,6 +3,8 @@ vim.opt.mouse = ""
 vim.opt.history = 500
 vim.opt.background = "dark"
 
+vim.opt.signcolumn = "yes"
+
 vim.opt.wildmenu = true
 vim.opt.wildignore = vim.opt.wildignore + { "*/.git/*", "*/.hg/*", "*/.svn/*", "*/.DS_Store" }
 
