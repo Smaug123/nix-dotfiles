@@ -57,7 +57,7 @@
       grep = "${nixpkgs.ripgrep}/bin/rg";
     };
     sessionVariables = {
-      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
+      RIPGREP_CONFIG_PATH = ./ripgrep.conf;
     };
     initExtra = builtins.readFile ./.zshrc;
   };
@@ -375,7 +375,6 @@
   home.file.".mailcap".source = ./mail/mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
-  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
 
   programs.emacs = {
     enable = true;
