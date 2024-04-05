@@ -57,7 +57,7 @@
       grep = "${nixpkgs.ripgrep}/bin/rg";
     };
     sessionVariables = {
-      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
+      RIPGREP_CONFIG_PATH = ./ripgrep.conf;
     };
     initExtra = builtins.readFile ./.zshrc;
   };
@@ -375,6 +375,8 @@
   home.file.".mailcap".source = ./mail/mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
+  # Not actually used, but if I ever need to debug it'll be easier
+  # if I can see what the current state of the world is by looking in .config
   home.file.".config/ripgrep/config".source = ./ripgrep.conf;
 
   programs.emacs = {
