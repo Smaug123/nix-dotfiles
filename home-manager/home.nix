@@ -1,6 +1,7 @@
 {
   nixpkgs,
   username,
+  mbsync,
   dotnet,
   ...
 }: {
@@ -271,6 +272,7 @@
     vimAlias = true;
     vimdiffAlias = true;
     withPython3 = true;
+    withRuby = true;
 
     extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua) + "\n" + builtins.readFile ./nvim/python.lua;
 
@@ -295,6 +297,7 @@
   };
 
   home.packages = [
+    nixpkgs.notmuch
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
     nixpkgs.nodePackages_latest.bash-language-server
     nixpkgs.nodePackages_latest.vscode-json-languageserver
@@ -354,6 +357,20 @@
     nixpkgs.sumneko-lua-language-server
     (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
+
+  programs.mbsync = {
+    extraConfig = ''
+      CopyArrivalDate yes
+    '';
+    package = mbsync;
+  };
+  programs.neomutt = {
+    extraConfig = ''
+      set use_threads=threads sort=last-date sort_aux=date
+    '';
+    sidebar.enable = true;
+    vimKeys = true;
+  };
 
   home.file.".mailcap".source = ./mail/mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;

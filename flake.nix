@@ -73,6 +73,7 @@
               nixpkgs = pkgs;
               username = "patrick";
               dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
             };
           in [
             ./home-manager/capybara-config.nix
@@ -96,6 +97,7 @@
               nixpkgs = pkgs;
               username = "patrick";
               dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
             };
           in [
             ./home-manager/earthworm-config.nix
@@ -123,6 +125,7 @@
             username = "patrick";
             dotnet = pkgs.dotnet-sdk_8;
             whisper = whisper.packages.${system};
+            mbsync = import ./mbsync.nix {inherit pkgs;};
           };
         in [
           ./darwin-configuration.nix
