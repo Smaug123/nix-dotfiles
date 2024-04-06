@@ -1,5 +1,6 @@
 {pkgs, ...}: let
   python = import ./python.nix {inherit pkgs;};
+  mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
   nix.useDaemon = true;
 
@@ -25,6 +26,38 @@ in {
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
+
+  launchd.agents = {
+    mbsync-btinternet = {
+      command = "${mbsync}/bin/mbsync BTInternet > /tmp/mbsync.btinternet.log 2>/tmp/mbsync.btinternet.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+
+    mbsync-proton = {
+      command = "${mbsync}/bin/mbsync Proton > /tmp/mbsync.proton.1.log 2>/tmp/mbsync.proton.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+
+    mbsync-gmail = {
+      command = "${mbsync}/bin/mbsync Gmail > /tmp/mbsync.gmail.1.log 2>/tmp/mbsync.gmail.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+  };
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
