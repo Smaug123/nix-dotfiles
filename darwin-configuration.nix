@@ -1,5 +1,4 @@
 {pkgs, ...}: let
-  python = import ./python.nix {inherit pkgs;};
   mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
   nix.useDaemon = true;
@@ -12,7 +11,7 @@ in {
     pkgs.rustup
     pkgs.libiconv
     pkgs.clang
-    python
+    pkgs.python3
   ];
 
   users.users.patrick = {
