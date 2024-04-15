@@ -49,7 +49,7 @@
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     userName = "Smaug123";
-    userEmail = "patrick+github@patrickstevens.co.uk";
+    userEmail = "3138005+Smaug123@users.noreply.github.com";
     aliases = {
       co = "checkout";
       st = "status";
