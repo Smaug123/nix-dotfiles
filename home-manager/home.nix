@@ -56,6 +56,7 @@
     };
     delta = {enable = true;};
     extraConfig = {
+      commit.gpgsign = true;
       core = {
         autocrlf = "input";
       };
