@@ -292,7 +292,6 @@
     nixpkgs.age
     nixpkgs.nodejs
     nixpkgs.nodePackages.pyright
-    nixpkgs.sqlitebrowser
     nixpkgs.woodpecker-agent
     nixpkgs.lynx
     nixpkgs.alejandra
@@ -301,6 +300,7 @@
     nixpkgs.pandoc
     nixpkgs.fd
     nixpkgs.sumneko-lua-language-server
+    nixpkgs.gnupg
   ];
 
   home.file.".ideavimrc".source = ./ideavimrc;
