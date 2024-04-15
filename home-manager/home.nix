@@ -57,6 +57,8 @@
     delta = {enable = true;};
     extraConfig = {
       commit.gpgsign = true;
+      gpg.program = "${nixpkgs.gnupg}/bin/gpg";
+      user.signingkey = "7C97D679CF3BC4F9";
       core = {
         autocrlf = "input";
       };
