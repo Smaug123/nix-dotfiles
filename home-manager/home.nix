@@ -49,13 +49,16 @@
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     userName = "Smaug123";
-    userEmail = "patrick+github@patrickstevens.co.uk";
+    userEmail = "3138005+Smaug123@users.noreply.github.com";
     aliases = {
       co = "checkout";
       st = "status";
     };
     delta = {enable = true;};
     extraConfig = {
+      commit.gpgsign = true;
+      gpg.program = "${nixpkgs.gnupg}/bin/gpg";
+      user.signingkey = "7C97D679CF3BC4F9";
       core = {
         autocrlf = "input";
       };
