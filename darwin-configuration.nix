@@ -62,7 +62,6 @@ in {
   services.nix-daemon.enable = true;
   nix.package = pkgs.nixVersions.stable;
   nix.gc.automatic = true;
-  nix.nixPath = ["darwin=/nix/store/zq4v3pi2wsfsrjkpk71kcn8srhbwjabf-nix-darwin"];
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;
