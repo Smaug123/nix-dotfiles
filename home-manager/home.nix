@@ -120,6 +120,10 @@
     };
   };
 
+  services.syncthing = {
+    enable = true;
+  };
+
   programs.neovim = let
     pynvimpp = nixpkgs.python3.pkgs.buildPythonPackage {
       pname = "pynvim-pp";
@@ -261,6 +265,7 @@
   };
 
   home.packages = [
+    nixpkgs.syncthing
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
     nixpkgs.nodePackages_latest.bash-language-server
     nixpkgs.nodePackages_latest.vscode-json-languageserver
