@@ -152,6 +152,11 @@ in {
     userName = address;
   };
 
+  services.mbsync = {
+    enable = pkgs.stdenv.isLinux;
+    package = mbsync;
+  };
+
   programs.mbsync = {
     enable = true;
     extraConfig = ''
