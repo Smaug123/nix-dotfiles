@@ -3,6 +3,7 @@
   config,
   ...
 }: {
+  nixpkgs.config.allowUnfree = true;
   imports = [
     ../hardware/capybara.nix
   ];
@@ -30,12 +31,19 @@
     extraGroups = ["wheel" "networkManager"];
   };
 
+  services.syncthing = {
+    enable = true;
+    user = "patrick";
+    dataDir = "/home/patrick/syncthing";
+  };
+
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
     pkgs.tmux
     pkgs.home-manager
     pkgs.firefox
+    pkgs.steam-run
   ];
 
   environment.loginShellInit = ''
@@ -54,4 +62,9 @@
     keep-outputs = true
     keep-derivations = true
   '';
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+  };
 }
