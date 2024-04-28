@@ -57,6 +57,16 @@ in {
         RunAtLoad = true;
       };
     };
+
+    backup-calendar = {
+      command = ''${pkgs.bash}/bin/bash -c "mkdir -p /Users/patrick/Backups && if [ ! -d /Users/patrick/Backups/radicale ] ; then ${pkgs.git}/bin/git clone root@patrickstevens.co.uk:/preserve/radicale/data/.git /Users/patrick/Backups/radicale >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${pkgs.git}/bin/git --git-dir /Users/patrick/Backups/radicale/.git pull 2>>/tmp/radicale.err.log"'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 3600;
+        RunAtLoad = true;
+      };
+    };
   };
 
   # Auto upgrade nix package and the daemon service.
