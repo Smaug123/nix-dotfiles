@@ -100,7 +100,7 @@ in {
       create = "maildir";
     };
     realName = "Patrick Stevens";
-    passwordCommand = "cat ${secretsPath}/btinternet.txt";
+    passwordCommand = "${pkgs.coreutils}/bin/cat ${secretsPath}/btinternet.txt";
     smtp = {
       host = "mail.btinternet.com";
       port = 465;
@@ -143,7 +143,7 @@ in {
     passwordCommand =
       # I store the ProtonMail Bridge password here.
       # Extracting it from a keychain would be better.
-      "cat ${secretsPath}/proton.txt";
+      "${pkgs.coreutils}/bin/cat ${secretsPath}/proton.txt";
     smtp = {
       host = "127.0.0.1";
       port = 1025; # 8126; if using hydroxide
