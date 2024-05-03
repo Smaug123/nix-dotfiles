@@ -2,23 +2,6 @@ vim.g["fsharp#fsautocomplete_command"] = { "fsautocomplete" }
 vim.g["fsharp#show_signature_on_cursor_move"] = 1
 vim.g["fsharp#fsi_keymap"] = "none"
 
--- MASSIVE HACK - raised https://github.com/ionide/Ionide-vim/pull/78
-local function captureLoadedProjects()
-	vim.fn.execute("redir => g:massive_hack_patrick_capture")
-	vim.fn.execute("call fsharp#showLoadedProjects()")
-	vim.fn.execute("redir END")
-	local output = vim.fn.eval("g:massive_hack_patrick_capture")
-
-	local projects = {}
-
-	for line in output:gmatch("[^\r\n]+") do
-		local project = line:gsub("^%s*-%s*", "")
-		table.insert(projects, project)
-	end
-
-	return projects
-end
-
 -- Supply nil to get all loaded F# projects and build them.
 local function BuildFSharpProjects(projects)
 	local function on_line(data, _, context)
@@ -76,7 +59,7 @@ local function BuildFSharpProjects(projects)
 	end
 
 	if not projects then
-		projects = captureLoadedProjects()
+		projects = vim.fn['fsharp#getLoadedProjects']()
 	end
 	if projects then
 		local total_projects = 0
@@ -107,7 +90,7 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = captureLoadedProjects(),
+					results = vim.fn['fsharp#getLoadedProjects'](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -173,7 +156,7 @@ vim.api.nvim_create_user_command("RunFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = captureLoadedProjects(),
+					results = vim.fn['fsharp#getLoadedProjects'](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -202,7 +185,7 @@ vim.api.nvim_create_user_command("PublishFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = captureLoadedProjects(),
+					results = vim.fn['fsharp#getLoadedProjects'](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
