@@ -1,4 +1,3 @@
-vim.g.python3_host_prog = "%PYTHONENV%/bin/python"
 vim.opt.mouse = ""
 vim.opt.history = 500
 vim.opt.background = "dark"

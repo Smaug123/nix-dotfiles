@@ -125,29 +125,6 @@
   };
 
   programs.neovim = let
-    pynvimpp = nixpkgs.python3.pkgs.buildPythonPackage {
-      pname = "pynvim-pp";
-      version = "unstable-2024-03-24";
-      pyproject = true;
-
-      src = nixpkgs.fetchFromGitHub {
-        owner = "ms-jpq";
-        repo = "pynvim_pp";
-        rev = "34e3a027c595981886d7efd1c91071f3eaa4715d";
-        hash = "sha256-2+jDRJXlg9q4MN9vOhmeq4cWVJ0wp5r5xAh3G8lqgOg=";
-      };
-
-      nativeBuildInputs = [nixpkgs.python3.pkgs.setuptools];
-
-      propagatedBuildInputs = [nixpkgs.python3.pkgs.pynvim];
-    };
-  in let
-    pythonEnv = nixpkgs.python3.withPackages (ps: [
-      ps.pynvim
-      pynvimpp
-      ps.pyyaml
-      ps.std2
-    ]);
     debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
   in {
     enable = true;
@@ -257,11 +234,15 @@
     vimAlias = true;
     vimdiffAlias = true;
     withPython3 = true;
+    extraPython3Packages = ps: [
+      ps.pynvim
+      ps.pynvim-pp
+      ps.pyyaml
+      ps.std2
+    ];
     withRuby = true;
 
-    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua) + "\n" + builtins.readFile ./nvim/python.lua;
-
-    package = nixpkgs.neovim-nightly;
+    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
   };
 
   home.packages = [
