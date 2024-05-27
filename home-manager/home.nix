@@ -54,7 +54,7 @@
       co = "checkout";
       st = "status";
     };
-    delta = {enable = true;};
+    difftastic.enable = true;
     extraConfig = {
       commit.gpgsign = true;
       gpg.program = "${nixpkgs.gnupg}/bin/gpg";
@@ -246,6 +246,7 @@
   };
 
   home.packages = [
+    nixpkgs.difftastic
     nixpkgs.syncthing
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
     nixpkgs.nodePackages_latest.bash-language-server
