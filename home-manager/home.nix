@@ -295,7 +295,6 @@
 
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
-  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
 
   programs.firefox = {
     enable = true;
@@ -376,16 +375,4 @@
       };
     };
   };
-
-  programs.emacs = {
-    enable = true;
-    package = nixpkgs.emacs;
-    extraPackages = epkgs: [];
-    extraConfig = ''
-      (load-file (let ((coding-system-for-read 'utf-8))
-                 (shell-command-to-string "agda-mode locate")))
-    '';
-  };
-
-  home.file.".cargo/config.toml".source = ./cargo-config.toml;
 }
