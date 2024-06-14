@@ -1,9 +1,6 @@
-This repository currently has no licence applied to it, except for the NeoVim configuration.
-That configuration is in large part derived from https://github.com/amix/vimrc and is therefore provided under the following licence.
-
 The MIT License (MIT)
 
-Copyright (c) 2016 Amir Salihefendic
+Copyright (c) 2024 Patrick Stevens
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

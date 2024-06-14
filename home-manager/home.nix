@@ -1,7 +1,9 @@
 {
   nixpkgs,
   username,
+  mbsync,
   dotnet,
+  secretsPath,
   ...
 }: {
   # Let Home Manager install and manage itself.
@@ -21,59 +23,42 @@
   # changes in each release.
   home.stateVersion = "22.05";
 
-  programs.tmux = {
-    shell = "\${nixpkgs.zsh}/bin/zsh";
-    escapeTime = 50;
-    mouse = false;
-    prefix = "C-b";
-  };
+  fonts.fontconfig.enable = true;
 
-  programs.zsh = {
-    enable = true;
-    autocd = true;
-    enableAutosuggestions = true;
-    enableCompletion = true;
-    history = {
-      expireDuplicatesFirst = true;
-    };
-    oh-my-zsh = {
-      enable = true;
-      plugins = ["git" "macos" "dircycle" "timer"];
-      theme = "robbyrussell";
-    };
-    sessionVariables = {
-      EDITOR = "vim";
-      LC_ALL = "en_US.UTF-8";
-      LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxxabi}/lib -L ${nixpkgs.libcxx}/lib";
-      RUST_BACKTRACE = "full";
-    };
-    shellAliases = {
-      vim = "nvim";
-      view = "vim -R";
-      grep = "${nixpkgs.ripgrep}/bin/rg";
-    };
-    sessionVariables = {
-      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
-    };
-  };
+  imports = [
+    # ./modules/agda.nix
+    # ./modules/emacs.nix
+    ./modules/direnv.nix
+    ./modules/tmux.nix
+    ./modules/zsh.nix
+    ./modules/ripgrep.nix
+    ./modules/alacritty.nix
+    ./modules/rust.nix
+    (import ./modules/mail.nix
+      {
+        inherit mbsync secretsPath;
+        pkgs = nixpkgs;
+      })
+  ];
 
   programs.fzf = {
     enable = true;
-    enableZshIntegration = true;
   };
 
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     userName = "Smaug123";
-    userEmail = "patrick+github@patrickstevens.co.uk";
+    userEmail = "3138005+Smaug123@users.noreply.github.com";
     aliases = {
       co = "checkout";
       st = "status";
     };
-    delta = {enable = true;};
+    difftastic.enable = true;
     extraConfig = {
+      commit.gpgsign = true;
+      gpg.program = "${nixpkgs.gnupg}/bin/gpg";
+      user.signingkey = "7C97D679CF3BC4F9";
       core = {
         autocrlf = "input";
       };
@@ -135,49 +120,146 @@
     };
   };
 
-  programs.neovim.enable = true;
-  programs.neovim.plugins = with nixpkgs.vimPlugins; [
-    molokai
-    tagbar
-    fzf-vim
-    Ionide-vim
-    {
-      plugin = rust-vim;
-      config = "let g:rustfmt_autosave = 1";
-    }
-    {
-      plugin = LanguageClient-neovim;
-      config = "let g:LanguageClient_serverCommands = { 'nix': ['rnix-lsp'] }";
-    }
-    {
-      plugin = syntastic;
-      config = ''        let g:syntastic_rust_checkers = ['cargo']
-        let g:syntastic_always_populate_loc_list = 1
-        let g:syntastic_auto_loc_list = 1
-        let g:syntastic_check_on_open = 1
-        let g:syntastic_check_on_wq = 0'';
-    }
-
-    # YouCompleteMe
-    tagbar
-  ];
-  programs.neovim.viAlias = true;
-  programs.neovim.vimAlias = true;
-  programs.neovim.vimdiffAlias = true;
-  programs.neovim.withPython3 = true;
-
-  programs.neovim.extraConfig = builtins.readFile ./init.vim;
-
-  programs.direnv = {
+  services.syncthing = {
     enable = true;
-    enableZshIntegration = true;
-    nix-direnv.enable = true;
+  };
+
+  programs.neovim = let
+    debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
+  in {
+    enable = true;
+    plugins = [
+      {
+        plugin = nixpkgs.vimPlugins.nvim-lightbulb;
+        type = "lua";
+        config = builtins.readFile ./nvim/nvim-lightbulb.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.lean-nvim;
+        type = "lua";
+        config = builtins.readFile ./nvim/lean.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.which-key-nvim;
+        type = "lua";
+        config = builtins.readFile ./nvim/which-key.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.tokyonight-nvim;
+        config = builtins.readFile ./nvim/tokyonight.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+        config = builtins.readFile ./nvim/treesitter.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-lspconfig;
+        config = builtins.readFile ./nvim/lspconfig.lua;
+        type = "lua";
+      }
+      nixpkgs.vimPlugins.telescope-nvim
+      nixpkgs.vimPlugins.tagbar
+      nixpkgs.vimPlugins.fzf-vim
+      {
+        plugin = nixpkgs.vimPlugins.roslyn-nvim;
+        config = builtins.readFile ./nvim/roslyn-nvim.lua;
+        type = "lua";
+      }
+      {
+        plugin = let
+          name = "coq.artifacts";
+          rev = "9c5067a471322c6bb866545e88e5b28c82511865";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "ms-jpq";
+              repo = name;
+              rev = rev;
+              hash = "sha256-BHm7U3pINtYamY7m26I4lQee7ccJ6AcHmYx7j1MRFDA=";
+            };
+          };
+      }
+      {
+        plugin = let
+          name = "venv-selector.nvim";
+          rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
+        in
+          nixpkgs.vimUtils.buildVimPlugin {
+            name = name;
+            src = nixpkgs.fetchFromGitHub {
+              owner = "linux-cultist";
+              repo = name;
+              rev = rev;
+              hash = "sha256-aOga7kJ1y3T2vDyYFl/XHOwk35ZqeUcfPUk+Pr1mIeo=";
+            };
+          };
+        config = builtins.readFile ./nvim/venv-selector.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.Ionide-vim;
+        type = "lua";
+        config = builtins.readFile ./nvim/ionide-vim.lua;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.chadtree;
+        config = builtins.readFile ./nvim/chadtree.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.coq_nvim;
+        config = ''let g:coq_settings = { 'auto_start': 'shut-up', 'xdg': v:true }'';
+      }
+      {
+        plugin = nixpkgs.vimPlugins.rustaceanvim;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-dap;
+        config = builtins.readFile ./nvim/nvim-dap.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.nvim-dap-python;
+        config = builtins.replaceStrings ["%PYTHONENV%"] ["${debugPyEnv}"] (builtins.readFile ./nvim/nvim-dap-python.lua);
+        type = "lua";
+      }
+    ];
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+    withPython3 = true;
+    extraPython3Packages = ps: [
+      ps.pynvim
+      ps.pynvim-pp
+      ps.pyyaml
+      ps.std2
+    ];
+    withRuby = true;
+
+    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
   };
 
   home.packages = [
+    nixpkgs.difftastic
+    nixpkgs.syncthing
+    nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
+    nixpkgs.nodePackages_latest.bash-language-server
+    nixpkgs.nodePackages_latest.vscode-json-languageserver
+    nixpkgs.nodePackages_latest.vscode-langservers-extracted
+    nixpkgs.hadolint
+    nixpkgs.ltex-ls
+    nixpkgs.yaml-language-server
+    nixpkgs.csharp-ls
+    nixpkgs.netcoredbg
+    nixpkgs.nil
+    nixpkgs.fsautocomplete
     nixpkgs.keepassxc
-    nixpkgs.rust-analyzer
-    nixpkgs.tmux
     nixpkgs.wget
     nixpkgs.yt-dlp
     nixpkgs.cmake
@@ -188,53 +270,32 @@
     nixpkgs.hledger-web
     dotnet
     nixpkgs.jitsi-meet
-    nixpkgs.ripgrep
     nixpkgs.elan
     nixpkgs.coreutils-prefixed
     nixpkgs.shellcheck
-    nixpkgs.html-tidy
-    nixpkgs.hugo
-    nixpkgs.agda
-    nixpkgs.pijul
     nixpkgs.universal-ctags
     nixpkgs.asciinema
     nixpkgs.git-lfs
     nixpkgs.imagemagick
     nixpkgs.nixpkgs-fmt
-    nixpkgs.rnix-lsp
-    nixpkgs.grpc-tools
-    nixpkgs.element-desktop
-    nixpkgs.ihp-new
-    nixpkgs.direnv
     nixpkgs.lnav
     nixpkgs.age
     nixpkgs.nodejs
-    nixpkgs.sqlitebrowser
-    nixpkgs.typst
-    nixpkgs.poetry
+    nixpkgs.nodePackages.pyright
     nixpkgs.woodpecker-agent
-    nixpkgs.alacritty
     nixpkgs.lynx
     nixpkgs.alejandra
     nixpkgs.ffmpeg
     nixpkgs.bat
     nixpkgs.pandoc
+    nixpkgs.fd
+    nixpkgs.sumneko-lua-language-server
+    nixpkgs.gnupg
   ];
 
-  home.file.".mailcap".source = ./mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
   home.file.".config/ripgrep/config".source = ./ripgrep.conf;
-
-  programs.emacs = {
-    enable = true;
-    package = nixpkgs.emacs;
-    extraPackages = epkgs: [];
-    extraConfig = ''
-      (load-file (let ((coding-system-for-read 'utf-8))
-                 (shell-command-to-string "agda-mode locate")))
-    '';
-  };
 
   programs.firefox = {
     enable = true;
@@ -314,6 +375,16 @@
         };
       };
     };
+  };
+
+  programs.emacs = {
+    enable = true;
+    package = nixpkgs.emacs;
+    extraPackages = epkgs: [];
+    extraConfig = ''
+      (load-file (let ((coding-system-for-read 'utf-8))
+                 (shell-command-to-string "agda-mode locate")))
+    '';
   };
 
   home.file.".cargo/config.toml".source = ./cargo-config.toml;

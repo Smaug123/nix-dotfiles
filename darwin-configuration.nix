@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  python = import ./python.nix {inherit pkgs;};
+  mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
   nix.useDaemon = true;
 
@@ -11,7 +11,7 @@ in {
     pkgs.rustup
     pkgs.libiconv
     pkgs.clang
-    python
+    pkgs.python3
   ];
 
   users.users.patrick = {
@@ -21,16 +21,58 @@ in {
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
+  programs.gnupg.agent.enable = true;
 
   # Use a custom configuration.nix location.
   # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
   environment.darwinConfig = "$HOME/.nixpkgs/darwin-configuration.nix";
 
+  launchd.agents = {
+    mbsync-btinternet = {
+      command = "${mbsync}/bin/mbsync BTInternet > /tmp/mbsync.btinternet.log 2>/tmp/mbsync.btinternet.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+
+    mbsync-proton = {
+      command = "${mbsync}/bin/mbsync Proton > /tmp/mbsync.proton.1.log 2>/tmp/mbsync.proton.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+
+    mbsync-gmail = {
+      command = "${mbsync}/bin/mbsync Gmail > /tmp/mbsync.gmail.1.log 2>/tmp/mbsync.gmail.2.log";
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 60;
+        RunAtLoad = true;
+      };
+    };
+
+    backup-calendar = {
+      command = ''${pkgs.bash}/bin/bash -c "mkdir -p /Users/patrick/Backups && if [ ! -d /Users/patrick/Backups/radicale ] ; then ${pkgs.git}/bin/git clone root@patrickstevens.co.uk:/preserve/radicale/data/.git /Users/patrick/Backups/radicale >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${pkgs.git}/bin/git --git-dir /Users/patrick/Backups/radicale/.git pull 2>>/tmp/radicale.err.log"'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 3600;
+        RunAtLoad = true;
+      };
+    };
+  };
+
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
   nix.package = pkgs.nixVersions.stable;
   nix.gc.automatic = true;
-  nix.nixPath = ["darwin=/nix/store/zq4v3pi2wsfsrjkpk71kcn8srhbwjabf-nix-darwin"];
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;

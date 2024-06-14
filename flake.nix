@@ -18,10 +18,6 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
@@ -31,23 +27,21 @@
   };
 
   outputs = {
-    self,
     darwin,
     emacs,
     nixpkgs,
     home-manager,
-    sops-nix,
     apple-silicon,
     whisper,
     ...
-  } @ inputs: let
+  }: let
     config = {
       # contentAddressedByDefault = true;
       allowUnfree = true;
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay] ++ import ./overlays.nix;
+    overlays = [emacs.overlay];
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:
@@ -62,6 +56,31 @@
       f [] attrList;
   in {
     nixosConfigurations = {
+      capybara = let
+        system = "x86_64-linux";
+      in let
+        pkgs = import nixpkgs {inherit system config overlays;};
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = let
+            args = {
+              nixpkgs = pkgs;
+              username = "patrick";
+              dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
+              secretsPath = "/home/patrick/.secrets/";
+            };
+          in [
+            ./home-manager/capybara-config.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.patrick = recursiveMerge [(import ./home-manager/linux.nix args) (import ./home-manager/home.nix args)];
+            }
+          ];
+        };
       earthworm = let
         system = "aarch64-linux";
       in let
@@ -74,6 +93,8 @@
               nixpkgs = pkgs;
               username = "patrick";
               dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
+              secretsPath = "/home/patrick/.secrets/";
             };
           in [
             ./home-manager/earthworm-config.nix
@@ -82,7 +103,7 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.patrick = recursiveMerge [(import ./home-manager/earthworm.nix args) (import ./home-manager/home.nix args)];
+              home-manager.users.patrick = recursiveMerge [(import ./home-manager/linux.nix args) (import ./home-manager/home.nix args)];
             }
           ];
         };
@@ -101,10 +122,11 @@
             username = "patrick";
             dotnet = pkgs.dotnet-sdk_8;
             whisper = whisper.packages.${system};
+            mbsync = import ./mbsync.nix {inherit pkgs;};
+            secretsPath = "/Users/patrick/.secrets/";
           };
         in [
           ./darwin-configuration.nix
-          sops-nix.nixosModules.sops
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -121,11 +143,12 @@
         pkgs.stdenvNoCC.mkDerivation {
           name = "fmt-check";
           src = ./.;
-          nativeBuildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.shfmt];
+          nativeBuildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.shfmt pkgs.stylua];
           checkPhase = ''
             find . -type f -name '*.sh' | xargs shfmt -d -s -i 2 -ci
             alejandra -c .
             find . -type f -name '*.sh' -exec shellcheck -x {} \;
+            find . -type f -name '*.lua' -exec stylua --check {} \;
           '';
           installPhase = "mkdir $out";
           dontBuild = true;
@@ -143,7 +166,7 @@
           pkgs = import nixpkgs {inherit config system;};
         in {
           default = pkgs.mkShell {
-            buildInputs = [pkgs.alejandra pkgs.shellcheck];
+            buildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.stylua];
           };
         }
       );
