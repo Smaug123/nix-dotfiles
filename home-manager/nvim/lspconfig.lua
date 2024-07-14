@@ -13,6 +13,8 @@ local schemas = {
 	["https://json.schemastore.org/dotnet-tools.json"] = "dotnet-tools.json",
 }
 
+require("lspconfig")["clangd"].setup({})
+
 require("lspconfig")["yamlls"].setup({
 	settings = {
 		yaml = {
