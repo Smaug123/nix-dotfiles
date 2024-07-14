@@ -292,6 +292,7 @@
     nixpkgs.sumneko-lua-language-server
     nixpkgs.gnupg
     nixpkgs.gh
+    nixpkgs.clang-tools
   ];
 
   home.file.".ideavimrc".source = ./ideavimrc;
