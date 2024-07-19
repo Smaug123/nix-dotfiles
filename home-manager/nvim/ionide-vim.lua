@@ -59,7 +59,7 @@ local function BuildFSharpProjects(projects)
 	end
 
 	if not projects then
-		projects = vim.fn['fsharp#getLoadedProjects']()
+		projects = vim.fn["fsharp#getLoadedProjects"]()
 	end
 	if projects then
 		local total_projects = 0
@@ -90,7 +90,7 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -156,7 +156,7 @@ vim.api.nvim_create_user_command("RunFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -185,7 +185,7 @@ vim.api.nvim_create_user_command("PublishFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)

@@ -158,3 +158,124 @@ vim.api.nvim_create_autocmd("FileType", {
 		FindAndRegisterSolution(false)
 	end,
 })
+
+local function compare_versions(a, b)
+	local function parse_version(v)
+		local major, minor, patch, pre = v:match("(%d+)%.(%d+)%.(%d+)(.*)$")
+		return {
+			tonumber(major) or 0,
+			tonumber(minor) or 0,
+			tonumber(patch) or 0,
+			pre or "",
+		}
+	end
+
+	local va, vb = parse_version(a), parse_version(b)
+
+	for i = 1, 3 do
+		if va[i] ~= vb[i] then
+			return va[i] < vb[i]
+		end
+	end
+
+	if va[4] == "" and vb[4] ~= "" then
+		return false
+	end
+	if va[4] ~= "" and vb[4] == "" then
+		return true
+	end
+	return va[4] < vb[4]
+end
+
+local function get_package_versions(package_name)
+	local url = string.format("https://api.nuget.org/v3-flatcontainer/%s/index.json", package_name:lower())
+	local command = string.format("_CURL_ --silent --fail '%s'", url)
+	local response = vim.fn.system(command)
+
+	if vim.v.shell_error ~= 0 then
+		print("Failed to fetch package versions")
+		return {}
+	end
+
+	local success, decoded = pcall(vim.fn.json_decode, response)
+	if not success or not decoded.versions then
+		print("Failed to parse package versions")
+		return {}
+	end
+
+	local versions = decoded.versions
+	table.sort(versions, function(a, b)
+		return compare_versions(b, a)
+	end)
+	return versions
+end
+
+local function update_package_version(version)
+	local line = vim.api.nvim_get_current_line()
+	local new_line = line:gsub('Version="[^"]+"', string.format('Version="%s"', version))
+	vim.api.nvim_set_current_line(new_line)
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "fsharp_project", "csharp_project" },
+	callback = function()
+		function UpdateNuGetVersion()
+			local line = vim.api.nvim_get_current_line()
+			local package_name = line:match('PackageReference Include="([^"]+)"')
+				or line:match('PackageReference Update="([^"]+)"')
+			local current_version = line:match('Version="([^"]+)"')
+
+			if not package_name then
+				print("No package reference found on the current line")
+				return
+			end
+
+			local package_versions = get_package_versions(package_name)
+
+			if #package_versions == 0 then
+				print("No versions found for the package")
+				return
+			end
+
+			local pickers = require("telescope.pickers")
+			local finders = require("telescope.finders")
+			local conf = require("telescope.config").values
+
+			pickers
+				.new({}, {
+					prompt_title = string.format("Select version for %s", package_name),
+					finder = finders.new_table({
+						results = package_versions,
+						entry_maker = function(entry)
+							local display_value = entry
+							if current_version and entry == current_version then
+								display_value = "[CURRENT] " .. entry
+							end
+							return {
+								value = entry,
+								display = display_value,
+								ordinal = entry,
+							}
+						end,
+					}),
+					sorter = conf.generic_sorter({}),
+					attach_mappings = function(_, map)
+						map("i", "<CR>", function(prompt_bufnr)
+							local selection = require("telescope.actions.state").get_selected_entry()
+							require("telescope.actions").close(prompt_bufnr)
+							update_package_version(selection.value)
+						end)
+						return true
+					end,
+				})
+				:find()
+		end
+		local whichkey = require("which-key")
+		whichkey.register({
+			n = {
+				name = "NuGet",
+				u = { UpdateNuGetVersion, "Upgrade NuGet versions" },
+			},
+		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+	end,
+})
