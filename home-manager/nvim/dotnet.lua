@@ -462,9 +462,11 @@ local function prefetch_dependencies()
 			get_package_dependencies(package_name, version, function(_) end)
 		end
 		local package_versions = get_package_versions(package_name)
-		for _, ver in pairs(package_versions) do
-			get_package_dependencies(package_name, ver, function() end)
-		end
+        if package_versions then
+            for _, ver in pairs(package_versions) do
+                get_package_dependencies(package_name, ver, function() end)
+            end
+        end
 	end
 end
 
