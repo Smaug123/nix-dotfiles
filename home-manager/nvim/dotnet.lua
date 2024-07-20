@@ -159,61 +159,311 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-local function compare_versions(a, b)
-	local function parse_version(v)
-		local major, minor, patch, pre = v:match("(%d+)%.(%d+)%.(%d+)(.*)$")
-		return {
-			tonumber(major) or 0,
-			tonumber(minor) or 0,
-			tonumber(patch) or 0,
-			pre or "",
-		}
+-- For what I'm sure are reasons, Lua appears to have nothing in its standard library
+---@generic K
+---@generic V1
+---@generic V2
+---@param tbl table<K, V1>
+---@param f fun(V1): V2
+---@return table<K, V2>
+local function map(tbl, f)
+	local t = {}
+	for k, v in pairs(tbl) do
+		t[k] = f(v)
 	end
-
-	local va, vb = parse_version(a), parse_version(b)
-
-	for i = 1, 3 do
-		if va[i] ~= vb[i] then
-			return va[i] < vb[i]
-		end
-	end
-
-	if va[4] == "" and vb[4] ~= "" then
-		return false
-	end
-	if va[4] ~= "" and vb[4] == "" then
-		return true
-	end
-	return va[4] < vb[4]
+	return t
 end
 
-local function get_package_versions(package_name)
-	local url = string.format("https://api.nuget.org/v3-flatcontainer/%s/index.json", package_name:lower())
-	local command = string.format("_CURL_ --silent --fail '%s'", url)
-	local response = vim.fn.system(command)
+---@generic K
+---@generic V
+---@param tbl table<K, V>
+---@param f fun(V1): nil
+local function iter(tbl, f)
+	for _, v in pairs(tbl) do
+		f(v)
+	end
+end
 
+---@generic K
+---@generic V
+---@param tbl table<K, V>
+---@param predicate fun(V): boolean
+---@return boolean, V
+local function find(tbl, predicate)
+	for _, v in pairs(tbl) do
+		if predicate(v) then
+			return true, v
+		end
+	end
+	return false, nil
+end
+
+---@class (exact) NuGetVersion
+---@field major number
+---@field minor number
+---@field patch number
+---@field suffix? string
+local NuGetVersion = {}
+
+---@param v NuGetVersion
+---@nodiscard
+---@return string
+local function nuGetVersionToString(v)
+	local s = tostring(v.major) .. "." .. tostring(v.minor) .. "." .. tostring(v.patch)
+	if v.suffix then
+		return s .. v.suffix
+	else
+		return s
+	end
+end
+
+---@param v string
+---@nodiscard
+---@return NuGetVersion
+local function parse_version(v)
+	local major, minor, patch, pre = v:match("(%d+)%.(%d+)%.(%d+)(.*)$")
+	-- TODO: why does this type-check if you remove the field names?
+	return {
+		major = tonumber(major) or 0,
+		minor = tonumber(minor) or 0,
+		patch = tonumber(patch) or 0,
+		suffix = pre or nil,
+	}
+end
+
+---@param a NuGetVersion
+---@param b NuGetVersion
+---@nodiscard
+---@return boolean
+local function compare_versions(a, b)
+	if a.major ~= b.major then
+		return a.major < b.major
+	elseif a.minor ~= b.minor then
+		return a.minor < b.minor
+	elseif a.patch ~= b.patch then
+		return a.patch < b.patch
+	elseif a.suffix and not b.suffix then
+		return false
+	elseif not a.suffix and b.suffix then
+		return true
+	else
+		return a.suffix < b.suffix
+	end
+end
+
+---@param url string
+---@nodiscard
+local function curl(url)
+	local command = string.format("_CURL_ --silent --compressed --fail '%s'", url)
+	local response = vim.fn.system(command)
 	if vim.v.shell_error ~= 0 then
+		print("Failed to fetch " .. url)
+		return nil
+	end
+	local success, decoded = pcall(vim.fn.json_decode, response)
+	if not success then
+		print("Failed to decode JSON from curl at " .. url)
+		return nil
+	end
+	return decoded
+end
+
+local _nugetIndex
+local _packageBaseAddress
+
+local function populate_nuget_api()
+	if _nugetIndex ~= nil then
+		return
+	end
+	local url = string.format("https://api.nuget.org/v3/index.json")
+	local decoded = curl(url)
+
+	local default_nuget_reg = "https://api.nuget.org/v3/registration5-semver1/"
+	local default_base_address = "https://api.nuget.org/v3-flatcontainer/"
+
+	if not decoded then
+		print("Failed to fetch NuGet index; falling back to default")
+		_nugetIndex = default_nuget_reg
+		_packageBaseAddress = default_base_address
+	else
+		local resources = decoded["resources"]
+
+		local resourceSuccess, regUrl = find(resources, function(o)
+			return o["@type"] == "RegistrationsBaseUrl/3.6.0"
+		end)
+		if not resourceSuccess then
+			print("Failed to find endpoint in NuGet index; falling back to default")
+			_nugetIndex = default_nuget_reg
+		else
+			_nugetIndex = regUrl["@id"]
+		end
+
+		local baseAddrSuccess, baseAddrUrl = find(resources, function(o)
+			return o["@type"] == "PackageBaseAddress/3.0.0"
+		end)
+		if not baseAddrSuccess then
+			print("Failed to find endpoint in NuGet index; falling back to default")
+			_packageBaseAddress = default_base_address
+		else
+			_packageBaseAddress = baseAddrUrl["@id"]
+		end
+	end
+end
+
+---@nodiscard
+---@return string
+local function get_nuget_index()
+	populate_nuget_api()
+	return _nugetIndex
+end
+---
+---@nodiscard
+---@return string
+local function get_package_base_addr()
+	populate_nuget_api()
+	return _packageBaseAddress
+end
+
+local _package_versions_cache = {}
+---@param package_name string
+---@return NuGetVersion[]
+local function get_package_versions(package_name)
+	if _package_versions_cache[package_name] ~= nil then
+		return _package_versions_cache[package_name]
+	end
+
+	local url = get_package_base_addr() .. string.format("%s/index.json", package_name:lower())
+	local decoded = curl(url)
+	if not decoded then
 		print("Failed to fetch package versions")
 		return {}
 	end
 
-	local success, decoded = pcall(vim.fn.json_decode, response)
-	if not success or not decoded.versions then
-		print("Failed to parse package versions")
-		return {}
-	end
-
-	local versions = decoded.versions
+	local versions = map(decoded.versions, parse_version)
 	table.sort(versions, function(a, b)
 		return compare_versions(b, a)
 	end)
+	_package_versions_cache[package_name] = versions
 	return versions
 end
 
+---@param version NuGetVersion
+---@return nil
 local function update_package_version(version)
 	local line = vim.api.nvim_get_current_line()
-	local new_line = line:gsub('Version="[^"]+"', string.format('Version="%s"', version))
+	local new_line = line:gsub('Version="[^"]+"', string.format('Version="%s"', nuGetVersionToString(version)))
 	vim.api.nvim_set_current_line(new_line)
+end
+
+-- A map from package to { packageWeDependOn: version }.
+--- @type table<string, table<string, string>>
+local _package_dependency_cache = {}
+---@param package_name string
+---@param version NuGetVersion
+---@param callback fun(result: table<string, string>): nil
+---@return nil
+local function get_package_dependencies(package_name, version, callback)
+	local key = package_name .. "@" .. nuGetVersionToString(version)
+	local cache_hit = _package_dependency_cache[key]
+	if cache_hit ~= nil then
+		callback(cache_hit)
+		return
+	end
+	local url = get_nuget_index()
+		.. string.format("%s/%s.json", package_name:lower(), nuGetVersionToString(version):lower())
+
+	local response = curl(url)
+
+	if not response then
+		print(
+			"Failed to get dependencies of "
+				.. package_name
+				.. " at version "
+				.. version
+				.. " : unsuccessful response to "
+				.. url
+		)
+		return
+	end
+
+	local entry_url = response["catalogEntry"]
+	local catalog_entry = curl(entry_url)
+	if not catalog_entry then
+		print(
+			"Failed to get dependencies of "
+				.. package_name
+				.. " at version "
+				.. version
+				.. " : unsuccessful response to "
+				.. entry_url
+		)
+		return
+	end
+
+	local result = {}
+	iter(catalog_entry["dependencyGroups"], function(grp)
+		if grp["dependencies"] then
+			for _, dep in pairs(grp["dependencies"]) do
+				result[dep["id"]] = dep["range"]
+			end
+		end
+	end)
+
+	_package_dependency_cache[key] = result
+
+	callback(result)
+end
+
+---@return table<string, NuGetVersion>
+---@nodiscard
+local function get_all_package_references()
+	local packages = {}
+	local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+	for _, line in ipairs(lines) do
+		local package_name = line:match('PackageReference Include="([^"]+)"')
+			or line:match('PackageReference Update="([^"]+)"')
+		local version = line:match('Version="([^"]+)"')
+
+		if package_name and version then
+			if not packages[package_name] then
+				packages[package_name] = {}
+			end
+			table.insert(packages[package_name], parse_version(version))
+		end
+	end
+
+	return packages
+end
+
+function ClearNuGetDependencyCache()
+	for k, _ in pairs(_package_dependency_cache) do
+		_package_dependency_cache[k] = nil
+	end
+end
+vim.api.nvim_create_user_command("ClearNuGetDependencyCache", ClearNuGetDependencyCache, {})
+
+function PrintNuGetDependencyCache()
+	for k, v in pairs(_package_dependency_cache) do
+		print(k .. ":")
+		for dep, ver in pairs(v) do
+			print("  " .. dep .. ": " .. ver)
+		end
+	end
+end
+vim.api.nvim_create_user_command("PrintNuGetDependencyCache", PrintNuGetDependencyCache, {})
+
+local function prefetch_dependencies()
+	local packages = get_all_package_references()
+
+	for package_name, versions in pairs(packages) do
+		print("Package: " .. package_name)
+		get_package_versions(package_name)
+		for _, version in ipairs(versions) do
+			print("Version: " .. nuGetVersionToString(version))
+			get_package_dependencies(package_name, version, function(_) end)
+		end
+	end
 end
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -223,7 +473,7 @@ vim.api.nvim_create_autocmd("FileType", {
 			local line = vim.api.nvim_get_current_line()
 			local package_name = line:match('PackageReference Include="([^"]+)"')
 				or line:match('PackageReference Update="([^"]+)"')
-			local current_version = line:match('Version="([^"]+)"')
+			local current_version = nuGetVersionToString(line:match('Version="([^"]+)"'))
 
 			if not package_name then
 				print("No package reference found on the current line")
@@ -239,7 +489,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 			local pickers = require("telescope.pickers")
 			local finders = require("telescope.finders")
-			local conf = require("telescope.config").values
+			local previewers = require("telescope.previewers")
 
 			pickers
 				.new({}, {
@@ -247,9 +497,10 @@ vim.api.nvim_create_autocmd("FileType", {
 					finder = finders.new_table({
 						results = package_versions,
 						entry_maker = function(entry)
-							local display_value = entry
+							local val = nuGetVersionToString(entry)
+							local display_value = val
 							if current_version and entry == current_version then
-								display_value = "[CURRENT] " .. entry
+								display_value = "[CURRENT] " .. val
 							end
 							return {
 								value = entry,
@@ -258,9 +509,33 @@ vim.api.nvim_create_autocmd("FileType", {
 							}
 						end,
 					}),
-					sorter = conf.generic_sorter({}),
-					attach_mappings = function(_, map)
-						map("i", "<CR>", function(prompt_bufnr)
+					previewer = previewers.new_buffer_previewer({
+						define_preview = function(self, entry, _)
+							local bufnr = self.state.bufnr
+							get_package_dependencies(package_name, entry.value, function(package_dependencies)
+								if not package_dependencies then
+									vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { "No dependencies found" })
+									return
+								end
+
+								local display = {}
+								table.insert(
+									display,
+									"Dependencies for "
+										.. package_name
+										.. " at version "
+										.. nuGetVersionToString(entry.value)
+										.. ":"
+								)
+								for dep, range in pairs(package_dependencies) do
+									table.insert(display, dep .. ": " .. range)
+								end
+								vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, display)
+							end)
+						end,
+					}),
+					attach_mappings = function(_, mapping)
+						mapping("i", "<CR>", function(prompt_bufnr)
 							local selection = require("telescope.actions.state").get_selected_entry()
 							require("telescope.actions").close(prompt_bufnr)
 							update_package_version(selection.value)
@@ -277,5 +552,6 @@ vim.api.nvim_create_autocmd("FileType", {
 				u = { UpdateNuGetVersion, "Upgrade NuGet versions" },
 			},
 		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+		prefetch_dependencies()
 	end,
 })
