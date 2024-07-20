@@ -246,6 +246,7 @@
   };
 
   home.packages = [
+    nixpkgs.jq
     nixpkgs.difftastic
     nixpkgs.syncthing
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs

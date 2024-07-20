@@ -327,6 +327,7 @@ end
 local _package_versions_cache = {}
 ---@param package_name string
 ---@return NuGetVersion[]
+---@nodiscard
 local function get_package_versions(package_name)
 	if _package_versions_cache[package_name] ~= nil then
 		return _package_versions_cache[package_name]
@@ -457,11 +458,12 @@ local function prefetch_dependencies()
 	local packages = get_all_package_references()
 
 	for package_name, versions in pairs(packages) do
-		print("Package: " .. package_name)
-		get_package_versions(package_name)
 		for _, version in ipairs(versions) do
-			print("Version: " .. nuGetVersionToString(version))
 			get_package_dependencies(package_name, version, function(_) end)
+		end
+		local package_versions = get_package_versions(package_name)
+		for _, ver in pairs(package_versions) do
+			get_package_dependencies(package_name, ver, function() end)
 		end
 	end
 end
