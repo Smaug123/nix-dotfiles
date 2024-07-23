@@ -242,10 +242,11 @@
     ];
     withRuby = true;
 
-    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
+    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + (builtins.replaceStrings ["_CURL_"] ["${nixpkgs.curl}/bin/curl"] (builtins.readFile ./nvim/dotnet.lua)) + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
   };
 
   home.packages = [
+    nixpkgs.jq
     nixpkgs.difftastic
     nixpkgs.syncthing
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs

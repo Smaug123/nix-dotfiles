@@ -288,9 +288,9 @@ whichkey.register({
 	},
 }, { prefix = vim.api.nvim_get_var("mapleader") })
 
-vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
-    pattern = {"Directory.Build.props", "*.fsproj", "*.csproj"},
-    callback = function()
-        vim.bo.filetype = "xml"
-    end,
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+	pattern = { "Directory.Build.props", "*.fsproj", "*.csproj" },
+	callback = function()
+		vim.bo.filetype = "xml"
+	end,
 })
