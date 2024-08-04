@@ -30,37 +30,36 @@ dap.configurations.cs = {
 
 do
 	local whichkey = require("which-key")
-	whichkey.register({
-		d = {
-			name = "Debugger-related commands",
-			o = { dap.step_over, "Step over" },
-			i = { dap.step_into, "Step into" },
-			c = { dap.continue, "Continue" },
-			C = { dap.run_last, "Run with last debug configuration" },
-			b = { dap.toggle_breakpoint, "Toggle breakpoint" },
-			r = { dap.repl.open, "Open debug repl" },
-			v = {
-				name = "Commands to view debugger state",
-				v = {
-					function()
-						dap_ui.hover()
-					end,
-					"View value of expression under cursor",
-				},
-				s = {
-					function()
-						dap_ui.sidebar(dap_ui.scopes).open()
-					end,
-					"View values of all variables in all scopes",
-				},
-				f = {
-					function()
-						dap_ui.sidebar(dap_ui.frames).open()
-					end,
-					"View stack frames",
-				},
-			},
-			t = { dap.terminate, "Terminate/stop/end debug session" },
+	whichkey.add({
+		{ "<localleader>d", desc = "Debugger-related commands" },
+		{ "<localleader>do", dap.step_over, desc = "Step over" },
+		{ "<localleader>di", dap.step_into, desc = "Step into" },
+		{ "<localleader>dc", dap.continue, desc = "Continue" },
+		{ "<localleader>dC", dap.run_last, desc = "Run with last debug configuration" },
+		{ "<localleader>db", dap.toggle_breakpoint, desc = "Toggle breakpoint" },
+		{ "<localleader>dr", dap.repl.open, desc = "Open debug repl" },
+		{ "<localleader>dv", desc = "Commands to view debugger state" },
+		{
+			"<localleader>dvv",
+			function()
+				dap_ui.hover()
+			end,
+			desc = "View value of expression under cursor",
 		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+		{
+			"<localleader>dvs",
+			function()
+				dap_ui.sidebar(dap_ui.scopes).open()
+			end,
+			desc = "View values of all variables in all scopes",
+		},
+		{
+			"<localleader>dvf",
+			function()
+				dap_ui.sidebar(dap_ui.frames).open()
+			end,
+			desc = "View stack frames",
+		},
+		{ "<localleader>dt", dap.terminate, desc = "Terminate/stop/end debug session" },
+	})
 end
