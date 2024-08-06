@@ -169,8 +169,6 @@ function DisplayAllMappingsWithTelescope()
 
 	local function accumulate(tree)
 		tree:walk(function(node)
-			-- Note: we could (if desired) view all groups, because the `node.mapping` table looks like this:
-			-- { prefix = "g", group = true, keys = {...}}
 			if node.mapping then
 				local mapping = node.mapping
 				if not mapping.group then
@@ -224,69 +222,65 @@ function ToggleSpell()
 	vim.cmd("setlocal spell!")
 end
 
-whichkey.register({
-	[vim.api.nvim_get_var("maplocalleader")] = {
-		DisplayAllMappingsWithTelescope,
-		"View all mappings",
+whichkey.add({
+	{
+		"<localleader><localleader>",
+		function()
+			require("which-key").show({ global = false })
+		end,
+		desc = "View all mappings",
 	},
-	m = {
-		p = { MarkdownPreview, "Preview Markdown in Lynx" },
-		d = { RemoveCarriageReturn, "Delete carriage returns from file" },
-	},
-	["j"] = {
-		FormatJson,
-		"Auto-format JSON",
-	},
-}, { prefix = vim.api.nvim_get_var("maplocalleader") })
-whichkey.register({
-	g = {
+	{ "<localleader>mp", MarkdownPreview, desc = "Preview Markdown in Lynx" },
+	{ "<localleader>md", RemoveCarriageReturn, desc = "Delete carriage returns from file" },
+	{ "<localleader>j", FormatJson, desc = "Auto-format JSON" },
+})
+whichkey.add({
+	{
+		"<leader>g",
 		function()
 			require("telescope.builtin").grep_string()
 		end,
-		"Find instances of text under cursor",
+		desc = "Find instances of text under cursor",
 	},
-	h = {
-		name = "Find historical...",
-		f = {
-			function()
-				require("telescope.builtin").oldfiles()
-			end,
-			"List previously open files",
-		},
-		c = {
-			function()
-				require("telescope.builtin").command_history()
-			end,
-			"List previously run commands",
-		},
-		s = {
-			function()
-				require("telescope.builtin").search_history()
-			end,
-			"List previously run searches",
-		},
+	{ "<leader>h", desc = "Find historical..." },
+	{
+		"<leader>hf",
+		function()
+			require("telescope.builtin").oldfiles()
+		end,
+		desc = "List previously open files",
 	},
-	m = {
+	{
+		"<leader>hc",
+		function()
+			require("telescope.builtin").command_history()
+		end,
+		desc = "List previously run commands",
+	},
+	{
+		"<leader>hs",
+		function()
+			require("telescope.builtin").search_history()
+		end,
+		desc = "List previously run searches",
+	},
+	{
+		"<leader>m",
 		function()
 			require("telescope.builtin").marks()
 		end,
-		"List marks",
+		desc = "List marks",
 	},
-	["cd"] = {
-		ChangeToCurrentDirectory,
-		"Switch CWD to the directory of the open buffer",
-	},
-	["ss"] = {
-		ToggleSpell,
-		"Toggle spell-checker on or off",
-	},
-	[vim.api.nvim_get_var("mapleader")] = {
+	{ "<leader>cd", ChangeToCurrentDirectory, desc = "Switch CWD to the directory of the open buffer" },
+	{ "<leader>ss", ToggleSpell, desc = "Toggle spell-checker on or off" },
+	{
+		"<leader><leader>",
 		function()
 			require("telescope.builtin").find_files()
 		end,
-		"Find files by name",
+		desc = "Find files by name",
 	},
-}, { prefix = vim.api.nvim_get_var("mapleader") })
+})
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	pattern = { "Directory.Build.props", "*.fsproj", "*.csproj" },

@@ -73,7 +73,7 @@ function RegisterSolution(sln_path)
 	end
 
 	local whichkey = require("which-key")
-	whichkey.register({
+	whichkey.add({
 		s = {
 			name = ".NET solution",
 			b = { BuildDotNetSolution, "Build .NET solution" },
