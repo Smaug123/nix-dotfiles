@@ -31,8 +31,6 @@ require("which-key").setup({
 	},
 	show_help = true, -- show a help message in the command line for using WhichKey
 	show_keys = true, -- show the currently pressed key and its label as a message in the command line
-	triggers = "auto", -- automatically setup triggers
-	-- triggers = {"<leader>"} -- or specifiy a list manually
 	-- disable the WhichKey popup for certain buf types and file types.
 	-- Disabled by default for Telescope
 	disable = {

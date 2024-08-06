@@ -130,6 +130,12 @@
     enable = true;
     plugins = [
       {
+        plugin = nixpkgs.vimPlugins.nvim-web-devicons;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.mini-nvim;
+      }
+      {
         plugin = nixpkgs.vimPlugins.nvim-lightbulb;
         type = "lua";
         config = builtins.readFile ./nvim/nvim-lightbulb.lua;

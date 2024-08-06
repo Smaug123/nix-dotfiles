@@ -223,7 +223,13 @@ function ToggleSpell()
 end
 
 whichkey.add({
-	{ "<localleader><localleader>", function() require("which-key").show({ global = false }) end, desc = "View all mappings" },
+	{
+		"<localleader><localleader>",
+		function()
+			require("which-key").show({ global = false })
+		end,
+		desc = "View all mappings",
+	},
 	{ "<localleader>mp", MarkdownPreview, desc = "Preview Markdown in Lynx" },
 	{ "<localleader>md", RemoveCarriageReturn, desc = "Delete carriage returns from file" },
 	{ "<localleader>j", FormatJson, desc = "Auto-format JSON" },
