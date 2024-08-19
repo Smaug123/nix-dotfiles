@@ -136,6 +136,9 @@
         plugin = nixpkgs.vimPlugins.mini-nvim;
       }
       {
+        plugin = nixpkgs.vimPlugins.satellite-nvim;
+      }
+      {
         plugin = nixpkgs.vimPlugins.nvim-lightbulb;
         type = "lua";
         config = builtins.readFile ./nvim/nvim-lightbulb.lua;
@@ -300,6 +303,8 @@
     nixpkgs.gnupg
     nixpkgs.gh
     nixpkgs.clang-tools
+    nixpkgs.deno
+    nixpkgs.yazi
   ];
 
   home.file.".ideavimrc".source = ./ideavimrc;

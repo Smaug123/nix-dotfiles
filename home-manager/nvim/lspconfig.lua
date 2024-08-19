@@ -43,6 +43,7 @@ require("lspconfig")["jsonls"].setup({
 	},
 })
 
+require("lspconfig")["denols"].setup({})
 require("lspconfig")["bashls"].setup({})
 require("lspconfig")["dockerls"].setup({})
 require("lspconfig")["html"].setup({

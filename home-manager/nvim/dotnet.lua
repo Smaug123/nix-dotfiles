@@ -74,12 +74,13 @@ function RegisterSolution(sln_path)
 
 	local whichkey = require("which-key")
 	whichkey.add({
-		s = {
-			name = ".NET solution",
-			b = { BuildDotNetSolution, "Build .NET solution" },
-			t = { TestDotNetSolution, "Test .NET solution" },
+		{
+			"<localleader>s",
+			desc = ".NET solution",
 		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+		{ "<localleader>sb", BuildDotNetSolution, desc = "Build .NET solution" },
+		{ "<localleader>st", TestDotNetSolution, desc = "Test .NET solution" },
+	}, { buffer = vim.api.nvim_get_current_buf() })
 end
 
 local function find_nearest_slns()
@@ -153,7 +154,7 @@ vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "fsharp", "cs" },
+	pattern = { "fsharp", "cs", "fsharp_project" },
 	callback = function()
 		FindAndRegisterSolution(false)
 	end,
@@ -274,6 +275,7 @@ end
 local function curl(url, callback)
 	local stdout = vim.uv.new_pipe(false)
 	local stdout_text = ""
+	local handle
 	handle, _ = vim.uv.spawn(
 		"_CURL_",
 		{ args = { "--silent", "--compressed", "--fail", url }, stdio = { nil, stdout, nil } },
@@ -326,6 +328,7 @@ local function populate_nuget_api(callback)
 					print(k .. ": " .. tostring(v))
 				end
 				callback()
+				return
 			end
 
 			local resourceSuccess, regUrl = find(resources, function(o)
@@ -629,7 +632,7 @@ local function prefetch_dependencies()
 end
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "fsharp_project", "csharp_project" },
+	pattern = { "fsharp_project", "csharp_project", "xml" },
 	callback = function()
 		function UpdateNuGetVersion()
 			local line = vim.api.nvim_get_current_line()
@@ -709,12 +712,10 @@ vim.api.nvim_create_autocmd("FileType", {
 				:find()
 		end
 		local whichkey = require("which-key")
-		whichkey.register({
-			n = {
-				name = "NuGet",
-				u = { UpdateNuGetVersion, "Upgrade NuGet versions" },
-			},
-		}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+		whichkey.add({
+			{ "<localleader>n", desc = "NuGet" },
+			{ "<localleader>nu", UpdateNuGetVersion, desc = "Upgrade NuGet versions" },
+		}, { buffer = vim.api.nvim_get_current_buf() })
 
 		vim.schedule(prefetch_dependencies)
 	end,
