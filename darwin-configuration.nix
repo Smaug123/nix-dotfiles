@@ -67,6 +67,26 @@ in {
         RunAtLoad = true;
       };
     };
+
+    sync-nixpkgs = {
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/nixpkgs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/nixpkgs/.git fetch origin ; fi"'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 36000;
+        RunAtLoad = true;
+      };
+    };
+
+    sync-dotnet-api-docs = {
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-api-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-api-docs/.git fetch origin ; fi"'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 36000;
+        RunAtLoad = true;
+      };
+    };
   };
 
   # Auto upgrade nix package and the daemon service.
