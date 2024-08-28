@@ -279,7 +279,6 @@
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
-    nixpkgs.jitsi-meet
     nixpkgs.elan
     nixpkgs.coreutils-prefixed
     nixpkgs.shellcheck
