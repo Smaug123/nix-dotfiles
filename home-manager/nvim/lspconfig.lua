@@ -53,6 +53,9 @@ require("lspconfig")["ltex"].setup({})
 
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
+		if not client.workspace_folders then
+			return
+		end
 		local path = client.workspace_folders[1].name
 		if vim.uv.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
 			return

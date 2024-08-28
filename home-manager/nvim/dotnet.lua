@@ -218,11 +218,38 @@ local function nuGetVersionToString(v)
 	end
 end
 
+local function get_all_variables()
+	local variables = {}
+	local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+	for _, line in ipairs(lines) do
+		local var_name, var_value = line:match("<(%w+)>([^<]+)</(%w+)>")
+		if var_name and var_value then
+			variables[var_name] = var_value
+		end
+	end
+	return variables
+end
+
+local function resolve_variable(version, variables)
+	if version:match("^%$%((.+)%)$") then
+		local var_name = version:match("^%$%((.+)%)$")
+		return variables[var_name] or nil
+	end
+	return nil
+end
+
 ---@param v string
 ---@nodiscard
 ---@return NuGetVersion
 local function parse_version(v)
+	local variables = get_all_variables()
 	local major, minor, patch, pre = v:match("(%d+)%.(%d+)%.(%d+)(.*)$")
+	if major == nil then
+		local resolved = resolve_variable(v, variables)
+		if resolved ~= nil then
+			return parse_version(resolved)
+		end
+	end
 	-- TODO: why does this type-check if you remove the field names?
 	return {
 		major = tonumber(major) or 0,
@@ -631,6 +658,14 @@ local function prefetch_dependencies()
 	end
 end
 
+---@param v1 NuGetVersion
+---@param v2 NuGetVersion
+---@return boolean
+---@nodiscard
+local function nuget_versions_equal(v1, v2)
+	return v1.major == v2.major and v1.minor == v2.minor and v1.patch == v2.patch and v1.suffix == v2.suffix
+end
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "fsharp_project", "csharp_project", "xml" },
 	callback = function()
@@ -638,11 +673,15 @@ vim.api.nvim_create_autocmd("FileType", {
 			local line = vim.api.nvim_get_current_line()
 			local package_name = line:match('PackageReference Include="([^"]+)"')
 				or line:match('PackageReference Update="([^"]+)"')
-			local current_version = nuGetVersionToString(line:match('Version="([^"]+)"'))
 
 			if not package_name then
 				print("No package reference found on the current line")
 				return
+			end
+
+			local current_version = parse_version(line:match('Version="([^"]+)"'))
+			if not current_version then
+				print("oh no!")
 			end
 
 			local package_versions = get_package_versions_sync(package_name)
@@ -664,7 +703,7 @@ vim.api.nvim_create_autocmd("FileType", {
 						entry_maker = function(entry)
 							local val = nuGetVersionToString(entry)
 							local display_value = val
-							if current_version and entry == current_version then
+							if current_version and nuget_versions_equal(entry, current_version) then
 								display_value = "[CURRENT] " .. val
 							end
 							return {
@@ -696,7 +735,11 @@ vim.api.nvim_create_autocmd("FileType", {
 								for dep, range in pairs(package_dependencies) do
 									table.insert(display, dep .. ": " .. range)
 								end
-								vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, display)
+								local ok, err = pcall(vim.api.nvim_buf_set_lines, bufnr, 0, -1, false, display)
+								if not ok then
+									-- If we can't set lines, the window's probably gone. Ignore.
+									return
+								end
 							end)
 						end,
 					}),
