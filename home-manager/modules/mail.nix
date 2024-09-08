@@ -149,7 +149,10 @@ in {
       port = 1025; # 8126; if using hydroxide
       tls = {enable = false;};
     };
-    userName = address;
+    userName =
+      if pkgs.stdenv.isLinux
+      then builtins.head (pkgs.lib.strings.splitString "@" address)
+      else address;
   };
 
   programs.mbsync = {

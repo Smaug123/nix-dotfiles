@@ -1,5 +1,6 @@
 {
   nixpkgs,
+  machinename,
   username,
   mbsync,
   dotnet,
@@ -58,7 +59,12 @@
     extraConfig = {
       commit.gpgsign = true;
       gpg.program = "${nixpkgs.gnupg}/bin/gpg";
-      user.signingkey = "7C97D679CF3BC4F9";
+      user.signingkey =
+        if machinename == "darwin" || machinename == "earthworm"
+        then "7C97D679CF3BC4F9"
+        else if machinename == "capybara"
+        then "AE90453E879DBCFA"
+        else throw "unrecognised machine name!";
       core = {
         autocrlf = "input";
       };
@@ -254,57 +260,63 @@
     extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + (builtins.replaceStrings ["_CURL_"] ["${nixpkgs.curl}/bin/curl"] (builtins.readFile ./nvim/dotnet.lua)) + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
   };
 
-  home.packages = [
-    nixpkgs.jq
-    nixpkgs.difftastic
-    nixpkgs.syncthing
-    nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
-    nixpkgs.nodePackages_latest.bash-language-server
-    nixpkgs.nodePackages_latest.vscode-json-languageserver
-    nixpkgs.nodePackages_latest.vscode-langservers-extracted
-    nixpkgs.hadolint
-    nixpkgs.ltex-ls
-    nixpkgs.yaml-language-server
-    nixpkgs.csharp-ls
-    nixpkgs.netcoredbg
-    nixpkgs.nil
-    nixpkgs.fsautocomplete
-    nixpkgs.keepassxc
-    nixpkgs.wget
-    nixpkgs.yt-dlp
-    nixpkgs.cmake
-    nixpkgs.gnumake
-    nixpkgs.gcc
-    nixpkgs.lldb
-    nixpkgs.hledger
-    nixpkgs.hledger-web
-    dotnet
-    nixpkgs.elan
-    nixpkgs.coreutils-prefixed
-    nixpkgs.shellcheck
-    nixpkgs.universal-ctags
-    nixpkgs.asciinema
-    nixpkgs.git-lfs
-    nixpkgs.imagemagick
-    nixpkgs.nixpkgs-fmt
-    nixpkgs.lnav
-    nixpkgs.age
-    nixpkgs.nodejs
-    nixpkgs.pyright
-    nixpkgs.woodpecker-agent
-    nixpkgs.lynx
-    nixpkgs.alejandra
-    nixpkgs.ffmpeg
-    nixpkgs.bat
-    nixpkgs.pandoc
-    nixpkgs.fd
-    nixpkgs.sumneko-lua-language-server
-    nixpkgs.gnupg
-    nixpkgs.gh
-    nixpkgs.clang-tools
-    nixpkgs.deno
-    nixpkgs.yazi
-  ];
+  home.packages =
+    [
+      nixpkgs.jq
+      nixpkgs.difftastic
+      nixpkgs.syncthing
+      nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
+      nixpkgs.nodePackages_latest.bash-language-server
+      nixpkgs.nodePackages_latest.vscode-json-languageserver
+      nixpkgs.nodePackages_latest.vscode-langservers-extracted
+      nixpkgs.hadolint
+      nixpkgs.ltex-ls
+      nixpkgs.yaml-language-server
+      nixpkgs.csharp-ls
+      nixpkgs.netcoredbg
+      nixpkgs.nil
+      nixpkgs.fsautocomplete
+      nixpkgs.keepassxc
+      nixpkgs.wget
+      nixpkgs.yt-dlp
+      nixpkgs.cmake
+      nixpkgs.gnumake
+      nixpkgs.gcc
+      nixpkgs.lldb
+      nixpkgs.hledger
+      nixpkgs.hledger-web
+      dotnet
+      nixpkgs.elan
+      nixpkgs.coreutils-prefixed
+      nixpkgs.shellcheck
+      nixpkgs.universal-ctags
+      nixpkgs.asciinema
+      nixpkgs.git-lfs
+      nixpkgs.imagemagick
+      nixpkgs.nixpkgs-fmt
+      nixpkgs.lnav
+      nixpkgs.age
+      nixpkgs.nodejs
+      nixpkgs.pyright
+      nixpkgs.woodpecker-agent
+      nixpkgs.lynx
+      nixpkgs.alejandra
+      nixpkgs.ffmpeg
+      nixpkgs.bat
+      nixpkgs.pandoc
+      nixpkgs.fd
+      nixpkgs.sumneko-lua-language-server
+      nixpkgs.gnupg
+      nixpkgs.gh
+      nixpkgs.clang-tools
+      nixpkgs.deno
+      nixpkgs.yazi
+    ]
+    ++ (
+      if nixpkgs.stdenv.isLinux
+      then [nixpkgs.protonmail-bridge nixpkgs.pinentry]
+      else []
+    );
 
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
