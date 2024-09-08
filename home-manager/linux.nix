@@ -17,7 +17,7 @@
 
   services.gpg-agent = {
     enable = nixpkgs.stdenv.isLinux;
-    # pinentryPackage = nixpkgs.pinentry-qt;
+    pinentryPackage = nixpkgs.pinentry-qt;
   };
 
   services.swayidle = {enable = true;};
