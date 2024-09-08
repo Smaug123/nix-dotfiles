@@ -10,14 +10,12 @@
       terminal = "alacritty";
       window = {border = 5;};
     };
-    extraConfig = ''
-      output Unknown-1 scale 2
-    '';
+    extraConfig = builtins.readFile ./sway.conf;
   };
 
   services.gpg-agent = {
     enable = nixpkgs.stdenv.isLinux;
-    pinentryPackage = nixpkgs.pinentry-qt;
+    pinentryPackage = nixpkgs.pinentry-curses;
   };
 
   services.swayidle = {enable = true;};
