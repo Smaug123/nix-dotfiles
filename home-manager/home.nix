@@ -314,7 +314,7 @@
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
-      then [nixpkgs.protonmail-bridge nixpkgs.pinentry]
+      then [nixpkgs.protonmail-bridge nixpkgs.pinentry nixpkgs.jetbrains-rider]
       else []
     );
 
