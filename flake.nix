@@ -24,14 +24,9 @@
     whisper = {
       url = "github:Smaug123/whisper.cpp/nix";
     };
-    neovim-nightly = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
-    neovim-nightly,
     darwin,
     emacs,
     nixpkgs,
@@ -46,7 +41,7 @@
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay neovim-nightly.overlay];
+    overlays = [emacs.overlay];
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:
@@ -73,6 +68,8 @@
               nixpkgs = pkgs;
               username = "patrick";
               dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
+              secretsPath = "/home/patrick/.secrets/";
             };
           in [
             ./home-manager/capybara-config.nix
@@ -96,6 +93,8 @@
               nixpkgs = pkgs;
               username = "patrick";
               dotnet = pkgs.dotnet-sdk_8;
+              mbsync = import ./mbsync.nix {inherit pkgs;};
+              secretsPath = "/home/patrick/.secrets/";
             };
           in [
             ./home-manager/earthworm-config.nix
@@ -123,6 +122,8 @@
             username = "patrick";
             dotnet = pkgs.dotnet-sdk_8;
             whisper = whisper.packages.${system};
+            mbsync = import ./mbsync.nix {inherit pkgs;};
+            secretsPath = "/Users/patrick/.secrets/";
           };
         in [
           ./darwin-configuration.nix

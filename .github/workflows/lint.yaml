@@ -13,14 +13,16 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v4"
       - name: "Install Nix"
-        uses: "cachix/install-nix-action@v26"
+        uses: "cachix/install-nix-action@V27"
         with: { "extra_nix_config": "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" }
       - name: "Check flake"
         run: "nix flake check --all-systems"
 
   all-required-checks-complete:
+    if:  ${{ always() }}
     runs-on: "ubuntu-latest"
     steps:
-      - run: "echo \"All required checks complete.\""
-    needs:
-      - "flake-check"
+      - uses: Smaug123/all-required-checks-complete-action@05b40a8c47ef0b175ea326e9abb09802cb67b44e
+        with:
+          needs-context: ${{ toJSON(needs) }}
+    needs: [ "flake-check" ]

@@ -1,7 +1,9 @@
 {
   nixpkgs,
   username,
+  mbsync,
   dotnet,
+  secretsPath,
   ...
 }: {
   # Let Home Manager install and manage itself.
@@ -23,60 +25,40 @@
 
   fonts.fontconfig.enable = true;
 
-  programs.tmux = {
-    shell = "${nixpkgs.zsh}/bin/zsh";
-    escapeTime = 50;
-    mouse = false;
-    prefix = "C-b";
-    enable = true;
-    terminal = "screen-256color";
-    extraConfig = ''
-      set-option -sa terminal-features ',xterm-256color:RGB'
-    '';
-  };
-
-  programs.zsh = {
-    enable = true;
-    autocd = true;
-    autosuggestion.enable = true;
-    enableCompletion = true;
-    history = {
-      expireDuplicatesFirst = true;
-    };
-    sessionVariables = {
-      EDITOR = "vim";
-      LC_ALL = "en_US.UTF-8";
-      LC_CTYPE = "en_US.UTF-8";
-      RUSTFLAGS = "-L ${nixpkgs.libiconv}/lib -L ${nixpkgs.libcxx}/lib";
-      RUST_BACKTRACE = "full";
-    };
-    shellAliases = {
-      vim = "nvim";
-      view = "vim -R";
-      grep = "${nixpkgs.ripgrep}/bin/rg";
-    };
-    sessionVariables = {
-      RIPGREP_CONFIG_PATH = "/Users/${username}/.config/ripgrep/config";
-    };
-    initExtra = builtins.readFile ./.zshrc;
-  };
+  imports = [
+    # ./modules/agda.nix
+    # ./modules/emacs.nix
+    ./modules/direnv.nix
+    ./modules/tmux.nix
+    ./modules/zsh.nix
+    ./modules/ripgrep.nix
+    ./modules/alacritty.nix
+    ./modules/rust.nix
+    (import ./modules/mail.nix
+      {
+        inherit mbsync secretsPath;
+        pkgs = nixpkgs;
+      })
+  ];
 
   programs.fzf = {
     enable = true;
-    enableZshIntegration = true;
   };
 
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     userName = "Smaug123";
-    userEmail = "patrick+github@patrickstevens.co.uk";
+    userEmail = "3138005+Smaug123@users.noreply.github.com";
     aliases = {
       co = "checkout";
       st = "status";
     };
-    delta = {enable = true;};
+    difftastic.enable = true;
     extraConfig = {
+      commit.gpgsign = true;
+      gpg.program = "${nixpkgs.gnupg}/bin/gpg";
+      user.signingkey = "7C97D679CF3BC4F9";
       core = {
         autocrlf = "input";
       };
@@ -138,34 +120,24 @@
     };
   };
 
+  services.syncthing = {
+    enable = true;
+  };
+
   programs.neovim = let
-    pynvimpp = nixpkgs.python3.pkgs.buildPythonPackage {
-      pname = "pynvim-pp";
-      version = "unstable-2024-03-24";
-      pyproject = true;
-
-      src = nixpkgs.fetchFromGitHub {
-        owner = "ms-jpq";
-        repo = "pynvim_pp";
-        rev = "34e3a027c595981886d7efd1c91071f3eaa4715d";
-        hash = "sha256-2+jDRJXlg9q4MN9vOhmeq4cWVJ0wp5r5xAh3G8lqgOg=";
-      };
-
-      nativeBuildInputs = [nixpkgs.python3.pkgs.setuptools];
-
-      propagatedBuildInputs = [nixpkgs.python3.pkgs.pynvim];
-    };
-  in let
-    pythonEnv = nixpkgs.python3.withPackages (ps: [
-      ps.pynvim
-      pynvimpp
-      ps.pyyaml
-      ps.std2
-    ]);
     debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
   in {
     enable = true;
     plugins = [
+      {
+        plugin = nixpkgs.vimPlugins.nvim-web-devicons;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.mini-nvim;
+      }
+      {
+        plugin = nixpkgs.vimPlugins.satellite-nvim;
+      }
       {
         plugin = nixpkgs.vimPlugins.nvim-lightbulb;
         type = "lua";
@@ -271,30 +243,21 @@
     vimAlias = true;
     vimdiffAlias = true;
     withPython3 = true;
+    extraPython3Packages = ps: [
+      ps.pynvim
+      ps.pynvim-pp
+      ps.pyyaml
+      ps.std2
+    ];
+    withRuby = true;
 
-    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + builtins.readFile ./nvim/dotnet.lua + "\n" + builtins.replaceStrings ["%PYTHONENV%"] ["${pythonEnv}"] (builtins.readFile ./nvim/init.lua) + "\n" + builtins.readFile ./nvim/python.lua;
-
-    package = nixpkgs.neovim-nightly;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = true;
-    nix-direnv.enable = true;
-  };
-
-  programs.alacritty = {
-    enable = true;
-    settings = {
-      font = {
-        normal = {
-          family = "FiraCode Nerd Font Mono";
-        };
-      };
-    };
+    extraLuaConfig = builtins.readFile ./nvim/build-utils.lua + "\n" + (builtins.replaceStrings ["_CURL_"] ["${nixpkgs.curl}/bin/curl"] (builtins.readFile ./nvim/dotnet.lua)) + "\n" + builtins.readFile ./nvim/init.lua + "\n" + builtins.readFile ./nvim/python.lua;
   };
 
   home.packages = [
+    nixpkgs.jq
+    nixpkgs.difftastic
+    nixpkgs.syncthing
     nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
     nixpkgs.nodePackages_latest.bash-language-server
     nixpkgs.nodePackages_latest.vscode-json-languageserver
@@ -307,8 +270,6 @@
     nixpkgs.nil
     nixpkgs.fsautocomplete
     nixpkgs.keepassxc
-    nixpkgs.rust-analyzer
-    nixpkgs.tmux
     nixpkgs.wget
     nixpkgs.yt-dlp
     nixpkgs.cmake
@@ -318,33 +279,19 @@
     nixpkgs.hledger
     nixpkgs.hledger-web
     dotnet
-    nixpkgs.jitsi-meet
-    nixpkgs.ripgrep
     nixpkgs.elan
     nixpkgs.coreutils-prefixed
     nixpkgs.shellcheck
-    nixpkgs.html-tidy
-    nixpkgs.hugo
-    nixpkgs.agda
-    nixpkgs.pijul
     nixpkgs.universal-ctags
     nixpkgs.asciinema
     nixpkgs.git-lfs
     nixpkgs.imagemagick
     nixpkgs.nixpkgs-fmt
-    nixpkgs.grpc-tools
-    nixpkgs.element-desktop
-    nixpkgs.ihp-new
-    nixpkgs.direnv
     nixpkgs.lnav
     nixpkgs.age
     nixpkgs.nodejs
-    nixpkgs.nodePackages.pyright
-    nixpkgs.sqlitebrowser
-    nixpkgs.typst
-    nixpkgs.poetry
+    nixpkgs.pyright
     nixpkgs.woodpecker-agent
-    nixpkgs.alacritty
     nixpkgs.lynx
     nixpkgs.alejandra
     nixpkgs.ffmpeg
@@ -352,28 +299,13 @@
     nixpkgs.pandoc
     nixpkgs.fd
     nixpkgs.sumneko-lua-language-server
-    (nixpkgs.nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
+    nixpkgs.gnupg
+    nixpkgs.gh
+    nixpkgs.clang-tools
+    nixpkgs.deno
+    nixpkgs.yazi
   ];
 
-  home.file.".mailcap".source = ./mailcap;
   home.file.".ideavimrc".source = ./ideavimrc;
   home.file.".config/yt-dlp/config".source = ./youtube-dl.conf;
-  home.file.".config/ripgrep/config".source = ./ripgrep.conf;
-
-  programs.emacs = {
-    enable = true;
-    package = nixpkgs.emacs;
-    extraPackages = epkgs: [epkgs.evil];
-    extraConfig = ''
-      (load-file (let ((coding-system-for-read 'utf-8))
-                 (shell-command-to-string "agda-mode locate")))
-      (require 'evil)
-      (evil-mode 1)
-      (evil-set-undo-system 'undo-redo)
-      ;; Allow hash to be entered
-      (global set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
-    '';
-  };
-
-  home.file.".cargo/config.toml".source = ./cargo-config.toml;
 }

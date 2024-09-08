@@ -13,6 +13,8 @@ local schemas = {
 	["https://json.schemastore.org/dotnet-tools.json"] = "dotnet-tools.json",
 }
 
+require("lspconfig")["clangd"].setup({})
+
 require("lspconfig")["yamlls"].setup({
 	settings = {
 		yaml = {
@@ -41,6 +43,7 @@ require("lspconfig")["jsonls"].setup({
 	},
 })
 
+require("lspconfig")["denols"].setup({})
 require("lspconfig")["bashls"].setup({})
 require("lspconfig")["dockerls"].setup({})
 require("lspconfig")["html"].setup({
@@ -50,6 +53,9 @@ require("lspconfig")["ltex"].setup({})
 
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
+		if not client.workspace_folders then
+			return
+		end
 		local path = client.workspace_folders[1].name
 		if vim.uv.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
 			return
@@ -116,15 +122,13 @@ end
 do
 	local whichkey_status, whichkey = pcall(require, "which-key")
 	if whichkey_status then
-		whichkey.register({
-			l = {
-				name = "loclist-related commands",
-				p = { vim.diagnostic.goto_prev, "Go to previous entry in loclist" },
-				n = { vim.diagnostic.goto_next, "Go to next entry in loclist" },
-				l = { ToggleLocList, "Toggle loclist" },
-				f = { vim.diagnostic.open_float, "Open current loclist entry in floating window" },
-			},
-		}, { prefix = vim.api.nvim_get_var("mapleader") })
+		whichkey.add({
+			{ "<leader>l", desc = "loclist-related commands" },
+			{ "<leader>lp", vim.diagnostic.goto_prev, desc = "Go to previous entry in loclist" },
+			{ "<leader>ln", vim.diagnostic.goto_next, desc = "Go to next entry in loclist" },
+			{ "<leader>ll", ToggleLocList, desc = "Toggle loclist" },
+			{ "<leader>lf", vim.diagnostic.open_float, desc = "Open current loclist entry in floating window" },
+		})
 	else
 		vim.keymap.set("n", "<leader>lp", vim.diagnostic.goto_prev)
 		vim.keymap.set("n", "<leader>ln", vim.diagnostic.goto_next)
@@ -144,48 +148,44 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		-- Buffer local mappings.
 		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		whichkey.register({
-			g = {
-				name = "Go-to related commands",
-				D = { vim.lsp.buf.declaration, "Go to declaration" },
-				d = { vim.lsp.buf.definition, "Go to definition" },
-				i = { vim.lsp.buf.implementation, "Go to implementation" },
-				r = {
-					function()
-						require("telescope.builtin").lsp_references()
-					end,
-					"Find references",
-				},
+		whichkey.add({
+			{ "g", desc = "Go-to related commands" },
+			{ "gD", vim.lsp.buf.declaration, desc = "Go to declaration" },
+			{ "gd", vim.lsp.buf.definition, desc = "Go to definition" },
+			{ "gi", vim.lsp.buf.implementation, desc = "Go to implementation" },
+			{
+				"gr",
+				function()
+					require("telescope.builtin").lsp_references()
+				end,
+				desc = "Find references",
 			},
-			K = { vim.lsp.buf.hover, "Display information about symbol under cursor" },
+			{ "gK", vim.lsp.buf.hover, desc = "Display information about symbol under cursor" },
 		})
-		whichkey.register({
-			["<C-k>"] = { vim.lsp.buf.signature_help, "Display signature information about symbol under cursor" },
+		whichkey.add({
+			{ "<C-k>", vim.lsp.buf.signature_help, desc = "Display signature information about symbol under cursor" },
 		})
-		whichkey.register({
-			w = {
-				a = { vim.lsp.buf.add_workspace_folder, "Add a path to the workspace folders list" },
-				r = { vim.lsp.buf.add_workspace_folder, "Remove a path from the workspace folders list" },
-				l = {
-					function()
-						print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-					end,
-					"Show the workspace folders list",
-				},
+		whichkey.add({
+			{ "<leader>w", desc = "Workspace-related commands" },
+			{ "<leader>wa", vim.lsp.buf.add_workspace_folder, desc = "Add a path to the workspace folders list" },
+			{ "<leader>wr", vim.lsp.buf.add_workspace_folder, desc = "Remove a path from the workspace folders list" },
+			{
+				"<leader>wl",
+				function()
+					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+				end,
+				desc = "Show the workspace folders list",
 			},
-			f = {
+			{
+				"<leader>f",
 				function()
 					vim.lsp.buf.format({ async = true })
 				end,
-				"Autoformat",
+				desc = "Autoformat",
 			},
-			c = {
-				a = { vim.lsp.buf.code_action, "Select a code action" },
-			},
-			r = {
-				n = { vim.lsp.buf.rename, "Rename variable" },
-			},
-			D = { vim.lsp.buf.type_definition, "Go to type definition" },
-		}, { prefix = vim.api.nvim_get_var("mapleader") })
+			{ "<leader>ca", vim.lsp.buf.code_action, desc = "Select a code action" },
+			{ "<leader>rn", vim.lsp.buf.rename, desc = "Rename variable" },
+			{ "<leader>D", vim.lsp.buf.type_definition, desc = "Go to type definition" },
+		})
 	end,
 })
