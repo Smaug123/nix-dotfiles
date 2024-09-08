@@ -69,10 +69,4 @@
     enable = true;
     remotePlay.openFirewall = true;
   };
-
-  rider = {
-    enable = true;
-    username = username;
-    dotnet = dotnet;
-  };
 }
