@@ -14,7 +14,9 @@
     enable = true;
   };
 
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver = {
+    videoDrivers = ["nouveau"];
+  };
 
   hardware.nvidia = {
     modesetting.enable = true;
@@ -66,6 +68,7 @@
   ];
 
   environment.loginShellInit = ''
+    export WLR_RENDERER=vulkan
     [[ "$(tty)" == /dev/tty1 ]] && sway --unsupported-gpu
   '';
 
