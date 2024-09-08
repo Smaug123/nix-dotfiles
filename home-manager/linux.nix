@@ -1,5 +1,5 @@
 {nixpkgs, ...}: {
-  home.packages = [nixpkgs.firefox-wayland];
+  home.packages = [nixpkgs.firefox-wayland nixpkgs.jetbrains.rider];
   nixpkgs.config.firefox.speechSynthesisSupport = true;
 
   wayland.windowManager.sway = {
