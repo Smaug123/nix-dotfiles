@@ -66,6 +66,7 @@
   ];
 
   environment.loginShellInit = ''
+    export WLR_RENDERER=vulkan
     [[ "$(tty)" == /dev/tty1 ]] && sway --unsupported-gpu
   '';
 
