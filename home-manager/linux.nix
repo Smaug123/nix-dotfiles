@@ -15,6 +15,11 @@
     '';
   };
 
+  services.gpg-agent = {
+    enable = nixpkgs.stdenv.isLinux;
+    # pinentryPackage = nixpkgs.pinentry-qt;
+  };
+
   services.swayidle = {enable = true;};
   services.cbatticon = {
     lowLevelPercent = 20;

@@ -46,11 +46,6 @@
     enable = true;
   };
 
-  programs.gpg-agent = {
-    enable = nixpkgs.stdenv.isLinux;
-    pinentryFlavor = "curses";
-  };
-
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
@@ -322,9 +317,15 @@
       then [
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
+        nixpkgs.signal-desktop
+      ]
+      else []
+    )
+    ++ (
+      if machinename == "capybara"
+      then [
         nixpkgs.steam-run
         nixpkgs.discord
-        nixpkgs.signal-desktop
       ]
       else []
     );
