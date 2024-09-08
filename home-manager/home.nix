@@ -326,6 +326,7 @@
       then [
         nixpkgs.steam-run
         nixpkgs.discord
+        nixpkgs.anki-bin
       ]
       else []
     );
