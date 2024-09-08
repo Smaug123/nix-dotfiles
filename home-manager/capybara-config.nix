@@ -10,7 +10,7 @@
     ../hardware/capybara.nix
   ];
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
   };
 
