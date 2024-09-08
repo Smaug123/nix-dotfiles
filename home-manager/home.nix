@@ -314,7 +314,20 @@
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
-      then [nixpkgs.protonmail-bridge nixpkgs.pinentry]
+      then [
+        nixpkgs.protonmail-bridge
+        nixpkgs.pinentry
+        nixpkgs.signal-desktop
+      ]
+      else []
+    )
+    ++ (
+      if machinename == "capybara"
+      then [
+        nixpkgs.steam-run
+        nixpkgs.discord
+        nixpkgs.anki-bin
+      ]
       else []
     );
 

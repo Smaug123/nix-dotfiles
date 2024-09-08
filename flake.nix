@@ -63,6 +63,10 @@
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = {
+            username = "patrick";
+            dotnet = pkgs.dotnet-sdk_8;
+          };
           modules = let
             args = {
               nixpkgs = pkgs;
