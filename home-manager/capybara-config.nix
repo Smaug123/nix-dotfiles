@@ -40,12 +40,12 @@
   };
 
   environment.systemPackages = [
+    pkgs.git
     pkgs.vim
     pkgs.wget
     pkgs.tmux
     pkgs.home-manager
     pkgs.firefox
-    pkgs.steam-run
   ];
 
   environment.loginShellInit = ''

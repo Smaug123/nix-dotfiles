@@ -2,6 +2,11 @@
   home.packages = [nixpkgs.firefox-wayland nixpkgs.jetbrains.rider];
   nixpkgs.config.firefox.speechSynthesisSupport = true;
 
+  programs.gpg-agent = {
+    enable = true;
+    pinentryFlavor = "curses";
+  };
+
   wayland.windowManager.sway = {
     enable = true;
     config = {

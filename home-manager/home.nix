@@ -314,7 +314,13 @@
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
-      then [nixpkgs.protonmail-bridge nixpkgs.pinentry]
+      then [
+        nixpkgs.protonmail-bridge
+        nixpkgs.pinentry
+        nixpkgs.steam-run
+        nixpkgs.discord
+        nixpkgs.signal-desktop
+      ]
       else []
     );
 
