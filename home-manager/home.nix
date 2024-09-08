@@ -46,6 +46,11 @@
     enable = true;
   };
 
+  programs.gpg-agent = {
+    enable = nixpkgs.stdenv.isLinux;
+    pinentryFlavor = "curses";
+  };
+
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
