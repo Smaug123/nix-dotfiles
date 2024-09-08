@@ -10,6 +10,23 @@
     ../hardware/capybara.nix
   ];
 
+  hardware.opengl = {
+    enable = true;
+  };
+
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+
+    # I don't have a Turing GPU
+    powerManagement.finegrained = false;
+
+    open = false;
+    nvidiaSettings = true;
+  };
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.useOSProber = true;
