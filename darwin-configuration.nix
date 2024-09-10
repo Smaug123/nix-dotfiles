@@ -53,7 +53,8 @@ in {
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
-        StartInterval = 60;
+        # Refresh token is 60min long, so do this more often than that!
+        StartInterval = 30;
         RunAtLoad = true;
       };
     };
