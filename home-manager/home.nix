@@ -271,7 +271,6 @@
       nixpkgs.nodePackages_latest.vscode-json-languageserver
       nixpkgs.nodePackages_latest.vscode-langservers-extracted
       nixpkgs.hadolint
-      nixpkgs.ltex-ls
       nixpkgs.yaml-language-server
       nixpkgs.csharp-ls
       nixpkgs.netcoredbg
