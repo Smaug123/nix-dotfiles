@@ -97,8 +97,9 @@ in {
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;
 
+  # Optimising store leads to transient build failures https://github.com/NixOS/nix/issues/7273
   nix.extraOptions = ''
-    auto-optimise-store = true
+    auto-optimise-store = false
     experimental-features = nix-command flakes
     extra-experimental-features = ca-derivations
     max-jobs = auto  # Allow building multiple derivations in parallel
