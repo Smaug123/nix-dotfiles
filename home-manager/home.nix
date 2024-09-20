@@ -250,6 +250,7 @@
     vimdiffAlias = true;
     withPython3 = true;
     extraPython3Packages = ps: [
+      ps.pip
       ps.pynvim
       ps.pynvim-pp
       ps.pyyaml
