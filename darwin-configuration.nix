@@ -98,6 +98,16 @@ in {
         RunAtLoad = true;
       };
     };
+
+    nix-store-optimise = {
+      command = ''${pkgs.nix}/bin/nix store optimise'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 72000;
+        RunAtLoad = true;
+      };
+    };
   };
 
   # Auto upgrade nix package and the daemon service.
