@@ -53,13 +53,14 @@ in {
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
-        StartInterval = 60;
+        # Refresh token is 60min long, so do this more often than that!
+        StartInterval = 30;
         RunAtLoad = true;
       };
     };
 
     backup-calendar = {
-      command = ''${pkgs.bash}/bin/bash -c "mkdir -p /Users/patrick/Backups && if [ ! -d /Users/patrick/Backups/radicale ] ; then ${pkgs.git}/bin/git clone root@patrickstevens.co.uk:/preserve/radicale/data/.git /Users/patrick/Backups/radicale >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${pkgs.git}/bin/git --git-dir /Users/patrick/Backups/radicale/.git pull 2>>/tmp/radicale.err.log"'';
+      command = ''${pkgs.bash}/bin/bash -c "mkdir -p '/Users/patrick/Library/Application Support/RadicaleBackups' && if [ ! -d '/Users/patrick/Library/Application Support/RadicaleBackups/.git' ] ; then ${pkgs.git}/bin/git clone root@patrickstevens.co.uk:/preserve/radicale/data/.git '/Users/patrick/Library/Application Support/RadicaleBackups' >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${pkgs.git}/bin/git --git-dir '/Users/patrick/Library/Application Support/RadicaleBackups/.git' --work-tree '/Users/patrick/Library/Application Support/RadicaleBackups/' pull 2>>/tmp/radicale.err.log"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -69,7 +70,7 @@ in {
     };
 
     sync-nixpkgs = {
-      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/nixpkgs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/nixpkgs/.git fetch origin ; fi"'';
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/nixpkgs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/nixpkgs/.git --work-tree '/Users/patrick/Documents/GitHub/nixpkgs/' fetch origin ; fi"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -79,7 +80,17 @@ in {
     };
 
     sync-dotnet-api-docs = {
-      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-api-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-api-docs/.git fetch origin ; fi"'';
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-api-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-api-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-api-docs' fetch origin ; fi"'';
+      serviceConfig = {
+        KeepAlive = false;
+        UserName = "patrick";
+        StartInterval = 36000;
+        RunAtLoad = true;
+      };
+    };
+
+    sync-dotnet-docs = {
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-docs' fetch origin ; fi"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";

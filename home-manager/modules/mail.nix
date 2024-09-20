@@ -75,7 +75,7 @@ in {
     # Run `./mail/mutt-oauth2.py /path/to/secret --authorize --verbose` once manually,
     # and that will populate /path/to/secret.
     # I've left it unencrypted here; the original uses GPG to store it encrypted at rest.
-    passwordCommand = ''${pkgs.python3}/bin/python ${./mail/mutt-oauth2.py} ${secretsPath}/gmail.txt'';
+    passwordCommand = ''${pkgs.python3}/bin/python ${./mail/mutt-oauth2.py} ${secretsPath}/gmail.txt 2>/tmp/gmail-passcmd.2.txt'';
     realName = "Patrick Stevens";
   };
 
