@@ -63,6 +63,10 @@
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = {
+            username = "patrick";
+            dotnet = pkgs.dotnet-sdk_8;
+          };
           modules = let
             args = {
               nixpkgs = pkgs;
@@ -70,6 +74,7 @@
               dotnet = pkgs.dotnet-sdk_8;
               mbsync = import ./mbsync.nix {inherit pkgs;};
               secretsPath = "/home/patrick/.secrets/";
+              machinename = "capybara";
             };
           in [
             ./home-manager/capybara-config.nix
@@ -95,6 +100,7 @@
               dotnet = pkgs.dotnet-sdk_8;
               mbsync = import ./mbsync.nix {inherit pkgs;};
               secretsPath = "/home/patrick/.secrets/";
+              machinename = "earthworm";
             };
           in [
             ./home-manager/earthworm-config.nix
@@ -124,6 +130,7 @@
             whisper = whisper.packages.${system};
             mbsync = import ./mbsync.nix {inherit pkgs;};
             secretsPath = "/Users/patrick/.secrets/";
+            machinename = "darwin";
           };
         in [
           ./darwin-configuration.nix

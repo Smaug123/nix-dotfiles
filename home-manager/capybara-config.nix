@@ -1,12 +1,31 @@
 {
   pkgs,
   config,
+  username,
+  dotnet,
   ...
 }: {
   nixpkgs.config.allowUnfree = true;
   imports = [
     ../hardware/capybara.nix
   ];
+
+  hardware.graphics = {
+    enable = true;
+  };
+
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+
+    # I don't have a Turing GPU
+    powerManagement.finegrained = false;
+
+    open = false;
+    nvidiaSettings = true;
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -38,16 +57,16 @@
   };
 
   environment.systemPackages = [
+    pkgs.git
     pkgs.vim
     pkgs.wget
     pkgs.tmux
     pkgs.home-manager
     pkgs.firefox
-    pkgs.steam-run
   ];
 
   environment.loginShellInit = ''
-    [[ "$(tty)" == /dev/tty1 ]] && sway
+    [[ "$(tty)" == /dev/tty1 ]] && sway --unsupported-gpu
   '';
 
   services.openssh.enable = true;

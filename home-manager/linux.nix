@@ -4,7 +4,7 @@
   dotnet,
   ...
 }: {
-  home.packages = [nixpkgs.firefox-wayland nixpkgs.wl-clipboard];
+  home.packages = [nixpkgs.firefox-wayland nixpkgs.wl-clipboard nixpkgs.jetbrains.rider];
   nixpkgs.config.firefox = {
     speechSynthesisSupport = true;
   };
@@ -20,6 +20,11 @@
     extraConfig = ''
       output Unknown-1 scale 2
     '';
+  };
+
+  services.gpg-agent = {
+    enable = nixpkgs.stdenv.isLinux;
+    pinentryPackage = nixpkgs.pinentry-qt;
   };
 
   services.swayidle = {enable = true;};

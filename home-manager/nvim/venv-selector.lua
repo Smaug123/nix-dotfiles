@@ -84,17 +84,16 @@ end
 
 do
 	local whichkey = require("which-key")
-	whichkey.register({
-		['pv'] = {
-				name = "Python virtual environment-related commands",
-				c = { CreateVenv, "Create virtual environment" },
-				l = { SelectVenv, "Load virtual environment" },
-				o = {
-					function()
-						vim.cmd("VenvSelect")
-					end,
-					"Choose (override) new virtual environment",
-				},
+	whichkey.add({
+		{ "<localleader>pv", desc = "Python virtual environment-related commands" },
+		{ "<localleader>pvc", CreateVenv, desc = "Create virtual environment" },
+		{ "<localleader>pvl", SelectVenv, desc = "Load virtual environment" },
+		{
+			"<localleader>pvo",
+			function()
+				vim.cmd("VenvSelect")
+			end,
+			desc = "Choose (override) new virtual environment",
 		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+	})
 end

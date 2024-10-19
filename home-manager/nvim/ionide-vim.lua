@@ -59,7 +59,7 @@ local function BuildFSharpProjects(projects)
 	end
 
 	if not projects then
-		projects = vim.fn['fsharp#getLoadedProjects']()
+		projects = vim.fn["fsharp#getLoadedProjects"]()
 	end
 	if projects then
 		local total_projects = 0
@@ -90,7 +90,7 @@ vim.api.nvim_create_user_command("BuildFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -156,7 +156,7 @@ vim.api.nvim_create_user_command("RunFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -185,7 +185,7 @@ vim.api.nvim_create_user_command("PublishFSharpProject", function(opts)
 			.new({}, {
 				prompt_title = "Projects",
 				finder = finders.new_table({
-					results = vim.fn['fsharp#getLoadedProjects'](),
+					results = vim.fn["fsharp#getLoadedProjects"](),
 				}),
 				sorter = conf.generic_sorter({}),
 				attach_mappings = function(prompt_buf, _)
@@ -206,28 +206,19 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		local status, whichkey = pcall(require, "which-key")
 		if status then
-			whichkey.register({
-				f = {
-					name = "F#",
-					t = { ":call fsharp#showTooltip()<CR>", "Show F# Tooltip" },
-					["si"] = { ":call fsharp#toggleFsi()<CR>", "Toggle FSI (F# Interactive)" },
-					["sl"] = { ":call fsharp#sendLineToFsi()<cr>", "Send line to FSI (F# Interactive)" },
-					r = {
-						name = "Run F# project",
-						d = { ":RunFSharpProject Debug", "Run F# project in debug configuration" },
-						r = { ":RunFSharpProject Release", "Run F# project in release configuration" },
-					},
-					p = {
-						":PublishFSharpProject",
-						"Publish F# project",
-					},
-					b = {
-						"Build F# project",
-						a = { BuildFSharpProjects, "Build all projects" },
-						s = { ":BuildFSharpProject", "Build specified project" },
-					},
-				},
-			}, { prefix = vim.api.nvim_get_var("maplocalleader"), buffer = vim.api.nvim_get_current_buf() })
+			whichkey.add({
+				{ "<localleader>f", desc = "F#" },
+				{ "<localleader>ft", ":call fsharp#showTooltip()<CR>", desc = "Show F# Tooltip" },
+				{ "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", desc = "Toggle FSI (F# Interactive)" },
+				{ "<localleader>fsl", ":call fsharp#sendLineToFsi()<cr>", desc = "Send line to FSI (F# Interactive)" },
+				{ "<localleader>fr", desc = "Run F# project" },
+				{ "<localleader>frd", ":RunFSharpProject Debug", desc = "Run F# project in debug configuration" },
+				{ "<localleader>frr", ":RunFSharpProject Release", desc = "Run F# project in release configuration" },
+				{ "<localleader>fp", ":PublishFSharpProject", desc = "Publish F# project" },
+				{ "<localleader>fb", desc = "Build F# project" },
+				{ "<localleader>fba", BuildFSharpProjects, desc = "Build all projects" },
+				{ "<localleader>fbs", ":BuildFSharpProject", desc = "Build specified project" },
+			}, { buffer = vim.api.nvim_get_current_buf() })
 		else
 			vim.api.nvim_set_keymap("n", "<localleader>ft", ":call fsharp#showTooltip()<CR>", { noremap = true })
 			vim.api.nvim_set_keymap("n", "<localleader>fsi", ":call fsharp#toggleFsi()<CR>", { noremap = true })

@@ -55,12 +55,10 @@ end
 
 do
 	local whichkey = require("which-key")
-	whichkey.register({
-		['pt'] = {
-				"Run Python tests",
-				f = { RunPythonTestsInFile, "Run Python tests in the current file" },
-				a = { RunAllPythonTests, "Run all Python tests" },
-				c = { RunPythonTestAtCursor, "Run the Python test under the cursor" },
-		},
-	}, { prefix = vim.api.nvim_get_var("maplocalleader") })
+	whichkey.add({
+		{ "<localleader>pt", desc = "Run Python tests" },
+		{ "<localleader>ptf", RunPythonTestsInFile, desc = "Run Python tests in the current file" },
+		{ "<localleader>pta", RunAllPythonTests, desc = "Run all Python tests" },
+		{ "<localleader>ptc", RunPythonTestAtCursor, desc = "Run the Python test under the cursor" },
+	})
 end
