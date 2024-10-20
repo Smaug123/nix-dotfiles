@@ -49,7 +49,6 @@ require("lspconfig")["dockerls"].setup({})
 require("lspconfig")["html"].setup({
 	capabilities = capabilities,
 })
-require("lspconfig")["ltex"].setup({})
 
 require("lspconfig")["lua_ls"].setup({
 	on_init = function(client)
