@@ -13,6 +13,7 @@
     terminal = "screen-256color";
     extraConfig = ''
       set-option -sa terminal-features ',xterm-256color:RGB'
+      set -g default-command "exec ${pkgs.zsh}/bin/zsh"
     '';
   };
 }
