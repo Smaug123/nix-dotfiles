@@ -16,6 +16,11 @@
       modifier = "Mod4";
       terminal = "alacritty";
       window = {border = 5;};
+      bars = [
+      {
+          command = "${nixpkgs.waybar}/bin/waybar";
+      }
+      ];
     };
     extraConfig = ''
       output Unknown-1 scale 2
