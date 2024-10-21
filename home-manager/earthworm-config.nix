@@ -3,7 +3,16 @@
     ../hardware/earthworm.nix
   ];
 
-  hardware.asahi.peripheralFirmwareDirectory = ../firmware;
+  # hardware.asahi.peripheralFirmwareDirectory = "/etc/nixos/firmware";
+  hardware.asahi =
+  {
+      extractPeripheralFirmware = false;
+      useExperimentalGPUDriver = true;
+      experimentalGPUInstallMode = "driver";
+      setupAsahiSound = true;
+      withRust = true;
+  };
+  hardware.graphics.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
@@ -14,6 +23,7 @@
   networking = {
     hostName = "earthworm";
     networkmanager.enable = true;
+    wireless.iwd = { enable = true; settings.General.EnableNetworkConfiguration = true; };
   };
 
   time.timeZone = "Europe/London";
@@ -31,6 +41,7 @@
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
+    pkgs.mesa-asahi-edge
   ];
 
   environment.loginShellInit = ''

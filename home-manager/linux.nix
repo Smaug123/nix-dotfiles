@@ -4,7 +4,7 @@
   dotnet,
   ...
 }: {
-  home.packages = [nixpkgs.firefox-wayland nixpkgs.wl-clipboard nixpkgs.jetbrains.rider];
+  home.packages = [nixpkgs.wl-clipboard nixpkgs.jetbrains.rider];
   nixpkgs.config.firefox = {
     speechSynthesisSupport = true;
   };
