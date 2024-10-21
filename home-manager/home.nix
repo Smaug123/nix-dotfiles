@@ -313,6 +313,7 @@
       nixpkgs.clang-tools
       nixpkgs.deno
       nixpkgs.yazi
+      nixpkgs.font-awesome
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
