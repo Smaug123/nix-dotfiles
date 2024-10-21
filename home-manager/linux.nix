@@ -9,10 +9,22 @@
       modifier = "Mod4";
       terminal = "alacritty";
       window = {border = 5;};
+      bars = [
+        { command = "${nixpkgs.waybar}/bin/waybar"; }
+      ];
     };
     extraConfig = ''
       output Unknown-1 scale 2
     '';
+  };
+
+  programs.waybar = {
+      enable = true;
+      settings = {
+          mainBar = {
+              position = "bottom";
+          };
+      };
   };
 
   services.gpg-agent = {
@@ -21,9 +33,4 @@
   };
 
   services.swayidle = {enable = true;};
-  services.cbatticon = {
-    lowLevelPercent = 20;
-    iconType = "standard";
-    enable = true;
-  };
 }
