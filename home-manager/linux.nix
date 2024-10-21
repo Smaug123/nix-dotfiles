@@ -13,9 +13,7 @@
         {command = "${nixpkgs.waybar}/bin/waybar";}
       ];
     };
-    extraConfig = ''
-      output Unknown-1 scale 2
-    '';
+    extraConfig = builtins.readFile ./sway.conf;
   };
 
   programs.waybar = {
