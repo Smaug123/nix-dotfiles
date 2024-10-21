@@ -1,6 +1,13 @@
-{nixpkgs, ...}: {
-  home.packages = [nixpkgs.firefox-wayland nixpkgs.jetbrains.rider];
-  nixpkgs.config.firefox.speechSynthesisSupport = true;
+{
+  nixpkgs,
+  username,
+  dotnet,
+  ...
+}: {
+  home.packages = [nixpkgs.wl-clipboard nixpkgs.jetbrains.rider];
+  nixpkgs.config.firefox = {
+    speechSynthesisSupport = true;
+  };
 
   wayland.windowManager.sway = {
     enable = true;
@@ -9,6 +16,11 @@
       modifier = "Mod4";
       terminal = "alacritty";
       window = {border = 5;};
+      bars = [
+      {
+          command = "${nixpkgs.waybar}/bin/waybar";
+      }
+      ];
     };
     extraConfig = ''
       output Unknown-1 scale 2
@@ -21,9 +33,4 @@
   };
 
   services.swayidle = {enable = true;};
-  services.cbatticon = {
-    lowLevelPercent = 20;
-    iconType = "standard";
-    enable = true;
-  };
 }
