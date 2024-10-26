@@ -315,6 +315,7 @@
       nixpkgs.yazi
       nixpkgs.font-awesome
       nixpkgs.gopls
+      nixpkgs.go
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
