@@ -15,6 +15,8 @@ local schemas = {
 
 require("lspconfig")["clangd"].setup({})
 
+require("lspconfig")["gopls"].setup({})
+
 require("lspconfig")["yamlls"].setup({
 	settings = {
 		yaml = {
