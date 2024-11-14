@@ -278,7 +278,6 @@
       nixpkgs.netcoredbg
       nixpkgs.nil
       nixpkgs.fsautocomplete
-      nixpkgs.keepassxc
       nixpkgs.wget
       nixpkgs.yt-dlp
       nixpkgs.cmake
@@ -323,6 +322,7 @@
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
         nixpkgs.signal-desktop
+        nixpkgs.keepassxc
       ]
       else []
     )
