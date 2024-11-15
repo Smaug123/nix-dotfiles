@@ -278,7 +278,6 @@
       nixpkgs.netcoredbg
       nixpkgs.nil
       nixpkgs.fsautocomplete
-      nixpkgs.keepassxc
       nixpkgs.wget
       nixpkgs.yt-dlp
       nixpkgs.cmake
@@ -313,6 +312,9 @@
       nixpkgs.clang-tools
       nixpkgs.deno
       nixpkgs.yazi
+      nixpkgs.font-awesome
+      nixpkgs.gopls
+      nixpkgs.go
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
@@ -320,6 +322,7 @@
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
         nixpkgs.signal-desktop
+        nixpkgs.keepassxc
       ]
       else []
     )
