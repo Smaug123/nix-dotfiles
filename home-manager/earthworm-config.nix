@@ -45,7 +45,7 @@
   ];
 
   environment.loginShellInit = ''
-    [[ "$(tty)" == /dev/tty1 ]] && sway
+    [[ "$(tty)" == /dev/tty1 ]] && export WLR_RENDER_NO_EXPLICIT_SYNC=1 && sway
   '';
 
   services.openssh.enable = true;
