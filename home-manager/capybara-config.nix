@@ -1,8 +1,6 @@
 {
   pkgs,
   config,
-  username,
-  dotnet,
   ...
 }: {
   nixpkgs.config.allowUnfree = true;
@@ -12,6 +10,7 @@
 
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
   };
 
   security.rtkit.enable = true;
@@ -22,22 +21,14 @@
     pulse.enable = true;
   };
 
-  services.xserver.videoDrivers = ["nvidia"];
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-
-    # I don't have a Turing GPU
-    powerManagement.finegrained = false;
-
-    open = false;
-    nvidiaSettings = true;
-  };
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.useOSProber = true;
+
+  boot.kernelParams = [
+    "video=DP-1:2560x1440@144"
+    "video=HDMI-A-1:1920x1080@144"
+  ];
 
   boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
 
