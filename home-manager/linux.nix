@@ -157,7 +157,7 @@
             "car" = "";
             "default" = ["" "" ""];
           };
-          "on-click" = "pavucontrol";
+          "on-click" = "${nixpkgs.pavucontrol}/bin/pavucontrol";
         };
         "custom/media" = {
           "format" = "{icon} {text}";
