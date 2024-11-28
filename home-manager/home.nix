@@ -277,7 +277,7 @@
       nixpkgs.csharp-ls
       nixpkgs.netcoredbg
       nixpkgs.nil
-      nixpkgs.fsautocomplete
+      # nixpkgs.fsautocomplete
       nixpkgs.wget
       nixpkgs.yt-dlp
       nixpkgs.cmake
@@ -295,7 +295,6 @@
       nixpkgs.git-lfs
       nixpkgs.imagemagick
       nixpkgs.nixpkgs-fmt
-      nixpkgs.lnav
       nixpkgs.age
       nixpkgs.nodejs
       nixpkgs.pyright
