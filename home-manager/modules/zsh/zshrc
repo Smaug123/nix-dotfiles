@@ -30,3 +30,7 @@ bindkey '^X^E' edit-command-line
 bindkey -e
 
 PATH="$PATH:$HOME/.cargo/bin"
+
+if [[ -z "$TMUX" ]]; then
+    tmux new-session -A -s default
+fi

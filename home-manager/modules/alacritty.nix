@@ -7,6 +7,7 @@
           family = "FiraCode Nerd Font Mono";
         };
       };
+      terminal = {shell = "${pkgs.zsh}/bin/zsh";};
     };
   };
 
