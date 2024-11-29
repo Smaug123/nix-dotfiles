@@ -3,16 +3,24 @@
     ../hardware/earthworm.nix
   ];
 
-  # hardware.asahi.peripheralFirmwareDirectory = "/etc/nixos/firmware";
+  hardware.asahi.peripheralFirmwareDirectory = ./../firmware;
   hardware.asahi =
   {
-      extractPeripheralFirmware = false;
       useExperimentalGPUDriver = true;
-      experimentalGPUInstallMode = "driver";
+      experimentalGPUInstallMode = "overlay";
       setupAsahiSound = true;
       withRust = true;
   };
   hardware.graphics.enable = true;
+
+  programs.light.enable = true;
+  services.actkbd = {
+    enable = true;
+    bindings = [
+      { keys = [ 225 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -A 10"; }
+      { keys = [ 224 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -U 10"; }
+    ];
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
