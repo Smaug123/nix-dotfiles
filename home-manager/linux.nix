@@ -178,7 +178,7 @@
           "menu" = "on-click";
           "menu-file" = ./modules/waybar/power_menu.xml;
           "menu-actions" = {
-            "shutdown" = "shutdown";
+            "shutdown" = "shutdown now";
             "reboot" = "reboot";
             "suspend" = "systemctl suspend";
             "hibernate" = "systemctl hibernate";
