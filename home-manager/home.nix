@@ -346,7 +346,10 @@
       patrick = {
         isDefault = true;
         name = "patrick";
-        search = {default = "Google"; force = true;};
+        search = {
+          default = "Google";
+          force = true;
+        };
         settings = {
           # see https://github.com/TLATER/dotfiles/blob/b39af91fbd13d338559a05d69f56c5a97f8c905d/home-config/config/graphical-applications/firefox.nix
           # see https://www.ghacks.net/2015/08/18/a-comprehensive-list-of-firefox-privacy-and-security-settings/

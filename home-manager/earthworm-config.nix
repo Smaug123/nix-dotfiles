@@ -4,12 +4,11 @@
   ];
 
   hardware.asahi.peripheralFirmwareDirectory = ./../firmware;
-  hardware.asahi =
-  {
-      useExperimentalGPUDriver = true;
-      experimentalGPUInstallMode = "overlay";
-      setupAsahiSound = true;
-      withRust = true;
+  hardware.asahi = {
+    useExperimentalGPUDriver = true;
+    experimentalGPUInstallMode = "overlay";
+    setupAsahiSound = true;
+    withRust = true;
   };
   hardware.graphics.enable = true;
 
@@ -17,8 +16,16 @@
   services.actkbd = {
     enable = true;
     bindings = [
-      { keys = [ 225 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -A 10"; }
-      { keys = [ 224 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -U 10"; }
+      {
+        keys = [225];
+        events = ["key"];
+        command = "${pkgs.light}/bin/light -A 10";
+      }
+      {
+        keys = [224];
+        events = ["key"];
+        command = "${pkgs.light}/bin/light -U 10";
+      }
     ];
   };
 
@@ -31,7 +38,10 @@
   networking = {
     hostName = "earthworm";
     networkmanager.enable = true;
-    wireless.iwd = { enable = true; settings.General.EnableNetworkConfiguration = true; };
+    wireless.iwd = {
+      enable = true;
+      settings.General.EnableNetworkConfiguration = true;
+    };
   };
 
   time.timeZone = "Europe/London";
