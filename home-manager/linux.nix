@@ -13,7 +13,7 @@
         {command = "${nixpkgs.waybar}/bin/waybar";}
       ];
     };
-    extraConfig = builtins.readFile ./sway.conf;
+    extraConfig = builtins.replaceStrings ["@@WL-COPY@@" "@@GRIM@@" "@@SLURP@@"] ["${nixpkgs.wl-clipboard}/bin/wl-copy" "${nixpkgs.grim}/bin/grim" "${nixpkgs.slurp}/bin/slurp"] (builtins.readFile ./sway.conf);
   };
 
   programs.waybar = {
