@@ -3,7 +3,31 @@
     ../hardware/earthworm.nix
   ];
 
-  hardware.asahi.peripheralFirmwareDirectory = ../firmware;
+  hardware.asahi.peripheralFirmwareDirectory = ./../firmware;
+  hardware.asahi = {
+    useExperimentalGPUDriver = true;
+    experimentalGPUInstallMode = "overlay";
+    setupAsahiSound = true;
+    withRust = true;
+  };
+  hardware.graphics.enable = true;
+
+  programs.light.enable = true;
+  services.actkbd = {
+    enable = true;
+    bindings = [
+      {
+        keys = [225];
+        events = ["key"];
+        command = "${pkgs.light}/bin/light -A 10";
+      }
+      {
+        keys = [224];
+        events = ["key"];
+        command = "${pkgs.light}/bin/light -U 10";
+      }
+    ];
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
@@ -14,6 +38,10 @@
   networking = {
     hostName = "earthworm";
     networkmanager.enable = true;
+    wireless.iwd = {
+      enable = true;
+      settings.General.EnableNetworkConfiguration = true;
+    };
   };
 
   time.timeZone = "Europe/London";
@@ -31,10 +59,11 @@
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
+    pkgs.mesa-asahi-edge
   ];
 
   environment.loginShellInit = ''
-    [[ "$(tty)" == /dev/tty1 ]] && sway
+    [[ "$(tty)" == /dev/tty1 ]] && export WLR_RENDER_NO_EXPLICIT_SYNC=1 && sway
   '';
 
   services.openssh.enable = true;

@@ -1,6 +1,13 @@
-{nixpkgs, ...}: {
-  home.packages = [nixpkgs.firefox-wayland nixpkgs.jetbrains.rider];
-  nixpkgs.config.firefox.speechSynthesisSupport = true;
+{
+  nixpkgs,
+  username,
+  dotnet,
+  ...
+}: {
+  home.packages = [nixpkgs.wl-clipboard nixpkgs.jetbrains.rider];
+  nixpkgs.config.firefox = {
+    speechSynthesisSupport = true;
+  };
 
   wayland.windowManager.sway = {
     enable = true;
