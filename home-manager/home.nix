@@ -295,7 +295,6 @@
       nixpkgs.git-lfs
       nixpkgs.imagemagick
       nixpkgs.nixpkgs-fmt
-      nixpkgs.lnav
       nixpkgs.age
       nixpkgs.nodejs
       nixpkgs.pyright
