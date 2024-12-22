@@ -26,6 +26,21 @@
         events = ["key"];
         command = "${pkgs.light}/bin/light -U 10";
       }
+      {
+        keys = [113];
+        events = ["key"];
+        command = "${pkgs.alsa-utils}/bin/amixer -q set Master toggle";
+      }
+      {
+        keys = [114];
+        events = ["key"];
+        command = "${pkgs.alsa-utils}/bin/amixer -q set Master 10- unmute";
+      }
+      {
+        keys = [115];
+        events = ["key"];
+        command = "${pkgs.alsa-utils}/bin/amixer -q set Master 10+ unmute";
+      }
     ];
   };
 
