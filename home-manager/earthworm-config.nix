@@ -11,6 +11,7 @@
     withRust = true;
   };
   hardware.graphics.enable = true;
+  hardware.bluetooth.enable = true;
 
   programs.light.enable = true;
   services.actkbd = {
