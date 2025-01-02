@@ -318,6 +318,7 @@
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
+        nixpkgs.xwaylandvideobridge
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
         nixpkgs.signal-desktop
@@ -329,7 +330,7 @@
       if machinename == "capybara"
       then [
         nixpkgs.steam-run
-        nixpkgs.discord
+        nixpkgs.discord-canary
         nixpkgs.anki-bin
       ]
       else []
