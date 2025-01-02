@@ -274,7 +274,6 @@
       nixpkgs.nodePackages_latest.vscode-langservers-extracted
       nixpkgs.hadolint
       nixpkgs.yaml-language-server
-      nixpkgs.csharp-ls
       nixpkgs.netcoredbg
       nixpkgs.nil
       nixpkgs.fsautocomplete
