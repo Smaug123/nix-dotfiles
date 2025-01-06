@@ -3,3 +3,4 @@ result
 bin/
 obj/
 .DS_Store
+.direnv/
