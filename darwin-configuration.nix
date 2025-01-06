@@ -7,10 +7,6 @@ in {
   # $ nix-env -qaP | grep wget
 
   environment.systemPackages = [
-    pkgs.alacritty
-    pkgs.rustup
-    pkgs.libiconv
-    pkgs.clang
     pkgs.python3
   ];
 

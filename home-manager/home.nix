@@ -33,8 +33,8 @@
     ./modules/tmux.nix
     ./modules/zsh.nix
     ./modules/ripgrep.nix
-    ./modules/alacritty.nix
     ./modules/rust.nix
+    ./modules/posix-sh.nix
     (import ./modules/mail.nix
       {
         inherit mbsync secretsPath;
@@ -269,7 +269,6 @@
       nixpkgs.difftastic
       nixpkgs.syncthing
       nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
-      nixpkgs.nodePackages_latest.bash-language-server
       nixpkgs.nodePackages_latest.vscode-json-languageserver
       nixpkgs.nodePackages_latest.vscode-langservers-extracted
       nixpkgs.hadolint
@@ -279,27 +278,20 @@
       nixpkgs.fsautocomplete
       nixpkgs.wget
       nixpkgs.yt-dlp
-      nixpkgs.cmake
-      nixpkgs.gnumake
-      nixpkgs.gcc
       nixpkgs.lldb
       nixpkgs.hledger
       nixpkgs.hledger-web
       dotnet
       nixpkgs.elan
       nixpkgs.coreutils-prefixed
-      nixpkgs.shellcheck
-      nixpkgs.universal-ctags
       nixpkgs.asciinema
       nixpkgs.git-lfs
       nixpkgs.imagemagick
       nixpkgs.nixpkgs-fmt
       nixpkgs.age
-      nixpkgs.nodejs
       nixpkgs.pyright
       nixpkgs.woodpecker-agent
       nixpkgs.lynx
-      nixpkgs.alejandra
       nixpkgs.ffmpeg
       nixpkgs.bat
       nixpkgs.pandoc
@@ -313,6 +305,8 @@
       nixpkgs.font-awesome
       nixpkgs.gopls
       nixpkgs.go
+      nixpkgs.libiconv
+      nixpkgs.ghostty
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
