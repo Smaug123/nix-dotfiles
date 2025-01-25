@@ -306,11 +306,11 @@
       nixpkgs.gopls
       nixpkgs.go
       nixpkgs.libiconv
-      nixpkgs.ghostty
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
+        nixpkgs.ghostty
         nixpkgs.xwaylandvideobridge
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
