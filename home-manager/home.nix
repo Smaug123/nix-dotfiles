@@ -109,22 +109,24 @@
 
   programs.vscode = {
     enable = true;
-    enableExtensionUpdateCheck = true;
-    enableUpdateCheck = true;
     package = nixpkgs.vscode;
-    extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
-    userSettings = {
-      workbench.colorTheme = "Default";
-      "files.Exclude" = {
-        "**/.git" = true;
-        "**/.DS_Store" = true;
-        "**/Thumbs.db" = true;
-        "**/*.olean" = true;
-        "**/result" = true;
+    profiles.default = {
+      extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};
+      enableExtensionUpdateCheck = true;
+      enableUpdateCheck = true;
+      userSettings = {
+        workbench.colorTheme = "Default";
+        "files.Exclude" = {
+          "**/.git" = true;
+          "**/.DS_Store" = true;
+          "**/Thumbs.db" = true;
+          "**/*.olean" = true;
+          "**/result" = true;
+        };
+        "git.path" = "${nixpkgs.git}/bin/git";
+        "update.mode" = "none";
+        "explorer.confirmDelete" = false;
       };
-      "git.path" = "${nixpkgs.git}/bin/git";
-      "update.mode" = "none";
-      "explorer.confirmDelete" = false;
     };
   };
 
@@ -306,12 +308,13 @@
       nixpkgs.gopls
       nixpkgs.go
       nixpkgs.libiconv
+      nixpkgs.claude-code
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
         nixpkgs.ghostty
-        nixpkgs.xwaylandvideobridge
+        nixpkgs.kdePackages.xwaylandvideobridge
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
         nixpkgs.signal-desktop

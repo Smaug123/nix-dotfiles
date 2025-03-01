@@ -12,7 +12,6 @@ with pkgs.vscode-extensions;
     rust-lang.rust-analyzer
     github.vscode-pull-request-github
     shardulm94.trailing-spaces
-    nvarner.typst-lsp
     arrterian.nix-env-selector
     # Doesn't build on arm64
     # vadimcn.vscode-lldb

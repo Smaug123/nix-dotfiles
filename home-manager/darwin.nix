@@ -23,12 +23,14 @@
   ];
 
   programs.vscode = {
-    userSettings = {
-      "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
-      "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
-      "lean.memoryLimit" = 16384;
-      "latex-workshop.view.pdf.viewer" = "tab";
-      "lean4.toolchainPath" = "/Users/${username}/.elan/toolchains/leanprover--lean4---nightly-2022-12-16";
+    profiles.default = {
+      userSettings = {
+        "lean.leanpkgPath" = "/Users/${username}/.elan/toolchains/stable/bin/leanpkg";
+        "lean.executablePath" = "/Users/${username}/.elan/toolchains/stable/bin/lean";
+        "lean.memoryLimit" = 16384;
+        "latex-workshop.view.pdf.viewer" = "tab";
+        "lean4.toolchainPath" = "/Users/${username}/.elan/toolchains/leanprover--lean4---nightly-2022-12-16";
+      };
     };
   };
 
