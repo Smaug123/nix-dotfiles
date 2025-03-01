@@ -9,10 +9,9 @@ with pkgs.vscode-extensions;
     ms-dotnettools.csharp
     ms-vscode-remote.remote-ssh
     justusadam.language-haskell
-    rust-lang.rust-analyzer
+    # rust-lang.rust-analyzer
     github.vscode-pull-request-github
     shardulm94.trailing-spaces
-    nvarner.typst-lsp
     arrterian.nix-env-selector
     # Doesn't build on arm64
     # vadimcn.vscode-lldb
