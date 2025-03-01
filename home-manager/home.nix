@@ -314,7 +314,7 @@
       if nixpkgs.stdenv.isLinux
       then [
         nixpkgs.ghostty
-        nixpkgs.xwaylandvideobridge
+        nixpkgs.kdePackages.xwaylandvideobridge
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
         nixpkgs.signal-desktop
