@@ -76,12 +76,29 @@
       push = {
         default = "current";
         autoSetupRemote = true;
+        followTags = true;
+      };
+      fetch = {
+        prune = true;
+        all = true;
+      };
+      help = {
+        autocorrect = "prompt";
       };
       pull = {
         rebase = false;
       };
       init = {
         defaultBranch = "main";
+      };
+      branch = {
+        sort = "-committerdate";
+      };
+      column = {
+        ui = "auto";
+      };
+      tag = {
+        sort = "version:refname";
       };
       advice = {
         addIgnoredFile = false;
@@ -100,6 +117,8 @@
       };
       diff = {
         colorMoved = "default";
+        algorithm = "histogram";
+        renames = true;
       };
       "protocol.file" = {
         allow = "always";
