@@ -215,6 +215,8 @@
       }
       {
         plugin = nixpkgs.vimPlugins.nvim-cmp;
+        config = builtins.readFile ./nvim/nvim-cmp.lua;
+        type = "lua";
       }
       {
         plugin = nixpkgs.vimPlugins.cmp-nvim-lsp;
