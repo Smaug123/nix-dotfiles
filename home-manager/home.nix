@@ -207,21 +207,6 @@
       }
       {
         plugin = let
-          name = "coq.artifacts";
-          rev = "9c5067a471322c6bb866545e88e5b28c82511865";
-        in
-          nixpkgs.vimUtils.buildVimPlugin {
-            name = name;
-            src = nixpkgs.fetchFromGitHub {
-              owner = "ms-jpq";
-              repo = name;
-              rev = rev;
-              hash = "sha256-BHm7U3pINtYamY7m26I4lQee7ccJ6AcHmYx7j1MRFDA=";
-            };
-          };
-      }
-      {
-        plugin = let
           name = "venv-selector.nvim";
           rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
         in
@@ -248,8 +233,12 @@
         type = "lua";
       }
       {
-        plugin = nixpkgs.vimPlugins.coq_nvim;
-        config = ''let g:coq_settings = { 'auto_start': 'shut-up', 'xdg': v:true }'';
+        plugin = nixpkgs.vimPlugins.nvim-cmp;
+        config = builtins.readFile ./nvim/nvim-cmp.lua;
+        type = "lua";
+      }
+      {
+        plugin = nixpkgs.vimPlugins.cmp-nvim-lsp;
       }
       {
         plugin = nixpkgs.vimPlugins.rustaceanvim;
