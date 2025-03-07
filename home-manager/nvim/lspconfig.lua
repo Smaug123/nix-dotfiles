@@ -1,4 +1,4 @@
-local coq = require("coq")
+local nvim_cmp = require("cmp")
 
 -- Using rustaceanvim means we shouldn't set up the LSP for Rust manually.
 -- Similarly csharp_ls is unnecessary given roslyn.nvim
@@ -34,6 +34,8 @@ require("lspconfig")["yamlls"].setup({
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 require("lspconfig")["jsonls"].setup({
 	capabilities = capabilities,
@@ -87,7 +89,8 @@ require("lspconfig")["lua_ls"].setup({
 	},
 })
 
-require("lspconfig").pyright.setup(coq.lsp_ensure_capabilities({
+require("lspconfig").pyright.setup({
+	capabilities = capabilities,
 	handlers = {
 		["textDocument/publishDiagnostics"] = function(...)
 			vim.lsp.diagnostic.on_publish_diagnostics(...)
@@ -97,9 +100,10 @@ require("lspconfig").pyright.setup(coq.lsp_ensure_capabilities({
 			vim.api.nvim_set_current_win(window)
 		end,
 	},
-}))
+})
 
-require("lspconfig").nil_ls.setup(coq.lsp_ensure_capabilities({
+require("lspconfig").nil_ls.setup({
+	capabilities = capabilities,
 	settings = {
 		nix = {
 			flake = {
@@ -107,7 +111,7 @@ require("lspconfig").nil_ls.setup(coq.lsp_ensure_capabilities({
 			},
 		},
 	},
-}))
+})
 
 function ToggleLocList()
 	local winid = vim.fn.getloclist(0, { winid = 0 }).winid
