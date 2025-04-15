@@ -61,7 +61,7 @@
       gpg.program = "${nixpkgs.gnupg}/bin/gpg";
       user.signingkey =
         if machinename == "darwin"
-        then "7C97D679CF3BC4F9"
+        then "6D71064924BE1245"
         else if machinename == "earthworm"
         then "6E8B1BA1148AD7C9"
         else if machinename == "capybara"
