@@ -16,7 +16,7 @@
       vim = "nvim";
       view = "vim -R";
     };
-    initExtra = builtins.readFile ./zsh/zshrc;
+    initContent = builtins.readFile ./zsh/zshrc;
   };
 
   programs.fzf.enableZshIntegration = true;
