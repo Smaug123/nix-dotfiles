@@ -49,7 +49,7 @@ in {
   accounts.email.accounts."Gmail" = let
     address = (deobfuscate "AFTN0cWdh12c") + "gmail.com";
   in {
-    notmuch.enable = true;
+    notmuch.enable = false;
     neomutt = {
       enable = true;
     };
@@ -82,7 +82,7 @@ in {
   accounts.email.accounts."BTInternet" = let
     address = (deobfuscate "z5WZ2VGdz5yajlmc0FGc") + "@btinternet.com";
   in {
-    notmuch.enable = true;
+    notmuch.enable = false;
     neomutt = {
       enable = true;
     };
@@ -116,7 +116,7 @@ in {
   accounts.email.accounts."Proton" = let
     address = deobfuscate "gAya15ybj5ycuVmdlR3crNWayRXYwB0ajlmc0FGc";
   in {
-    notmuch.enable = true;
+    # notmuch.enable = true;
     neomutt = {
       enable = true;
     };
@@ -164,6 +164,7 @@ in {
   };
   programs.neomutt = {
     enable = true;
+    package = pkgs.neomutt.override {withNotmuch = false;};
     extraConfig = ''
       set use_threads=threads sort=last-date sort_aux=date
     '';
@@ -171,12 +172,12 @@ in {
     vimKeys = true;
   };
 
-  programs.notmuch.enable = true;
+  programs.notmuch.enable = false;
 
   home.file.".mailcap".source = ./mail/mailcap;
 
   home.packages = [
-    pkgs.notmuch
+    # pkgs.notmuch
     pkgs.lynx
   ];
 }
