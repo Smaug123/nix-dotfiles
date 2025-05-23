@@ -24,6 +24,8 @@ precmd_functions+=(prompt_custom)
 
 export WORDCHARS=''
 
+export OPENAI_API_KEY=$(cat ~/.secrets/openai.txt)
+
 autoload edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line

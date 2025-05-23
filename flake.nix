@@ -14,10 +14,6 @@
       # url = "github:Smaug123/nix-darwin/extract";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    emacs = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
@@ -28,7 +24,6 @@
 
   outputs = {
     darwin,
-    emacs,
     nixpkgs,
     home-manager,
     apple-silicon,
@@ -41,7 +36,6 @@
     };
     systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   in let
-    overlays = [emacs.overlay];
     recursiveMerge = attrList: let
       f = attrPath:
         builtins.zipAttrsWith (n: values:
@@ -59,7 +53,7 @@
       capybara = let
         system = "x86_64-linux";
       in let
-        pkgs = import nixpkgs {inherit system config overlays;};
+        pkgs = import nixpkgs {inherit system config;};
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -89,7 +83,7 @@
       earthworm = let
         system = "aarch64-linux";
       in let
-        pkgs = import nixpkgs {inherit system config overlays;};
+        pkgs = import nixpkgs {inherit system config;};
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -117,7 +111,7 @@
     darwinConfigurations = let
       system = "aarch64-darwin";
     in let
-      pkgs = import nixpkgs {inherit system config overlays;};
+      pkgs = import nixpkgs {inherit system config;};
     in {
       nixpkgs = pkgs;
       patrick = darwin.lib.darwinSystem {
