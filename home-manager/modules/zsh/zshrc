@@ -25,6 +25,7 @@ precmd_functions+=(prompt_custom)
 export WORDCHARS=''
 
 export OPENAI_API_KEY=$(cat ~/.secrets/openai.txt)
+export ANTHROPIC_API_KEY=$(cat ~/.secrets/anthropic.txt)
 
 autoload edit-command-line
 zle -N edit-command-line
