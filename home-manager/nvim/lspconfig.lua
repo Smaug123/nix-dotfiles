@@ -39,7 +39,7 @@ capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 require("lspconfig")["jsonls"].setup({
 	capabilities = capabilities,
-	cmd = { "vscode-json-languageserver", "--stdio" },
+	cmd = { "vscode-json-language-server", "--stdio" },
 	settings = {
 		json = {
 			validate = { enable = true },
