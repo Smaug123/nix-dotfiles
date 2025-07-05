@@ -244,9 +244,6 @@
         plugin = nixpkgs.vimPlugins.rustaceanvim;
       }
       {
-        plugin = nixpkgs.vimPlugins.LanguageClient-neovim;
-      }
-      {
         plugin = nixpkgs.vimPlugins.nvim-dap;
         config = builtins.readFile ./nvim/nvim-dap.lua;
         type = "lua";
@@ -279,7 +276,6 @@
       nixpkgs.difftastic
       nixpkgs.syncthing
       nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
-      nixpkgs.nodePackages_latest.vscode-json-languageserver
       nixpkgs.nodePackages_latest.vscode-langservers-extracted
       nixpkgs.hadolint
       nixpkgs.yaml-language-server
