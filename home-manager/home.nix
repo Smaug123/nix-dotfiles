@@ -123,6 +123,9 @@
       "protocol.file" = {
         allow = "always";
       };
+      url."git@github.com:" = {
+        insteadOf = "https://github.com/";
+      };
     };
   };
 
