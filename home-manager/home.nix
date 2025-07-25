@@ -29,6 +29,7 @@
   imports = [
     # ./modules/agda.nix
     # ./modules/emacs.nix
+    ./modules/ghostty.nix
     ./modules/direnv.nix
     ./modules/tmux.nix
     ./modules/zsh.nix
