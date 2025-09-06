@@ -321,7 +321,6 @@
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
-        nixpkgs.ghostty
         nixpkgs.kdePackages.xwaylandvideobridge
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry
