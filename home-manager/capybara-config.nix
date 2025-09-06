@@ -13,6 +13,8 @@
     enable32Bit = true;
   };
 
+  hardware.bluetooth.enable = true;
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;

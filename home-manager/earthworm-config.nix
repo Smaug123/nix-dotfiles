@@ -5,10 +5,7 @@
 
   hardware.asahi.peripheralFirmwareDirectory = ./../firmware;
   hardware.asahi = {
-    useExperimentalGPUDriver = true;
-    experimentalGPUInstallMode = "overlay";
     setupAsahiSound = true;
-    withRust = true;
   };
   hardware.graphics.enable = true;
   hardware.bluetooth.enable = true;
@@ -75,7 +72,6 @@
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
-    pkgs.mesa-asahi-edge
   ];
 
   environment.loginShellInit = ''
