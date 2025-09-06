@@ -72,7 +72,6 @@
   environment.systemPackages = [
     pkgs.vim
     pkgs.wget
-    pkgs.mesa-asahi-edge
   ];
 
   environment.loginShellInit = ''
