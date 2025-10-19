@@ -54,7 +54,7 @@
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
-    extraConfig = {
+    settings = {
       alias = {
         co = "checkout";
         st = "status";
