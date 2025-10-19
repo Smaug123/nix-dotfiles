@@ -47,17 +47,22 @@
     enable = true;
   };
 
+  programs.difftastic = {
+    enable = true;
+    git.enable = true;
+  };
   programs.git = {
     package = nixpkgs.gitAndTools.gitFull;
     enable = true;
-    userName = "Smaug123";
-    userEmail = "3138005+Smaug123@users.noreply.github.com";
-    aliases = {
-      co = "checkout";
-      st = "status";
-    };
-    difftastic.enable = true;
     extraConfig = {
+      alias = {
+        co = "checkout";
+        st = "status";
+      };
+      user = {
+        email = "3138005+Smaug123@users.noreply.github.com";
+        name = "Smaug123";
+      };
       commit.gpgsign = true;
       gpg.program = "${nixpkgs.gnupg}/bin/gpg";
       user.signingkey =
@@ -279,7 +284,7 @@
       nixpkgs.jq
       nixpkgs.difftastic
       nixpkgs.syncthing
-      nixpkgs.nodePackages_latest.dockerfile-language-server-nodejs
+      nixpkgs.dockerfile-language-server
       nixpkgs.nodePackages_latest.vscode-langservers-extracted
       nixpkgs.hadolint
       nixpkgs.yaml-language-server
