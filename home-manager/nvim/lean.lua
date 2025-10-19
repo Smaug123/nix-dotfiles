@@ -1,4 +1,8 @@
-require("lspconfig")["leanls"].setup({})
+vim.lsp.config.leanls = {
+	cmd = { "lean-language-server", "--stdio" },
+	root_markers = { "lean-toolchain", "lakefile.lean" },
+}
+vim.lsp.enable("leanls")
 
 require("lean").setup({})
 
