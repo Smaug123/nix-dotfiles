@@ -52,7 +52,6 @@
     git.enable = true;
   };
   programs.git = {
-    package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     settings = {
       alias = {
@@ -311,7 +310,7 @@
       nixpkgs.bat
       nixpkgs.pandoc
       nixpkgs.fd
-      nixpkgs.sumneko-lua-language-server
+      nixpkgs.lua-language-server
       nixpkgs.gnupg
       nixpkgs.gh
       nixpkgs.clang-tools
@@ -322,6 +321,7 @@
       nixpkgs.go
       nixpkgs.libiconv
       nixpkgs.claude-code
+      nixpkgs.uv
     ]
     ++ (
       if nixpkgs.stdenv.isLinux

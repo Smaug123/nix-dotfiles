@@ -24,6 +24,8 @@ precmd_functions+=(prompt_custom)
 
 export WORDCHARS=''
 
+setopt EXTENDED_HISTORY
+
 export OPENAI_API_KEY=$(cat ~/.secrets/openai.txt)
 export ANTHROPIC_API_KEY=$(cat ~/.secrets/anthropic.txt)
 
