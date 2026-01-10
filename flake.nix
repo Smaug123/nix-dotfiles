@@ -167,7 +167,7 @@
           pkgs = import nixpkgs {inherit config system;};
         in {
           default = pkgs.mkShell {
-            buildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.stylua];
+            buildInputs = [pkgs.alejandra pkgs.shellcheck pkgs.stylua pkgs.codex pkgs.claude-code];
           };
         }
       );

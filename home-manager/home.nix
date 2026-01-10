@@ -163,6 +163,9 @@
 
   programs.neovim = let
     debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
+    codelldb = nixpkgs.vscode-extensions.vadimcn.vscode-lldb;
+    codelldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
+    liblldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/lldb/lib/liblldb.dylib";
   in {
     enable = true;
     plugins = [
@@ -241,15 +244,9 @@
         type = "lua";
       }
       {
-        plugin = nixpkgs.vimPlugins.nvim-cmp;
-        config = builtins.readFile ./nvim/nvim-cmp.lua;
-        type = "lua";
-      }
-      {
-        plugin = nixpkgs.vimPlugins.cmp-nvim-lsp;
-      }
-      {
         plugin = nixpkgs.vimPlugins.rustaceanvim;
+        config = builtins.replaceStrings ["%CODELLDB_PATH%" "%LIBLLDB_PATH%"] [codelldbPath liblldbPath] (builtins.readFile ./nvim/rustaceanvim.lua);
+        type = "lua";
       }
       {
         plugin = nixpkgs.vimPlugins.nvim-dap;

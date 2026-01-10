@@ -1,8 +1,6 @@
-local nvim_cmp = require("cmp")
+-- LSP configuration using Neovim 0.11+ native vim.lsp.config API
+-- See :help lspconfig-nvim-0.11
 
--- Using rustaceanvim means we shouldn't set up the LSP for Rust manually.
--- Similarly csharp_ls is unnecessary given roslyn.nvim
--- require("lspconfig")["csharp_ls"].setup({})
 local schemas = {
 	["https://raw.githubusercontent.com/docker/compose/master/compose/config/compose_spec.json"] = "docker-compose*.{yml,yaml}",
 	["https://json.schemastore.org/github-workflow.json"] = ".github/**/*.{yml,yaml}",
@@ -13,84 +11,68 @@ local schemas = {
 	["https://json.schemastore.org/dotnet-tools.json"] = "dotnet-tools.json",
 }
 
-require("lspconfig")["clangd"].setup({})
+-- Configure LSP servers
+vim.lsp.config.clangd = {}
 
-require("lspconfig")["gopls"].setup({})
+vim.lsp.config.gopls = {}
 
-require("lspconfig")["yamlls"].setup({
+vim.lsp.config.yamlls = {
 	settings = {
 		yaml = {
 			validate = true,
-			-- disable the schema store
 			schemaStore = {
 				enable = false,
 				url = "",
 			},
-			-- manually select schemas
 			schemas = schemas,
 		},
 	},
 	filetypes = { "yaml", "json", "jsonc" },
-})
+}
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-require("lspconfig")["jsonls"].setup({
-	capabilities = capabilities,
+vim.lsp.config.jsonls = {
 	cmd = { "vscode-json-language-server", "--stdio" },
 	settings = {
 		json = {
 			validate = { enable = true },
 		},
 	},
-})
+}
 
-require("lspconfig")["denols"].setup({})
-require("lspconfig")["bashls"].setup({})
-require("lspconfig")["dockerls"].setup({})
-require("lspconfig")["html"].setup({
-	capabilities = capabilities,
-})
+vim.lsp.config.denols = {}
+vim.lsp.config.bashls = {}
+vim.lsp.config.dockerls = {}
 
-require("lspconfig")["lua_ls"].setup({
+vim.lsp.config.html = {}
+
+vim.lsp.config.lua_ls = {
 	on_init = function(client)
 		if not client.workspace_folders then
 			return
 		end
 		local path = client.workspace_folders[1].name
-		if vim.uv.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
+		if vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc") then
 			return
 		end
 
 		client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
 			runtime = {
-				-- Tell the language server which version of Lua you're using
-				-- (most likely LuaJIT in the case of Neovim)
 				version = "LuaJIT",
 			},
-			-- Make the server aware of Neovim runtime files
 			workspace = {
 				checkThirdParty = false,
 				library = {
 					vim.env.VIMRUNTIME,
-					-- Depending on the usage, you might want to add additional paths here.
-					-- "${3rd}/luv/library"
-					-- "${3rd}/busted/library",
 				},
-				-- or pull in all of 'runtimepath'. NOTE: this is a lot slower
-				-- library = vim.api.nvim_get_runtime_file("", true)
 			},
 		})
 	end,
 	settings = {
 		Lua = {},
 	},
-})
+}
 
-require("lspconfig").pyright.setup({
-	capabilities = capabilities,
+vim.lsp.config.pyright = {
 	handlers = {
 		["textDocument/publishDiagnostics"] = function(...)
 			vim.lsp.diagnostic.on_publish_diagnostics(...)
@@ -100,10 +82,9 @@ require("lspconfig").pyright.setup({
 			vim.api.nvim_set_current_win(window)
 		end,
 	},
-})
+}
 
-require("lspconfig").nil_ls.setup({
-	capabilities = capabilities,
+vim.lsp.config.nil_ls = {
 	settings = {
 		nix = {
 			flake = {
@@ -111,7 +92,23 @@ require("lspconfig").nil_ls.setup({
 			},
 		},
 	},
-})
+}
+
+-- Enable all configured servers
+vim.lsp.enable("clangd")
+vim.lsp.enable("gopls")
+vim.lsp.enable("yamlls")
+vim.lsp.enable("jsonls")
+vim.lsp.enable("denols")
+vim.lsp.enable("bashls")
+vim.lsp.enable("dockerls")
+vim.lsp.enable("html")
+vim.lsp.enable("lua_ls")
+vim.lsp.enable("pyright")
+vim.lsp.enable("nil_ls")
+
+-- Note: rust-analyzer is managed by rustaceanvim, not configured here
+-- Note: csharp_ls is managed by roslyn.nvim, not configured here
 
 function ToggleLocList()
 	local winid = vim.fn.getloclist(0, { winid = 0 }).winid
@@ -148,8 +145,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
 		local whichkey = require("which-key")
-		-- Enable completion triggered by <c-x><c-o>
-		vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+		-- Enable native LSP completion
+		if client and client:supports_method("textDocument/completion") then
+			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+		end
 
 		-- Buffer local mappings.
 		-- See `:help vim.lsp.*` for documentation on any of the below functions
