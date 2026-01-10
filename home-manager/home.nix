@@ -323,9 +323,8 @@
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
-        nixpkgs.kdePackages.xwaylandvideobridge
         nixpkgs.protonmail-bridge
-        nixpkgs.pinentry
+        nixpkgs.pinentry-curses
         nixpkgs.signal-desktop
         nixpkgs.keepassxc
       ]
