@@ -174,7 +174,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		whichkey.add({
 			{ "<leader>w", desc = "Workspace-related commands" },
 			{ "<leader>wa", vim.lsp.buf.add_workspace_folder, desc = "Add a path to the workspace folders list" },
-			{ "<leader>wr", vim.lsp.buf.add_workspace_folder, desc = "Remove a path from the workspace folders list" },
+			{ "<leader>wr", vim.lsp.buf.remove_workspace_folder, desc = "Remove a path from the workspace folders list" },
 			{
 				"<leader>wl",
 				function()

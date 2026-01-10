@@ -110,7 +110,7 @@
         addIgnoredFile = false;
       };
       "filter \"lfs\"" = {
-        clean = "${nixpkgs.git-lfs} clean -- %f";
+        clean = "${nixpkgs.git-lfs}/bin/git-lfs clean -- %f";
         smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
         process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
         required = true;
