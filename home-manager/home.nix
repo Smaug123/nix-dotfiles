@@ -92,6 +92,7 @@
       };
       pull = {
         rebase = false;
+        twohead = "ort";
       };
       init = {
         defaultBranch = "main";
@@ -113,9 +114,6 @@
         smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
         process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
         required = true;
-      };
-      pull = {
-        twohead = "ort";
       };
       merge = {
         conflictStyle = "diff3";
@@ -165,7 +163,11 @@
     debugPyEnv = nixpkgs.python3.withPackages (ps: [ps.debugpy]);
     codelldb = nixpkgs.vscode-extensions.vadimcn.vscode-lldb;
     codelldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
-    liblldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/lldb/lib/liblldb.dylib";
+    liblldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/lldb/lib/liblldb.${
+      if nixpkgs.stdenv.isDarwin
+      then "dylib"
+      else "so"
+    }";
   in {
     enable = true;
     plugins = [

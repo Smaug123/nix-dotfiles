@@ -206,7 +206,7 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 
 		-- Try graceful shutdown first
 		for _, client in ipairs(clients) do
-			client.stop(true)
+			client.stop()
 		end
 
 		-- Wait briefly for graceful shutdown

@@ -74,11 +74,11 @@ vim.lsp.config.lua_ls = {
 
 vim.lsp.config.pyright = {
 	handlers = {
-		["textDocument/publishDiagnostics"] = function(...)
-			vim.lsp.diagnostic.on_publish_diagnostics(...)
+		["textDocument/publishDiagnostics"] = function(err, result, ctx)
+			vim.lsp.handlers["textDocument/publishDiagnostics"](err, result, ctx)
 
 			local window = vim.api.nvim_get_current_win()
-			vim.diagnostic.setloclist({ open_loclist = true })
+			vim.diagnostic.setloclist({ open = true })
 			vim.api.nvim_set_current_win(window)
 		end,
 	},
