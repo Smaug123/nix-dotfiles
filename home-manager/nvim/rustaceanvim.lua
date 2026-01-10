@@ -5,6 +5,64 @@
 local codelldb_path = "%CODELLDB_PATH%"
 local liblldb_path = "%LIBLLDB_PATH%"
 
+-- Fix rustaceanvim's config format issues for codelldb
+local function fix_rustaceanvim_config(config)
+	-- sourceMap: rustaceanvim generates { { "from", "to" } } but codelldb expects { ["from"] = "to" }
+	if config.sourceMap and type(config.sourceMap) == "table" then
+		local dominated_by_arrays = false
+		for _, v in pairs(config.sourceMap) do
+			if type(v) == "table" then
+				dominated_by_arrays = true
+				break
+			end
+		end
+		if dominated_by_arrays then
+			local fixed = {}
+			for _, v in ipairs(config.sourceMap) do
+				if type(v) == "table" and #v == 2 then
+					fixed[v[1]] = v[2]
+				end
+			end
+			config.sourceMap = fixed
+		end
+	end
+
+	-- env: rustaceanvim generates { "KEY=value" } but codelldb expects { KEY = "value" }
+	if config.env and type(config.env) == "table" then
+		local first_val = config.env[1]
+		if type(first_val) == "string" and first_val:find("=") then
+			local fixed = {}
+			for _, v in ipairs(config.env) do
+				local key, val = v:match("^([^=]+)=(.*)$")
+				if key then
+					fixed[key] = val
+				end
+			end
+			config.env = fixed
+		end
+	end
+
+	-- sourceLanguages should be a list of strings, not false
+	if config.sourceLanguages == false then
+		config.sourceLanguages = { "rust" }
+	end
+
+	return config
+end
+
+-- Register the codelldb adapter with nvim-dap (for rustaceanvim compatibility)
+local dap = require("dap")
+dap.adapters.lldb = {
+	type = "executable",
+	command = codelldb_path,
+	args = { "--liblldb", liblldb_path },
+	name = "lldb",
+	enrich_config = function(config, on_config)
+		on_config(fix_rustaceanvim_config(config))
+	end,
+}
+dap.adapters.codelldb = dap.adapters.lldb
+
 vim.g.rustaceanvim = {
 	tools = {
 		-- Automatically set inlay hints
@@ -128,13 +186,6 @@ vim.g.rustaceanvim = {
 					enable = true,
 				},
 			},
-		},
-	},
-	dap = {
-		adapter = {
-			type = "executable",
-			command = codelldb_path,
-			args = { "--liblldb", liblldb_path },
 		},
 	},
 }

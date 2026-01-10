@@ -1,10 +1,15 @@
 local dap = require("dap")
 local dap_ui = require("dap.ui.widgets")
+
 dap.adapters.coreclr = {
 	type = "executable",
 	command = "netcoredbg",
 	args = { "--interpreter=vscode" },
 }
+
+-- codelldb adapter for Rust (registered as both 'codelldb' and 'lldb' for compatibility)
+-- Paths are injected by Nix in rustaceanvim.lua
+-- This uses stdio mode available in codelldb 1.11.0+
 
 dap.configurations.fsharp = {
 	{
