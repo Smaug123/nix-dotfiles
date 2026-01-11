@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{lib, ...}: {
+  home.activation.removeZcompdump = lib.hm.dag.entryBefore ["writeBoundary"] ''
+    rm -f ~/.zcompdump*
+  '';
+
   programs.zsh = {
     enable = true;
     autocd = true;
