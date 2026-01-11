@@ -1,9 +1,10 @@
-require("nvim-treesitter.configs").setup({
-	-- Automatically install missing parsers when entering buffer
-	-- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-	auto_install = false,
+-- nvim-treesitter 1.0+ removed the configs module
+-- Highlighting is now handled by Neovim's built-in treesitter support
+-- Parsers are installed via Nix (withAllGrammars in home.nix)
 
-	highlight = {
-		enable = true,
-	},
+-- Enable treesitter-based highlighting for all buffers with a parser
+vim.api.nvim_create_autocmd("FileType", {
+	callback = function()
+		pcall(vim.treesitter.start)
+	end,
 })
