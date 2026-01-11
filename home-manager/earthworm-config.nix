@@ -51,10 +51,6 @@
   networking = {
     hostName = "earthworm";
     networkmanager.enable = true;
-    wireless.iwd = {
-      enable = true;
-      settings.General.EnableNetworkConfiguration = true;
-    };
   };
 
   time.timeZone = "Europe/London";
