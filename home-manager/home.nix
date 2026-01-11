@@ -52,7 +52,6 @@
     git.enable = true;
   };
   programs.git = {
-    package = nixpkgs.gitAndTools.gitFull;
     enable = true;
     settings = {
       alias = {
@@ -93,6 +92,7 @@
       };
       pull = {
         rebase = false;
+        twohead = "ort";
       };
       init = {
         defaultBranch = "main";
@@ -110,13 +110,10 @@
         addIgnoredFile = false;
       };
       "filter \"lfs\"" = {
-        clean = "${nixpkgs.git-lfs} clean -- %f";
+        clean = "${nixpkgs.git-lfs}/bin/git-lfs clean -- %f";
         smudge = "${nixpkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
         process = "${nixpkgs.git-lfs}/bin/git-lfs filter-process";
         required = true;
-      };
-      pull = {
-        twohead = "ort";
       };
       merge = {
         conflictStyle = "diff3";
@@ -311,7 +308,7 @@
       nixpkgs.bat
       nixpkgs.pandoc
       nixpkgs.fd
-      nixpkgs.sumneko-lua-language-server
+      nixpkgs.lua-language-server
       nixpkgs.gnupg
       nixpkgs.gh
       nixpkgs.clang-tools
@@ -322,13 +319,13 @@
       nixpkgs.go
       nixpkgs.libiconv
       nixpkgs.claude-code
+      nixpkgs.uv
     ]
     ++ (
       if nixpkgs.stdenv.isLinux
       then [
-        nixpkgs.kdePackages.xwaylandvideobridge
         nixpkgs.protonmail-bridge
-        nixpkgs.pinentry
+        nixpkgs.pinentry-curses
         nixpkgs.signal-desktop
         nixpkgs.keepassxc
       ]
