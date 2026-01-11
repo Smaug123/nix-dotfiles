@@ -4,6 +4,7 @@
     autocd = true;
     autosuggestion.enable = true;
     enableCompletion = true;
+    completionInit = "autoload -U compinit && compinit -C";
     history = {
       expireDuplicatesFirst = true;
     };
