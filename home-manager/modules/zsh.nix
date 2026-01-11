@@ -1,9 +1,14 @@
-{pkgs, ...}: {
+{lib, ...}: {
+  home.activation.removeZcompdump = lib.hm.dag.entryBefore ["writeBoundary"] ''
+    rm -f ~/.zcompdump*
+  '';
+
   programs.zsh = {
     enable = true;
     autocd = true;
     autosuggestion.enable = true;
     enableCompletion = true;
+    completionInit = "autoload -U compinit && compinit -C";
     history = {
       expireDuplicatesFirst = true;
     };
