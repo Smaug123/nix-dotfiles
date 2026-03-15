@@ -1,6 +1,22 @@
 {pkgs, ...}: let
   mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
+  nixpkgs.overlays = [
+    (_f: p: {
+      yt-dlp = p.yt-dlp.overridePythonAttrs (o: {
+        # don't use gnome keyring
+        dependencies = (
+          __filter (
+            p:
+            !(__elem p.pname [
+              "cffi"
+              "secretstorage"
+            ])
+          ) o.dependencies
+        );
+      });
+    })
+  ];
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
 
