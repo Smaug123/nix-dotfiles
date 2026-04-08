@@ -53,6 +53,9 @@
   };
   programs.git = {
     enable = true;
+    signing = {
+      format = "openpgp";
+    };
     settings = {
       alias = {
         co = "checkout";
@@ -283,7 +286,7 @@
       nixpkgs.difftastic
       nixpkgs.syncthing
       nixpkgs.dockerfile-language-server
-      nixpkgs.nodePackages_latest.vscode-langservers-extracted
+      nixpkgs.vscode-langservers-extracted
       nixpkgs.hadolint
       nixpkgs.yaml-language-server
       nixpkgs.netcoredbg

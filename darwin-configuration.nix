@@ -8,11 +8,12 @@ in {
         dependencies = (
           __filter (
             p:
-            !(__elem p.pname [
-              "cffi"
-              "secretstorage"
-            ])
-          ) o.dependencies
+              !(__elem p.pname [
+                "cffi"
+                "secretstorage"
+              ])
+          )
+          o.dependencies
         );
       });
     })
