@@ -1,6 +1,10 @@
 {pkgs, ...}: let
   mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
+  imports = [
+    ./darwin-modules/observability.nix
+  ];
+
   nixpkgs.overlays = [
     (_f: p: {
       yt-dlp = p.yt-dlp.overridePythonAttrs (o: {
