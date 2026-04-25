@@ -22,7 +22,7 @@
     };
   };
 
-  outputs = inputs@{
+  outputs = inputs @ {
     self,
     darwin,
     nixpkgs,

@@ -99,6 +99,8 @@
       server = {
         http_listen_address = "127.0.0.1";
         http_listen_port = 3100;
+        grpc_listen_address = "127.0.0.1";
+        grpc_listen_port = 9096;
       };
       common = {
         path_prefix = "/var/lib/loki";
@@ -131,6 +133,8 @@
       server = {
         http_listen_address = "127.0.0.1";
         http_listen_port = 3200;
+        grpc_listen_address = "127.0.0.1";
+        grpc_listen_port = 9097;
       };
       distributor.receivers.otlp.protocols = {
         grpc.endpoint = "127.0.0.1:4317";
@@ -154,7 +158,8 @@
       server = {
         http_listen_address = "127.0.0.1";
         http_listen_port = 9009;
-        grpc_listen_port = 9095;
+        grpc_listen_address = "127.0.0.1";
+        grpc_listen_port = 9098;
       };
       common = {
         storage = {

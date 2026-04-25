@@ -10,19 +10,18 @@
   hardware.graphics.enable = true;
   hardware.bluetooth.enable = true;
 
-  programs.light.enable = true;
   services.actkbd = {
     enable = true;
     bindings = [
       {
         keys = [225];
         events = ["key"];
-        command = "${pkgs.light}/bin/light -A 10";
+        command = "${pkgs.brightnessctl}/bin/brightnessctl -q -n set +10%";
       }
       {
         keys = [224];
         events = ["key"];
-        command = "${pkgs.light}/bin/light -U 10";
+        command = "${pkgs.brightnessctl}/bin/brightnessctl -q -n set 10%-";
       }
       {
         keys = [113];
@@ -66,6 +65,7 @@
   };
 
   environment.systemPackages = [
+    pkgs.brightnessctl
     pkgs.vim
     pkgs.wget
   ];

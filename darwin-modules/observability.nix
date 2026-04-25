@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   home = "/Users/patrick";
   stateDir = "${home}/Library/Application Support";
 
@@ -15,6 +19,8 @@
     server = {
       http_listen_address = "127.0.0.1";
       http_listen_port = 3100;
+      grpc_listen_address = "127.0.0.1";
+      grpc_listen_port = 9096;
     };
     common = {
       path_prefix = lokiDir;
@@ -44,6 +50,8 @@
     server = {
       http_listen_address = "127.0.0.1";
       http_listen_port = 3200;
+      grpc_listen_address = "127.0.0.1";
+      grpc_listen_port = 9097;
     };
     distributor.receivers.otlp.protocols = {
       grpc.endpoint = "127.0.0.1:4317";
@@ -64,7 +72,8 @@
     server = {
       http_listen_address = "127.0.0.1";
       http_listen_port = 9009;
-      grpc_listen_port = 9095;
+      grpc_listen_address = "127.0.0.1";
+      grpc_listen_port = 9098;
     };
     common = {
       storage = {
@@ -215,7 +224,7 @@ in {
 
     mimir = agent "mimir" "${pkgs.mimir}/bin/mimir --config.file=${mimirConfig}";
 
-    alloy = agent "alloy" "${pkgs.grafana-alloy}/bin/alloy run ${alloyConfig} --server.http.listen-addr=127.0.0.1:12345 --storage.path=${alloyDir}";
+    alloy = agent "alloy" "${pkgs.grafana-alloy}/bin/alloy run ${alloyConfig} --server.http.listen-addr=127.0.0.1:12345 --storage.path=${lib.escapeShellArg alloyDir}";
 
     grafana = agent "grafana" "${pkgs.grafana}/bin/grafana server -homepath ${pkgs.grafana}/share/grafana -config ${grafanaIni}";
   };

@@ -227,7 +227,8 @@
           rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
         in
           nixpkgs.vimUtils.buildVimPlugin {
-            name = name;
+            pname = name;
+            version = rev;
             src = nixpkgs.fetchFromGitHub {
               owner = "linux-cultist";
               repo = name;
