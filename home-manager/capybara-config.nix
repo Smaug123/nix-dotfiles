@@ -1,8 +1,13 @@
 {
+  lib,
   pkgs,
   config,
   ...
-}: {
+}: let
+  grafanaSecretsDir = "/var/lib/grafana/secrets";
+  grafanaAdminPasswordFile = "${grafanaSecretsDir}/admin-password";
+  grafanaSecretKeyFile = "${grafanaSecretsDir}/secret-key";
+in {
   nixpkgs.config.allowUnfree = true;
   imports = [
     ../hardware/capybara.nix
@@ -89,8 +94,6 @@
   };
 
   # --- Observability: local full LGTM stack on 127.0.0.1 -------------------
-  # admin_password and secret_key are placeholders. Swap for file-provider
-  # once the secrets-management TODO above is resolved.
 
   services.loki = {
     enable = true;
@@ -267,8 +270,8 @@
       };
       security = {
         admin_user = "admin";
-        admin_password = "admin";
-        secret_key = "nixos-lgtm-placeholder-replace-me";
+        admin_password = "$__file{${grafanaAdminPasswordFile}}";
+        secret_key = "$__file{${grafanaSecretKeyFile}}";
       };
       analytics.reporting_enabled = false;
       "auth.anonymous".enabled = false;
@@ -298,4 +301,27 @@
       ];
     };
   };
+
+  systemd.services.grafana.preStart = lib.mkBefore ''
+    ${pkgs.coreutils}/bin/mkdir -p ${grafanaSecretsDir}
+    ${pkgs.coreutils}/bin/chmod 0700 ${grafanaSecretsDir}
+
+    if [[ ! -e ${grafanaAdminPasswordFile} ]]; then
+      ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > ${grafanaAdminPasswordFile}
+    fi
+
+    if [[ ! -e ${grafanaSecretKeyFile} ]]; then
+      ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > ${grafanaSecretKeyFile}
+    fi
+
+    if [[ "$(${pkgs.coreutils}/bin/id -u)" = 0 ]]; then
+      ${pkgs.coreutils}/bin/chown -R grafana:grafana ${grafanaSecretsDir}
+    fi
+
+    ${pkgs.coreutils}/bin/chmod 0400 ${grafanaAdminPasswordFile} ${grafanaSecretKeyFile}
+  '';
+
+  systemd.tmpfiles.rules = [
+    "d ${grafanaSecretsDir} 0700 grafana grafana -"
+  ];
 }

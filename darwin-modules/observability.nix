@@ -11,6 +11,9 @@
   mimirDir = "${stateDir}/Mimir";
   alloyDir = "${stateDir}/Alloy";
   grafanaDir = "${stateDir}/Grafana";
+  grafanaSecretsDir = "${grafanaDir}/secrets";
+  grafanaAdminPasswordFile = "${grafanaSecretsDir}/admin-password";
+  grafanaSecretKeyFile = "${grafanaSecretsDir}/secret-key";
 
   yaml = (pkgs.formats.yaml {}).generate;
 
@@ -167,8 +170,8 @@
 
     [security]
     admin_user     = admin
-    admin_password = admin
-    secret_key     = nixos-lgtm-placeholder-replace-me
+    admin_password = $__file{${grafanaAdminPasswordFile}}
+    secret_key     = $__file{${grafanaSecretKeyFile}}
 
     [analytics]
     reporting_enabled = false
@@ -203,7 +206,15 @@
                '${mimirDir}/tsdb' '${mimirDir}/ruler' '${mimirDir}/compactor' ; \
       mkdir -p '${alloyDir}' ; \
       mkdir -p '${grafanaDir}/data' '${grafanaDir}/logs' '${grafanaDir}/plugins' \
-               '${grafanaDir}/provisioning/datasources' ; \
+               '${grafanaDir}/provisioning/datasources' '${grafanaSecretsDir}' ; \
+      chmod 700 '${grafanaSecretsDir}' ; \
+      if [ ! -e '${grafanaAdminPasswordFile}' ] ; then \
+        ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > '${grafanaAdminPasswordFile}' ; \
+      fi ; \
+      if [ ! -e '${grafanaSecretKeyFile}' ] ; then \
+        ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > '${grafanaSecretKeyFile}' ; \
+      fi ; \
+      chmod 400 '${grafanaAdminPasswordFile}' '${grafanaSecretKeyFile}' ; \
       cp '${datasourcesYaml}' '${grafanaDir}/provisioning/datasources/lgtm.yaml' ; \
       exec ${inner}"
   '';
