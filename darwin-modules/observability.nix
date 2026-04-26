@@ -26,15 +26,27 @@
       grpc_listen_address = "127.0.0.1";
       grpc_listen_port = 9096;
     };
+    frontend = {
+      address = "127.0.0.1";
+      port = 9096;
+    };
     common = {
       path_prefix = lokiDir;
       replication_factor = 1;
-      ring.kvstore.store = "inmemory";
+      ring = {
+        kvstore.store = "inmemory";
+        instance_addr = "127.0.0.1";
+        instance_port = 9096;
+        instance_id = "localhost";
+      };
       storage.filesystem = {
         chunks_directory = "${lokiDir}/chunks";
         rules_directory = "${lokiDir}/rules";
       };
     };
+    # The APFS Data volume is large enough that 90% full can still leave tens of GiB free.
+    ingester.wal.disk_full_threshold = 0.99;
+    limits_config.volume_enabled = true;
     schema_config.configs = [
       {
         from = "2024-01-01";
@@ -58,8 +70,8 @@
       grpc_listen_port = 9097;
     };
     distributor.receivers.otlp.protocols = {
-      grpc.endpoint = "127.0.0.1:4317";
-      http.endpoint = "127.0.0.1:4318";
+      grpc.endpoint = "127.0.0.1:14317";
+      http.endpoint = "127.0.0.1:14318";
     };
     ingester.trace_idle_period = "10s";
     storage.trace = {
@@ -73,6 +85,7 @@
   mimirConfig = yaml "mimir.yaml" {
     target = "all";
     multitenancy_enabled = false;
+    activity_tracker.filepath = "${mimirDir}/metrics-activity.log";
     server = {
       http_listen_address = "127.0.0.1";
       http_listen_port = 9009;
@@ -156,6 +169,56 @@
       targets    = local.file_match.tmp_logs.targets
       forward_to = [loki.write.loki.receiver]
     }
+
+    // --- otlp: receive app telemetry, send traces to Tempo and logs to Loki
+    otelcol.exporter.otlp "tempo" {
+      client {
+        endpoint = "127.0.0.1:14317"
+
+        tls {
+          insecure             = true
+          insecure_skip_verify = true
+        }
+      }
+    }
+
+    otelcol.exporter.loki "otlp" {
+      forward_to = [loki.write.loki.receiver]
+    }
+
+    otelcol.processor.attributes "otlp_logs" {
+      action {
+        key    = "loki.resource.labels"
+        action = "insert"
+        value  = "service.name, service.namespace"
+      }
+
+      output {
+        logs = [otelcol.processor.batch.otlp.input]
+      }
+    }
+
+    otelcol.processor.batch "otlp" {
+      output {
+        logs   = [otelcol.exporter.loki.otlp.input]
+        traces = [otelcol.exporter.otlp.tempo.input]
+      }
+    }
+
+    otelcol.receiver.otlp "default" {
+      grpc {
+        endpoint = "127.0.0.1:4317"
+      }
+
+      http {
+        endpoint = "127.0.0.1:4318"
+      }
+
+      output {
+        logs   = [otelcol.processor.attributes.otlp_logs.input]
+        traces = [otelcol.processor.batch.otlp.input]
+      }
+    }
   '';
 
   grafanaIni = pkgs.writeText "grafana.ini" ''
@@ -189,6 +252,10 @@
         access: proxy
         url: http://127.0.0.1:3100
         isDefault: true
+        jsonData:
+          httpHeaderName1: X-Scope-OrgID
+        secureJsonData:
+          httpHeaderValue1: fake
       - name: Mimir
         type: prometheus
         access: proxy
