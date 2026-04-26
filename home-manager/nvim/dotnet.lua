@@ -55,6 +55,600 @@ function TestDotNetSolution()
 	end
 end
 
+-- Parse a .sln file (classic format) and extract project paths
+---@param sln_path string
+---@param sln_dir string
+---@return string[]
+local function get_projects_from_sln(sln_path, sln_dir)
+	local projects = {}
+	local file = io.open(sln_path, "r")
+	if not file then
+		return projects
+	end
+
+	for line in file:lines() do
+		-- Match: Project("{GUID}") = "Name", "path/to/project.csproj", "{GUID}"
+		-- Also matches .fsproj (the [cf] character class matches both c and f)
+		local proj_path = line:match('Project%("[^"]+"%)[^"]*"[^"]+"%s*,%s*"([^"]+%.[cf]sproj)"')
+		if proj_path then
+			-- Normalize path separators (Windows -> Unix)
+			proj_path = proj_path:gsub("\\", "/")
+			local full_path = sln_dir .. "/" .. proj_path
+			-- Normalize the path
+			full_path = vim.fn.fnamemodify(full_path, ":p")
+			if vim.fn.filereadable(full_path) == 1 then
+				table.insert(projects, full_path)
+			end
+		end
+	end
+	file:close()
+	return projects
+end
+
+-- Parse a .slnx file (XML format) and extract project paths
+---@param sln_path string
+---@param sln_dir string
+---@return string[]
+local function get_projects_from_slnx(sln_path, sln_dir)
+	local projects = {}
+	local file = io.open(sln_path, "r")
+	if not file then
+		return projects
+	end
+
+	for line in file:lines() do
+		-- Match: <Project Path="path/to/project.fsproj" /> or <Project Path="path/to/project.csproj" />
+		local proj_path = line:match('<Project[^>]+Path="([^"]+%.[cf]sproj)"')
+		if proj_path then
+			-- Normalize path separators (Windows -> Unix)
+			proj_path = proj_path:gsub("\\", "/")
+			local full_path = sln_dir .. "/" .. proj_path
+			-- Normalize the path
+			full_path = vim.fn.fnamemodify(full_path, ":p")
+			if vim.fn.filereadable(full_path) == 1 then
+				table.insert(projects, full_path)
+			end
+		end
+	end
+	file:close()
+	return projects
+end
+
+-- Parse a solution file (.sln or .slnx) and extract project paths
+---@param sln_path string
+---@return string[]
+local function get_projects_from_solution(sln_path)
+	local sln_dir = vim.fn.fnamemodify(sln_path, ":h")
+	local ext = vim.fn.fnamemodify(sln_path, ":e")
+
+	if ext == "slnx" then
+		return get_projects_from_slnx(sln_path, sln_dir)
+	else
+		return get_projects_from_sln(sln_path, sln_dir)
+	end
+end
+
+-- Read project file content (cached for the session)
+---@type table<string, string>
+local _project_content_cache = {}
+
+---@param proj_path string
+---@return string|nil
+local function get_project_content(proj_path)
+	if _project_content_cache[proj_path] then
+		return _project_content_cache[proj_path]
+	end
+	local file = io.open(proj_path, "r")
+	if not file then
+		return nil
+	end
+	local content = file:read("*a")
+	file:close()
+	_project_content_cache[proj_path] = content
+	return content
+end
+
+-- Check if a project is a test project (has Microsoft.NET.Test.Sdk)
+---@param proj_path string
+---@return boolean
+local function is_test_project(proj_path)
+	local content = get_project_content(proj_path)
+	if not content then
+		return false
+	end
+	return content:match('PackageReference[^>]+Include="Microsoft%.NET%.Test%.Sdk"') ~= nil
+end
+
+-- Check if a project is executable (has <OutputType>Exe</OutputType> or is a web project)
+---@param proj_path string
+---@return boolean
+local function is_executable_project(proj_path)
+	local content = get_project_content(proj_path)
+	if not content then
+		return false
+	end
+
+	-- Check for explicit Exe output type
+	if content:match("<OutputType>Exe</OutputType>") then
+		return true
+	end
+
+	-- Web SDK projects are implicitly executable
+	if content:match('Sdk="Microsoft%.NET%.Sdk%.Web"') then
+		return true
+	end
+
+	return false
+end
+
+-- Get the output DLL path for a project
+---@param proj_path string
+---@param configuration string
+---@return string
+local function get_project_output_path(proj_path, configuration)
+	local proj_dir = vim.fn.fnamemodify(proj_path, ":h")
+	local proj_name = vim.fn.fnamemodify(proj_path, ":t:r")
+
+	-- Try to find the actual output by checking bin directory
+	local bin_dir = proj_dir .. "/bin/" .. configuration
+	local pattern = bin_dir .. "/net*/" .. proj_name .. ".dll"
+	local matches = vim.fn.glob(pattern, nil, true)
+
+	if #matches > 0 then
+		-- Return the most recently modified one
+		table.sort(matches, function(a, b)
+			return vim.fn.getftime(a) > vim.fn.getftime(b)
+		end)
+		return matches[1]
+	end
+
+	-- Fallback: construct a likely path
+	return bin_dir .. "/net8.0/" .. proj_name .. ".dll"
+end
+
+-- Get all executable projects from the current solution
+---@return {path: string, name: string, dll: string, is_test: boolean}[]
+local function get_debuggable_projects()
+	local sln = GetCurrentSln()
+	if not sln then
+		return {}
+	end
+
+	local projects = get_projects_from_solution(sln)
+	local debuggables = {}
+
+	for _, proj_path in ipairs(projects) do
+		if is_executable_project(proj_path) then
+			local name = vim.fn.fnamemodify(proj_path, ":t:r")
+			table.insert(debuggables, {
+				path = proj_path,
+				name = name,
+				dll = get_project_output_path(proj_path, "Debug"),
+				is_test = is_test_project(proj_path),
+			})
+		end
+	end
+
+	return debuggables
+end
+
+-- Debug a specific project
+---@param project {path: string, name: string, dll: string, is_test: boolean}
+---@param build_first boolean
+local function debug_project(project, build_first)
+	local dap = require("dap")
+
+	-- Test projects should use test debugging
+	if project.is_test then
+		print("This is a test project. Use ;sdt to debug a specific test, or ;sda for all tests.")
+		return
+	end
+
+	local function start_debug()
+		-- Check if DLL exists
+		if vim.fn.filereadable(project.dll) ~= 1 then
+			print("DLL not found: " .. project.dll .. " - try building first")
+			return
+		end
+
+		dap.run({
+			type = "coreclr",
+			name = "Debug " .. project.name,
+			request = "launch",
+			program = project.dll,
+			cwd = vim.fn.fnamemodify(project.path, ":h"),
+		})
+	end
+
+	if build_first then
+		local context = BuildUtils.create_window()
+		context.errs = 0
+		context.warn = 0
+		BuildUtils.run("dotnet", { "build", project.path }, "dotnet build " .. project.name, context, on_line, function(ctx, code, _)
+			on_complete(ctx, code, nil)
+			if code == 0 then
+				-- Refresh the DLL path after build
+				project.dll = get_project_output_path(project.path, "Debug")
+				vim.schedule(start_debug)
+			end
+		end)
+	else
+		start_debug()
+	end
+end
+
+-- Pick a project to debug using Telescope
+---@param build_first boolean
+local function pick_and_debug_project(build_first)
+	local debuggables = get_debuggable_projects()
+
+	if #debuggables == 0 then
+		print("No executable projects found in solution")
+		return
+	end
+
+	if #debuggables == 1 then
+		debug_project(debuggables[1], build_first)
+		return
+	end
+
+	local pickers = require("telescope.pickers")
+	local finders = require("telescope.finders")
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+	local conf = require("telescope.config").values
+
+	pickers
+		.new({}, {
+			prompt_title = "Select project to debug",
+			finder = finders.new_table({
+				results = debuggables,
+				entry_maker = function(entry)
+					local display = entry.name
+					if entry.is_test then
+						display = display .. " [test - use ;sdt]"
+					end
+					return {
+						value = entry,
+						display = display,
+						ordinal = entry.name,
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr, _)
+				actions.select_default:replace(function()
+					local selection = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					debug_project(selection.value, build_first)
+				end)
+				return true
+			end,
+		})
+		:find()
+end
+
+function DebugDotNetProject()
+	pick_and_debug_project(false)
+end
+
+function BuildAndDebugDotNetProject()
+	pick_and_debug_project(true)
+end
+
+-- Find the project that contains the current file
+---@return string|nil
+local function find_project_for_current_file()
+	local current_file = vim.fn.expand("%:p")
+	local sln = GetCurrentSln()
+	if not sln then
+		return nil
+	end
+
+	local projects = get_projects_from_solution(sln)
+	for _, proj_path in ipairs(projects) do
+		local proj_dir = vim.fn.fnamemodify(proj_path, ":h")
+		if current_file:sub(1, #proj_dir) == proj_dir then
+			return proj_path
+		end
+	end
+	return nil
+end
+
+-- Find the test name at the cursor position (NUnit)
+-- Returns: fully qualified test name or nil
+---@return string|nil, string|nil  -- test_filter, display_name
+local function find_test_at_cursor()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local cursor_line = cursor[1]
+
+	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+	-- Find the namespace and module/type containing the cursor
+	local namespace = nil
+	local current_type = nil
+	local current_test = nil
+
+	-- Track nesting for F# modules
+	local module_stack = {}
+
+	for i, line in ipairs(lines) do
+		-- F# namespace
+		local ns = line:match("^namespace%s+([%w%.]+)")
+		if ns then
+			namespace = ns
+		end
+
+		-- F# module (can be nested)
+		local mod = line:match("^module%s+([%w_]+)%s*=?") or line:match("^%s*module%s+([%w_]+)%s*=")
+		if mod then
+			-- Simple heuristic: top-level module vs nested
+			if line:match("^module%s") then
+				module_stack = { mod }
+			else
+				table.insert(module_stack, mod)
+			end
+			current_type = table.concat(module_stack, "+")
+		end
+
+		-- F# type (class)
+		local typ = line:match("^type%s+([%w_]+)") or line:match("^%s+type%s+([%w_]+)")
+		if typ and not line:match("^type%s+%w+%s*=") then -- Exclude type aliases
+			current_type = typ
+		end
+
+		-- Check for test attributes on this line or the previous line
+		if i == cursor_line or i == cursor_line - 1 then
+			if line:match("%[<Test") or line:match("%[<TestCase") or line:match("%[<Property") then
+				-- The test is on the next line (or this line if it's a let binding)
+				local test_line = (i == cursor_line) and line or lines[cursor_line]
+				local test_name = test_line:match("let%s+([%w_'`]+)") or test_line:match("member%s+[%w_]+%.([%w_]+)")
+				if test_name then
+					-- Remove backticks from F# names like ``test name``
+					test_name = test_name:gsub("``", "")
+					current_test = test_name
+					break
+				end
+			end
+		end
+
+		-- Also check if cursor is on a let binding that might be a test
+		if i == cursor_line then
+			local test_name = line:match("let%s+([%w_'`]+)") or line:match("member%s+[%w_]+%.([%w_]+)")
+			if test_name then
+				-- Check if previous lines have test attributes
+				for j = math.max(1, i - 3), i - 1 do
+					if lines[j]:match("%[<Test") or lines[j]:match("%[<TestCase") or lines[j]:match("%[<Property") then
+						test_name = test_name:gsub("``", "")
+						current_test = test_name
+						break
+					end
+				end
+			end
+		end
+	end
+
+	if current_test then
+		local full_name = ""
+		if namespace then
+			full_name = namespace .. "."
+		end
+		if current_type then
+			full_name = full_name .. current_type .. "."
+		end
+		full_name = full_name .. current_test
+
+		-- NUnit filter syntax
+		return "FullyQualifiedName~" .. current_test, full_name
+	end
+
+	return nil, nil
+end
+
+-- Find the test fixture (class/module) at cursor
+---@return string|nil, string|nil  -- test_filter, display_name
+local function find_test_fixture_at_cursor()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+	local namespace = nil
+	local current_type = nil
+
+	for _, line in ipairs(lines) do
+		local ns = line:match("^namespace%s+([%w%.]+)")
+		if ns then
+			namespace = ns
+		end
+
+		local mod = line:match("^module%s+([%w_]+)")
+		if mod then
+			current_type = mod
+		end
+
+		local typ = line:match("^type%s+([%w_]+)")
+		if typ then
+			current_type = typ
+		end
+	end
+
+	if current_type then
+		local full_name = namespace and (namespace .. "." .. current_type) or current_type
+		return "FullyQualifiedName~" .. current_type, full_name
+	end
+
+	return nil, nil
+end
+
+-- Debug a test using dotnet test with VSTEST_HOST_DEBUG
+-- This launches dotnet test which pauses waiting for debugger, then we attach
+---@param project_path string
+---@param filter string|nil
+---@param display_name string
+---@param build_first boolean
+local function debug_test(project_path, filter, display_name, build_first)
+	local dap = require("dap")
+	local proj_dir = vim.fn.fnamemodify(project_path, ":h")
+
+	local function start_debug()
+		local args = { "test", "--no-build", project_path }
+		if filter then
+			table.insert(args, "--filter")
+			table.insert(args, filter)
+		end
+
+		print("Starting test with debugger: " .. display_name)
+		print("Waiting for testhost to start...")
+
+		-- Launch dotnet test with VSTEST_HOST_DEBUG=1 in background
+		-- It will print "Process Id: XXXX" and wait for debugger
+		local stdout = vim.uv.new_pipe(false)
+		local stderr = vim.uv.new_pipe(false)
+		local output = ""
+		local attached = false
+
+		local handle
+		handle = vim.uv.spawn("dotnet", {
+			args = args,
+			cwd = proj_dir,
+			stdio = { nil, stdout, stderr },
+			env = vim.tbl_extend("force", vim.fn.environ(), { VSTEST_HOST_DEBUG = "1" }),
+		}, function(code, _)
+			stdout:close()
+			stderr:close()
+			if handle then
+				handle:close()
+			end
+			if code ~= 0 and not attached then
+				vim.schedule(function()
+					print("dotnet test exited with code " .. code)
+				end)
+			end
+		end)
+
+		local function process_output(data)
+			if not data then
+				return
+			end
+			output = output .. data
+
+			-- Look for "Process Id: XXXX, Name: testhost"
+			local pid = output:match("Process Id:%s*(%d+)")
+			if pid and not attached then
+				attached = true
+				vim.schedule(function()
+					print("Attaching to testhost (PID: " .. pid .. ")")
+					dap.run({
+						type = "coreclr",
+						name = "Attach to testhost",
+						request = "attach",
+						processId = tonumber(pid),
+					})
+				end)
+			end
+		end
+
+		vim.uv.read_start(stdout, function(err, data)
+			assert(not err, err)
+			process_output(data)
+		end)
+		vim.uv.read_start(stderr, function(err, data)
+			assert(not err, err)
+			process_output(data)
+		end)
+	end
+
+	if build_first then
+		local context = BuildUtils.create_window()
+		context.errs = 0
+		context.warn = 0
+		BuildUtils.run("dotnet", { "build", project_path }, "dotnet build", context, on_line, function(ctx, code, _)
+			on_complete(ctx, code, nil)
+			if code == 0 then
+				vim.schedule(start_debug)
+			end
+		end)
+	else
+		start_debug()
+	end
+end
+
+-- Debug the test at cursor
+---@param build_first boolean
+local function debug_test_at_cursor(build_first)
+	local proj_path = find_project_for_current_file()
+	if not proj_path then
+		print("Could not find project for current file")
+		return
+	end
+
+	if not is_test_project(proj_path) then
+		print("Current file is not in a test project")
+		return
+	end
+
+	local filter, display_name = find_test_at_cursor()
+	if not filter then
+		print("No test found at cursor")
+		return
+	end
+
+	debug_test(proj_path, filter, display_name, build_first)
+end
+
+-- Debug all tests in the current fixture/module
+---@param build_first boolean
+local function debug_test_fixture(build_first)
+	local proj_path = find_project_for_current_file()
+	if not proj_path then
+		print("Could not find project for current file")
+		return
+	end
+
+	if not is_test_project(proj_path) then
+		print("Current file is not in a test project")
+		return
+	end
+
+	local filter, display_name = find_test_fixture_at_cursor()
+	if not filter then
+		print("No test fixture found")
+		return
+	end
+
+	debug_test(proj_path, filter, display_name, build_first)
+end
+
+-- Debug all tests in the current project
+---@param build_first boolean
+local function debug_all_tests_in_project(build_first)
+	local proj_path = find_project_for_current_file()
+	if not proj_path then
+		print("Could not find project for current file")
+		return
+	end
+
+	if not is_test_project(proj_path) then
+		print("Current file is not in a test project")
+		return
+	end
+
+	local proj_name = vim.fn.fnamemodify(proj_path, ":t:r")
+	debug_test(proj_path, nil, proj_name, build_first)
+end
+
+function DebugTestAtCursor()
+	debug_test_at_cursor(true)
+end
+
+function DebugTestFixture()
+	debug_test_fixture(true)
+end
+
+function DebugAllTestsInProject()
+	debug_all_tests_in_project(true)
+end
+
 function CurrentSlnOrEmpty()
 	local sln = GetCurrentSln()
 	if sln then
@@ -80,6 +674,12 @@ function RegisterSolution(sln_path)
 		},
 		{ "<localleader>sb", BuildDotNetSolution, desc = "Build .NET solution" },
 		{ "<localleader>st", TestDotNetSolution, desc = "Test .NET solution" },
+		{ "<localleader>sd", desc = "Debug" },
+		{ "<localleader>sdp", DebugDotNetProject, desc = "Debug .NET project" },
+		{ "<localleader>sdP", BuildAndDebugDotNetProject, desc = "Build and debug .NET project" },
+		{ "<localleader>sdt", DebugTestAtCursor, desc = "Debug test at cursor" },
+		{ "<localleader>sdf", DebugTestFixture, desc = "Debug test fixture/module" },
+		{ "<localleader>sda", DebugAllTestsInProject, desc = "Debug all tests in project" },
 	}, { buffer = vim.api.nvim_get_current_buf() })
 end
 
@@ -87,7 +687,10 @@ local function find_nearest_slns()
 	local path = vim.fn.expand("%:p:h") -- Get the full path of the current buffer's directory
 
 	while path and path ~= "/" do
+		-- Look for both .sln and .slnx files
 		local sln_paths = vim.fn.glob(path .. "/*.sln", nil, true)
+		local slnx_paths = vim.fn.glob(path .. "/*.slnx", nil, true)
+		vim.list_extend(sln_paths, slnx_paths)
 		if #sln_paths > 0 then
 			return sln_paths
 		end
@@ -104,7 +707,7 @@ local function FindAndRegisterSolution(should_override)
 
 	local solutions = find_nearest_slns()
 	if not solutions or #solutions == 0 then
-		print("No .sln file found in any parent directory.")
+		print("No .sln or .slnx file found in any parent directory.")
 		return
 	elseif #solutions == 1 then
 		-- Exactly one solution found; register it directly
@@ -145,7 +748,7 @@ local function FindAndRegisterSolution(should_override)
 end
 
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-	pattern = "*.sln",
+	pattern = { "*.sln", "*.slnx" },
 	callback = function()
 		if GetCurrentSln() == nil then
 			RegisterSolution(vim.fn.expand("%:p"))

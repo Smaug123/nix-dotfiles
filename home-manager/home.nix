@@ -53,6 +53,9 @@
   };
   programs.git = {
     enable = true;
+    signing = {
+      format = "openpgp";
+    };
     settings = {
       alias = {
         co = "checkout";
@@ -224,7 +227,8 @@
           rev = "2ad34f36d498ff5193ea10f79c87688bd5284172";
         in
           nixpkgs.vimUtils.buildVimPlugin {
-            name = name;
+            pname = name;
+            version = rev;
             src = nixpkgs.fetchFromGitHub {
               owner = "linux-cultist";
               repo = name;
@@ -283,7 +287,7 @@
       nixpkgs.difftastic
       nixpkgs.syncthing
       nixpkgs.dockerfile-language-server
-      nixpkgs.nodePackages_latest.vscode-langservers-extracted
+      nixpkgs.vscode-langservers-extracted
       nixpkgs.hadolint
       nixpkgs.yaml-language-server
       nixpkgs.netcoredbg
