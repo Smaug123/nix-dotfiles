@@ -12,6 +12,7 @@
   alloyDir = "${stateDir}/Alloy";
   grafanaDir = "${stateDir}/Grafana";
   grafanaSecretsDir = "${grafanaDir}/secrets";
+  grafanaDatasourcePath = "${grafanaDir}/provisioning/datasources/lgtm.yaml";
   grafanaAdminPasswordFile = "${grafanaSecretsDir}/admin-password";
   grafanaSecretKeyFile = "${grafanaSecretsDir}/secret-key";
 
@@ -206,7 +207,8 @@
                '${mimirDir}/tsdb' '${mimirDir}/ruler' '${mimirDir}/compactor' ; \
       mkdir -p '${alloyDir}' ; \
       mkdir -p '${grafanaDir}/data' '${grafanaDir}/logs' '${grafanaDir}/plugins' \
-               '${grafanaDir}/provisioning/datasources' '${grafanaSecretsDir}' ; \
+               '${grafanaDir}/provisioning/datasources' '${grafanaDir}/provisioning/dashboards' \
+               '${grafanaSecretsDir}' ; \
       chmod 700 '${grafanaSecretsDir}' ; \
       if [ ! -e '${grafanaAdminPasswordFile}' ] ; then \
         ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > '${grafanaAdminPasswordFile}' ; \
@@ -215,7 +217,9 @@
         ${pkgs.openssl}/bin/openssl rand -hex 32 | ${pkgs.coreutils}/bin/tr -d '\n' > '${grafanaSecretKeyFile}' ; \
       fi ; \
       chmod 400 '${grafanaAdminPasswordFile}' '${grafanaSecretKeyFile}' ; \
-      cp '${datasourcesYaml}' '${grafanaDir}/provisioning/datasources/lgtm.yaml' ; \
+      rm -f '${grafanaDatasourcePath}' ; \
+      cp '${datasourcesYaml}' '${grafanaDatasourcePath}' ; \
+      chmod 644 '${grafanaDatasourcePath}' ; \
       exec ${inner}"
   '';
 
@@ -224,11 +228,10 @@
     serviceConfig = {
       KeepAlive = true;
       RunAtLoad = true;
-      UserName = "patrick";
     };
   };
 in {
-  launchd.agents = {
+  launchd.user.agents = {
     loki = agent "loki" "${pkgs.grafana-loki}/bin/loki -config.file=${lokiConfig}";
 
     tempo = agent "tempo" "${pkgs.tempo}/bin/tempo --config.file=${tempoConfig}";
