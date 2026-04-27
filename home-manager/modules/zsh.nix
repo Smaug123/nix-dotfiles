@@ -1,7 +1,28 @@
-{lib, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  zshrc =
+    builtins.replaceStrings
+    [
+      "@nix-git@"
+      "@nix-timeout@"
+    ]
+    [
+      "${pkgs.git}/bin/git"
+      "${pkgs.coreutils}/bin/timeout"
+    ]
+    (builtins.readFile ./zsh/zshrc);
+in {
   home.activation.removeZcompdump = lib.hm.dag.entryBefore ["writeBoundary"] ''
     rm -f ~/.zcompdump*
   '';
+
+  home.packages = [
+    pkgs.coreutils
+    pkgs.git
+  ];
 
   programs.zsh = {
     enable = true;
@@ -21,7 +42,7 @@
       vim = "nvim";
       view = "vim -R";
     };
-    initContent = builtins.readFile ./zsh/zshrc;
+    initContent = zshrc;
   };
 
   programs.fzf.enableZshIntegration = true;
