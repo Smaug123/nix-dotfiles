@@ -29,7 +29,7 @@ in {
     autocd = true;
     autosuggestion.enable = true;
     enableCompletion = true;
-    completionInit = "autoload -U compinit && compinit -C";
+    completionInit = "autoload -U compinit && compinit -C -D";
     history = {
       expireDuplicatesFirst = true;
     };

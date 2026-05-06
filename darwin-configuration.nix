@@ -49,6 +49,9 @@ in {
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
+  programs.zsh.enableGlobalCompInit = false;
+  programs.zsh.enableBashCompletion = false;
+  programs.zsh.promptInit = "";
   programs.gnupg.agent.enable = true;
 
   # Use a custom configuration.nix location.
@@ -138,9 +141,12 @@ in {
     };
   };
 
+  # because of Determinate
+  nix.enable = false;
+
   # Auto upgrade nix package and the daemon service.
-  nix.package = pkgs.nixVersions.stable;
-  nix.gc.automatic = true;
+  # nix.package = pkgs.nixVersions.stable;
+  # nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;
