@@ -7,11 +7,9 @@
     builtins.replaceStrings
     [
       "@nix-git@"
-      "@nix-timeout@"
     ]
     [
       "${pkgs.git}/bin/git"
-      "${pkgs.coreutils}/bin/timeout"
     ]
     (builtins.readFile ./zsh/zshrc);
 in {
