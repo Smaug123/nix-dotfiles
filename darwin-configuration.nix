@@ -1,4 +1,15 @@
 {pkgs, ...}: let
+  boundedGit = pkgs.writeShellScript "bounded-git" ''
+    export GIT_TERMINAL_PROMPT=0
+    export GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=2"
+
+    exec ${pkgs.coreutils}/bin/timeout --kill-after=10s 300s \
+      ${pkgs.git}/bin/git \
+      --no-optional-locks \
+      -c http.lowSpeedLimit=1000 \
+      -c http.lowSpeedTime=30 \
+      "$@"
+  '';
   mbsync = import ./mbsync.nix {inherit pkgs;};
 in {
   imports = [
@@ -26,6 +37,8 @@ in {
   # $ nix-env -qaP | grep wget
 
   environment.systemPackages = [
+    pkgs.coreutils
+    pkgs.git
     pkgs.python3
   ];
 
@@ -36,6 +49,9 @@ in {
 
   # This line is required; otherwise, on shell startup, you won't have Nix stuff in the PATH.
   programs.zsh.enable = true;
+  programs.zsh.enableGlobalCompInit = false;
+  programs.zsh.enableBashCompletion = false;
+  programs.zsh.promptInit = "";
   programs.gnupg.agent.enable = true;
 
   # Use a custom configuration.nix location.
@@ -75,7 +91,7 @@ in {
     };
 
     backup-calendar = {
-      command = ''${pkgs.bash}/bin/bash -c "mkdir -p '/Users/patrick/Library/Application Support/RadicaleBackups' && if [ ! -d '/Users/patrick/Library/Application Support/RadicaleBackups/.git' ] ; then ${pkgs.git}/bin/git clone root@patrickstevens.co.uk:/preserve/radicale/data/.git '/Users/patrick/Library/Application Support/RadicaleBackups' >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${pkgs.git}/bin/git --git-dir '/Users/patrick/Library/Application Support/RadicaleBackups/.git' --work-tree '/Users/patrick/Library/Application Support/RadicaleBackups/' pull 2>>/tmp/radicale.err.log"'';
+      command = ''${pkgs.bash}/bin/bash -c "mkdir -p '/Users/patrick/Library/Application Support/RadicaleBackups' && if [ ! -d '/Users/patrick/Library/Application Support/RadicaleBackups/.git' ] ; then ${boundedGit} clone root@patrickstevens.co.uk:/preserve/radicale/data/.git '/Users/patrick/Library/Application Support/RadicaleBackups' >/tmp/radicale.out.log 2>/tmp/radicale.err.log; fi && ${boundedGit} --git-dir '/Users/patrick/Library/Application Support/RadicaleBackups/.git' --work-tree '/Users/patrick/Library/Application Support/RadicaleBackups/' pull 2>>/tmp/radicale.err.log"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -85,7 +101,7 @@ in {
     };
 
     sync-nixpkgs = {
-      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/nixpkgs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/nixpkgs/.git --work-tree '/Users/patrick/Documents/GitHub/nixpkgs/' fetch origin ; fi"'';
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/nixpkgs ] ; then ${boundedGit} --git-dir /Users/patrick/Documents/GitHub/nixpkgs/.git --work-tree '/Users/patrick/Documents/GitHub/nixpkgs/' fetch origin ; fi"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -95,7 +111,7 @@ in {
     };
 
     sync-dotnet-api-docs = {
-      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-api-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-api-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-api-docs' fetch origin ; fi"'';
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-api-docs ] ; then ${boundedGit} --git-dir /Users/patrick/Documents/GitHub/dotnet-api-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-api-docs' fetch origin ; fi"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -105,7 +121,7 @@ in {
     };
 
     sync-dotnet-docs = {
-      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-docs ] ; then ${pkgs.git}/bin/git --git-dir /Users/patrick/Documents/GitHub/dotnet-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-docs' fetch origin ; fi"'';
+      command = ''${pkgs.bash}/bin/bash -c "if [ -d /Users/patrick/Documents/GitHub/dotnet-docs ] ; then ${boundedGit} --git-dir /Users/patrick/Documents/GitHub/dotnet-docs/.git --work-tree '/Users/patrick/Documents/GitHub/dotnet-docs' fetch origin ; fi"'';
       serviceConfig = {
         KeepAlive = false;
         UserName = "patrick";
@@ -125,9 +141,12 @@ in {
     };
   };
 
+  # because of Determinate
+  nix.enable = false;
+
   # Auto upgrade nix package and the daemon service.
-  nix.package = pkgs.nixVersions.stable;
-  nix.gc.automatic = true;
+  # nix.package = pkgs.nixVersions.stable;
+  # nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
   nix.settings.sandbox = false;

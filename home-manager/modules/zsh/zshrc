@@ -1,10 +1,45 @@
+prompt_git_info() {
+  REPLY=""
+
+  local dir="$PWD"
+  local git_dir=""
+  local git_file=""
+  while [[ "$dir" != "/" ]]; do
+    if [[ -d "$dir/.git" ]]; then
+      git_dir="$dir/.git"
+      break
+    fi
+    if [[ -f "$dir/.git" ]]; then
+      IFS= read -r git_file < "$dir/.git" || return
+      [[ "$git_file" == gitdir:\ * ]] || return
+      git_dir="${git_file#gitdir: }"
+      [[ "$git_dir" == /* ]] || git_dir="$dir/$git_dir"
+      break
+    fi
+    dir="${dir:h}"
+  done
+
+  [[ -r "$git_dir/HEAD" ]] || return
+
+  local head=""
+  IFS= read -r head < "$git_dir/HEAD" || return
+  if [[ "$head" == ref:\ refs/heads/* ]]; then
+    REPLY="${head#ref: refs/heads/}"
+  elif [[ "$head" == ref:\ refs/tags/* ]]; then
+    REPLY="${head#ref: refs/tags/}"
+  else
+    REPLY="${head[1,12]}"
+  fi
+}
+
 prompt_custom() {
   local cyan='%F{cyan}'
   local red='%F{red}'
   local blue='%F{blue}'
   local reset_color='%f'
 
-  local git_info=$(git symbolic-ref --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null || git rev-parse --short HEAD 2> /dev/null)
+  prompt_git_info
+  local git_info="$REPLY"
   if [[ -n "$git_info" ]]; then
     # escape the percent character, which is the only zsh prompt metacharacter
     git_info=$git_info:s/%/%%/
@@ -28,6 +63,7 @@ setopt EXTENDED_HISTORY
 
 export OPENAI_API_KEY=$(<~/.secrets/openai.txt)
 export ANTHROPIC_API_KEY=$(<~/.secrets/anthropic.txt)
+export CLAUDE_CODE_OAUTH_TOKEN=$(<~/.secrets/anthropic-oauth.txt)
 
 autoload edit-command-line
 zle -N edit-command-line
@@ -35,7 +71,7 @@ bindkey -e
 bindkey '^X^E' edit-command-line
 
 if [[ -z "$TMUX" ]]; then
-    tmux new-session -A -s default
+    exec tmux new-session -A -s default
 fi
 
 ttyctl -f

@@ -11,7 +11,6 @@ in let
   riderconfig = pkgs.stdenv.mkDerivation {
     name = "rider-config";
     version = "2023.1";
-    __contentAddressed = true;
 
     src = src;
     phases = ["unpackPhase"];

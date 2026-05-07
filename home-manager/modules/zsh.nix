@@ -1,14 +1,33 @@
-{lib, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  zshrc =
+    builtins.replaceStrings
+    [
+      "@nix-git@"
+    ]
+    [
+      "${pkgs.git}/bin/git"
+    ]
+    (builtins.readFile ./zsh/zshrc);
+in {
   home.activation.removeZcompdump = lib.hm.dag.entryBefore ["writeBoundary"] ''
     rm -f ~/.zcompdump*
   '';
+
+  home.packages = [
+    pkgs.coreutils
+    pkgs.git
+  ];
 
   programs.zsh = {
     enable = true;
     autocd = true;
     autosuggestion.enable = true;
     enableCompletion = true;
-    completionInit = "autoload -U compinit && compinit -C";
+    completionInit = "autoload -U compinit && compinit -C -D";
     history = {
       expireDuplicatesFirst = true;
     };
@@ -21,7 +40,7 @@
       vim = "nvim";
       view = "vim -R";
     };
-    initContent = builtins.readFile ./zsh/zshrc;
+    initContent = zshrc;
   };
 
   programs.fzf.enableZshIntegration = true;

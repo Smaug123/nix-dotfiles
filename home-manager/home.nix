@@ -136,7 +136,7 @@
   };
 
   programs.vscode = {
-    enable = true;
+    enable = false;
     package = nixpkgs.vscode;
     profiles.default = {
       extensions = import ./vscode-extensions.nix {pkgs = nixpkgs;};

@@ -114,7 +114,6 @@
     in let
       pkgs = import nixpkgs {inherit system config;};
     in {
-      nixpkgs = pkgs;
       patrick = darwin.lib.darwinSystem {
         system = system;
         modules = let
