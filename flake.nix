@@ -112,7 +112,19 @@
     darwinConfigurations = let
       system = "aarch64-darwin";
     in let
-      pkgs = import nixpkgs {inherit system config;};
+      pkgs = import nixpkgs {
+        inherit system config;
+        overlays = [
+          (_f: p: {
+            # On aarch64-darwin the `ffmpeg-headless` binary has a broken ad-hoc
+            # code signature, so the kernel SIGKILLs it on exec. yt-dlp wraps it
+            # and probes ffmpeg by running it; the kill makes yt-dlp report
+            # "ffmpeg is not installed" and refuse to merge formats. Wrap the
+            # full (validly signed) ffmpeg instead.
+            yt-dlp = p.yt-dlp.override {ffmpeg-headless = p.ffmpeg;};
+          })
+        ];
+      };
     in {
       patrick = darwin.lib.darwinSystem {
         system = system;
