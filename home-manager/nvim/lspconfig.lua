@@ -160,7 +160,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			{ "gd", vim.lsp.buf.definition, desc = "Go to definition" },
 			{ "gi", vim.lsp.buf.implementation, desc = "Go to implementation" },
 			{
-				"gr",
+				"grr",
 				function()
 					require("telescope.builtin").lsp_references()
 				end,

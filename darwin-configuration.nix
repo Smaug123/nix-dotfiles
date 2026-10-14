@@ -16,23 +16,6 @@ in {
     ./darwin-modules/observability.nix
   ];
 
-  nixpkgs.overlays = [
-    (_f: p: {
-      yt-dlp = p.yt-dlp.overridePythonAttrs (o: {
-        # don't use gnome keyring
-        dependencies = (
-          __filter (
-            p:
-              !(__elem p.pname [
-                "cffi"
-                "secretstorage"
-              ])
-          )
-          o.dependencies
-        );
-      });
-    })
-  ];
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
 
@@ -152,6 +135,7 @@ in {
   nix.settings.sandbox = false;
 
   # Optimising store leads to transient build failures https://github.com/NixOS/nix/issues/7273
+  # and syspolicyd lockups https://github.com/nix-darwin/nix-darwin/issues/1307
   nix.extraOptions = ''
     auto-optimise-store = false
     experimental-features = nix-command flakes

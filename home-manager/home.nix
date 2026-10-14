@@ -239,11 +239,11 @@
         config = builtins.readFile ./nvim/venv-selector.lua;
         type = "lua";
       }
-      {
-        plugin = nixpkgs.vimPlugins.Ionide-vim;
-        type = "lua";
-        config = builtins.readFile ./nvim/ionide-vim.lua;
-      }
+      # {
+      #   plugin = nixpkgs.vimPlugins.Ionide-vim;
+      #   type = "lua";
+      #   config = builtins.readFile ./nvim/ionide-vim.lua;
+      # }
       {
         plugin = nixpkgs.vimPlugins.chadtree;
         config = builtins.readFile ./nvim/chadtree.lua;

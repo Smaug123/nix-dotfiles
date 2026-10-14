@@ -79,6 +79,25 @@
       local.path = "${tempoDir}/traces";
       wal.path = "${tempoDir}/wal";
     };
+    # Powers the Explore Traces app's rate()/breakdown queries (TraceQL metrics),
+    # which otherwise fail with "error finding generators: empty ring" — the
+    # metrics-generator is a separate opt-in component, not enabled by
+    # configuring the trace-ingestion path alone. Runs in-process (single
+    # `target=all` binary), so it joins the same in-memory ring automatically.
+    metrics_generator = {
+      registry.external_labels.source = "tempo";
+      storage = {
+        path = "${tempoDir}/generator/wal";
+        remote_write = [
+          {
+            url = "http://127.0.0.1:9009/api/v1/push";
+            send_exemplars = true;
+          }
+        ];
+      };
+      traces_storage.path = "${tempoDir}/generator/traces";
+    };
+    overrides.defaults.metrics_generator.processors = ["service-graphs" "span-metrics"];
     usage_report.reporting_enabled = false;
   };
 
@@ -269,7 +288,7 @@
   bootstrap = inner: ''
     ${pkgs.bash}/bin/bash -c "set -e ; \
       mkdir -p '${lokiDir}/chunks' '${lokiDir}/rules' ; \
-      mkdir -p '${tempoDir}/traces' '${tempoDir}/wal' ; \
+      mkdir -p '${tempoDir}/traces' '${tempoDir}/wal' '${tempoDir}/generator/wal' '${tempoDir}/generator/traces' ; \
       mkdir -p '${mimirDir}/data' '${mimirDir}/blocks' '${mimirDir}/tsdb-sync' \
                '${mimirDir}/tsdb' '${mimirDir}/ruler' '${mimirDir}/compactor' ; \
       mkdir -p '${alloyDir}' ; \
