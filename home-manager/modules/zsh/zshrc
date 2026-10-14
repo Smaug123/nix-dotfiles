@@ -70,7 +70,7 @@ zle -N edit-command-line
 bindkey -e
 bindkey '^X^E' edit-command-line
 
-if [[ -z "$TMUX" ]]; then
+if [[ -z "$TMUX" && -t 0 && -t 1 && -z "$VSCODE_RESOLVING_ENVIRONMENT" && "$TERM_PROGRAM" != "vscode" ]]; then
     exec tmux new-session -A -s default
 fi
 
