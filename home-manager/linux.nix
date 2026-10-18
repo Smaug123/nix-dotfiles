@@ -1,5 +1,5 @@
 {nixpkgs, ...}: {
-  home.packages = [nixpkgs.firefox nixpkgs.jetbrains.rider];
+  home.packages = [nixpkgs.firefox nixpkgs.jetbrains.rider nixpkgs.wl-clipboard];
 
   wayland.windowManager.sway = {
     enable = true;
