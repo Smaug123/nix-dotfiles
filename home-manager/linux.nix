@@ -7,6 +7,7 @@
       focus = {followMouse = false;};
       modifier = "Mod4";
       terminal = "alacritty";
+      menu = "${nixpkgs.fuzzel}/bin/fuzzel";
       window = {border = 5;};
       bars = [
         {command = "${nixpkgs.waybar}/bin/waybar";}
