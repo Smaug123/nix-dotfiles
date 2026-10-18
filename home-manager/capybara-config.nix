@@ -37,7 +37,7 @@ in {
     "video=HDMI-A-1:1920x1080@144"
   ];
 
-  boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
+  # boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
 
   networking = {
     hostName = "capybara";
@@ -79,6 +79,7 @@ in {
 
   system.stateVersion = "23.11";
   nix.settings.experimental-features = ["nix-command" "flakes" "ca-derivations"];
+  nix.package = pkgs.nixVersions.latest;
 
   nix.gc.automatic = true;
   nix.extraOptions = ''
