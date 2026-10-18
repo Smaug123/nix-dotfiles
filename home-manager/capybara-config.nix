@@ -109,7 +109,11 @@ in {
       common = {
         path_prefix = "/var/lib/loki";
         replication_factor = 1;
-        ring.kvstore.store = "inmemory";
+        # Otherwise the address is auto-detected from eth0/en0/lo, none of which is usable here.
+        ring = {
+          kvstore.store = "inmemory";
+          instance_addr = "127.0.0.1";
+        };
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
           rules_directory = "/var/lib/loki/rules";
@@ -204,6 +208,8 @@ in {
         instance_addr = "127.0.0.1";
         kvstore.store = "inmemory";
       };
+      # Mimir 3 added a querier ring; without this it auto-detects from eth0/en0, which don't exist here.
+      querier.ring.instance_addr = "127.0.0.1";
       usage_stats.enabled = false;
     };
   };
