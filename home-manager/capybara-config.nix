@@ -144,7 +144,12 @@ in {
         grpc.endpoint = "127.0.0.1:4317";
         http.endpoint = "127.0.0.1:4318";
       };
-      ingester.trace_idle_period = "10s";
+      # Tempo 3 defaults these to /var/tempo, which the sandboxed unit can't write to.
+      live_store = {
+        wal.path = "/var/lib/tempo/live-store/traces";
+        shutdown_marker_dir = "/var/lib/tempo/live-store/shutdown-marker";
+      };
+      backend_scheduler.local_work_path = "/var/lib/tempo/backend-scheduler";
       storage.trace = {
         backend = "local";
         local.path = "/var/lib/tempo/traces";
