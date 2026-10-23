@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  config,
   ...
 }: let
   grafanaSecretsDir = "/var/lib/grafana/secrets";
@@ -109,10 +108,11 @@ in {
       common = {
         path_prefix = "/var/lib/loki";
         replication_factor = 1;
-        # Otherwise Loki looks up an address on eth0/en0, which fails at boot before
-        # the network is up, and advertises the LAN IP when it isn't listening there.
-        instance_addr = "127.0.0.1";
-        ring.kvstore.store = "inmemory";
+        # Otherwise the address is auto-detected from eth0/en0/lo, none of which is usable here.
+        ring = {
+          kvstore.store = "inmemory";
+          instance_addr = "127.0.0.1";
+        };
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
           rules_directory = "/var/lib/loki/rules";
