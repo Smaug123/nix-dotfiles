@@ -109,6 +109,9 @@ in {
       common = {
         path_prefix = "/var/lib/loki";
         replication_factor = 1;
+        # Otherwise Loki looks up an address on eth0/en0, which fails at boot before
+        # the network is up, and advertises the LAN IP when it isn't listening there.
+        instance_addr = "127.0.0.1";
         ring.kvstore.store = "inmemory";
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
@@ -204,6 +207,17 @@ in {
         instance_addr = "127.0.0.1";
         kvstore.store = "inmemory";
       };
+      # Mimir 3 also starts rings for these; unpinned, they fail at boot looking for
+      # an address on eth0/en0 (and the querier ring defaults to memberlist).
+      querier.ring = {
+        instance_addr = "127.0.0.1";
+        kvstore.store = "inmemory";
+      };
+      compactor.sharding_ring = {
+        instance_addr = "127.0.0.1";
+        kvstore.store = "inmemory";
+      };
+      frontend.address = "127.0.0.1";
       usage_stats.enabled = false;
     };
   };
