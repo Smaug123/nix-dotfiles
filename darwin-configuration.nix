@@ -14,6 +14,7 @@
 in {
   imports = [
     ./darwin-modules/observability.nix
+    ./darwin-modules/rosetta-builder.nix
   ];
 
   # List packages installed in system profile. To search by name, run:
@@ -132,7 +133,8 @@ in {
   # nix.gc.automatic = true;
 
   # Sandbox causes failure: https://github.com/NixOS/nix/issues/4119
-  nix.settings.sandbox = false;
+  # ignored because of Determinate
+  # nix.settings.sandbox = false;
 
   # Optimising store leads to transient build failures https://github.com/NixOS/nix/issues/7273
   # and syspolicyd lockups https://github.com/nix-darwin/nix-darwin/issues/1307
