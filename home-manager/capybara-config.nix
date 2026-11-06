@@ -55,12 +55,6 @@ in {
     extraGroups = ["wheel" "networkManager"];
   };
 
-  services.syncthing = {
-    enable = true;
-    user = "patrick";
-    dataDir = "/home/patrick/syncthing";
-  };
-
   environment.systemPackages = [
     pkgs.git
     pkgs.vim
