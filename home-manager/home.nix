@@ -167,7 +167,7 @@
     codelldb = nixpkgs.vscode-extensions.vadimcn.vscode-lldb;
     codelldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
     liblldbPath = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/lldb/lib/liblldb.${
-      if nixpkgs.stdenv.isDarwin
+      if nixpkgs.stdenv.hostPlatform.isDarwin
       then "dylib"
       else "so"
     }";
@@ -326,14 +326,14 @@
       nixpkgs.uv
     ]
     ++ (
-      if nixpkgs.stdenv.isDarwin
+      if nixpkgs.stdenv.hostPlatform.isDarwin
       then [
         nixpkgs.coreutils-prefixed
       ]
       else []
     )
     ++ (
-      if nixpkgs.stdenv.isLinux
+      if nixpkgs.stdenv.hostPlatform.isLinux
       then [
         nixpkgs.protonmail-bridge
         nixpkgs.pinentry-curses

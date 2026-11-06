@@ -26,7 +26,7 @@
 
       # Use y to yank to clipboard
       ${
-        if pkgs.stdenv.isDarwin
+        if pkgs.stdenv.hostPlatform.isDarwin
         then ''
           bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
         ''
