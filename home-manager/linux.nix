@@ -200,5 +200,14 @@
     pinentry.package = nixpkgs.pinentry-curses;
   };
 
-  services.swayidle = {enable = true;};
+  services.swayidle = {
+    enable = true;
+    timeouts = [
+      {
+        timeout = 600;
+        command = "${nixpkgs.sway}/bin/swaymsg 'output * power off'";
+        resumeCommand = "${nixpkgs.sway}/bin/swaymsg 'output * power on'";
+      }
+    ];
+  };
 }
