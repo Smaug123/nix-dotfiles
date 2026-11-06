@@ -73,12 +73,19 @@
       grpc.endpoint = "127.0.0.1:14317";
       http.endpoint = "127.0.0.1:14318";
     };
-    ingester.trace_idle_period = "10s";
     storage.trace = {
       backend = "local";
       local.path = "${tempoDir}/traces";
       wal.path = "${tempoDir}/wal";
     };
+    # Tempo 3 defaults each of these to /var/tempo, which a user agent cannot
+    # create; the live-store fails to start without them, taking ingest with it.
+    live_store = {
+      shutdown_marker_dir = "${tempoDir}/live-store/shutdown";
+      wal.path = "${tempoDir}/live-store/wal";
+    };
+    block_builder.wal.path = "${tempoDir}/block-builder/wal";
+    backend_scheduler.local_work_path = "${tempoDir}/backend-scheduler";
     # Powers the Explore Traces app's rate()/breakdown queries (TraceQL metrics),
     # which otherwise fail with "error finding generators: empty ring" — the
     # metrics-generator is a separate opt-in component, not enabled by
@@ -95,7 +102,6 @@
           }
         ];
       };
-      traces_storage.path = "${tempoDir}/generator/traces";
     };
     overrides.defaults.metrics_generator.processors = ["service-graphs" "span-metrics"];
     usage_report.reporting_enabled = false;
@@ -127,6 +133,9 @@
       filesystem.dir = "${mimirDir}/ruler";
     };
     compactor.data_dir = "${mimirDir}/compactor";
+    # The querier sends results back to the address the frontend advertises,
+    # which defaults to a private-interface IP; gRPC listens on loopback only.
+    frontend.address = "127.0.0.1";
     ingester = {
       ring = {
         replication_factor = 1;
@@ -143,9 +152,13 @@
       instance_addr = "127.0.0.1";
       kvstore.store = "inmemory";
     };
-    ruler.ring = {
-      instance_addr = "127.0.0.1";
-      kvstore.store = "inmemory";
+    ruler = {
+      # Defaults to ./data-ruler/, relative to launchd's read-only cwd of /.
+      rule_path = "${mimirDir}/data-ruler";
+      ring = {
+        instance_addr = "127.0.0.1";
+        kvstore.store = "inmemory";
+      };
     };
     usage_stats.enabled = false;
   };
@@ -288,7 +301,7 @@
   bootstrap = inner: ''
     ${pkgs.bash}/bin/bash -c "set -e ; \
       mkdir -p '${lokiDir}/chunks' '${lokiDir}/rules' ; \
-      mkdir -p '${tempoDir}/traces' '${tempoDir}/wal' '${tempoDir}/generator/wal' '${tempoDir}/generator/traces' ; \
+      mkdir -p '${tempoDir}/traces' '${tempoDir}/wal' '${tempoDir}/generator/wal' ; \
       mkdir -p '${mimirDir}/data' '${mimirDir}/blocks' '${mimirDir}/tsdb-sync' \
                '${mimirDir}/tsdb' '${mimirDir}/ruler' '${mimirDir}/compactor' ; \
       mkdir -p '${alloyDir}' ; \
