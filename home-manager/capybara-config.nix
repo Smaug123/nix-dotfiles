@@ -52,7 +52,7 @@ in {
   users.mutableUsers = true;
   users.users.patrick = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkManager"];
+    extraGroups = ["wheel" "networkmanager"];
   };
 
   environment.systemPackages = [
