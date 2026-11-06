@@ -118,6 +118,9 @@ in {
           rules_directory = "/var/lib/loki/rules";
         };
       };
+      # Otherwise the querier sends results back to the frontend on an auto-detected LAN
+      # address, but gRPC only listens on 127.0.0.1, so every query hangs.
+      frontend.address = "127.0.0.1";
       schema_config.configs = [
         {
           from = "2024-01-01";
