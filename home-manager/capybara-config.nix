@@ -109,6 +109,9 @@ in {
         path_prefix = "/var/lib/loki";
         replication_factor = 1;
         # Otherwise the address is auto-detected from eth0/en0/lo, none of which is usable here.
+        # The ring setting alone isn't enough: memberlist-kv still auto-detects unless this is
+        # set, and at boot lo can briefly lack an address while NetworkManager takes it over.
+        instance_addr = "127.0.0.1";
         ring = {
           kvstore.store = "inmemory";
           instance_addr = "127.0.0.1";
