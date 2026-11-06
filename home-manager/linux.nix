@@ -1,6 +1,5 @@
 {nixpkgs, ...}: {
-  home.packages = [nixpkgs.firefox nixpkgs.jetbrains.rider];
-  nixpkgs.config.firefox.speechSynthesisSupport = true;
+  home.packages = [nixpkgs.firefox nixpkgs.jetbrains.rider nixpkgs.wl-clipboard];
 
   wayland.windowManager.sway = {
     enable = true;
@@ -8,12 +7,13 @@
       focus = {followMouse = false;};
       modifier = "Mod4";
       terminal = "alacritty";
+      menu = "${nixpkgs.fuzzel}/bin/fuzzel";
       window = {border = 5;};
       bars = [
         {command = "${nixpkgs.waybar}/bin/waybar";}
       ];
     };
-    extraConfig = builtins.replaceStrings ["@@WL-COPY@@" "@@GRIM@@" "@@SLURP@@"] ["${nixpkgs.wl-clipboard}/bin/wl-copy" "${nixpkgs.grim}/bin/grim" "${nixpkgs.slurp}/bin/slurp"] (builtins.readFile ./sway.conf);
+    extraConfig = builtins.replaceStrings ["@@WL-COPY@@" "@@GRIM@@" "@@SLURP@@" "@@WPCTL@@"] ["${nixpkgs.wl-clipboard}/bin/wl-copy" "${nixpkgs.grim}/bin/grim" "${nixpkgs.slurp}/bin/slurp" "${nixpkgs.wireplumber}/bin/wpctl"] (builtins.readFile ./sway.conf);
   };
 
   programs.waybar = {

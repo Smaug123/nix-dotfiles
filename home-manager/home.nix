@@ -300,7 +300,6 @@
       nixpkgs.hledger-web
       dotnet
       nixpkgs.elan
-      nixpkgs.coreutils-prefixed
       nixpkgs.asciinema
       nixpkgs.git-lfs
       nixpkgs.imagemagick
@@ -326,6 +325,13 @@
       nixpkgs.claude-code
       nixpkgs.uv
     ]
+    ++ (
+      if nixpkgs.stdenv.isDarwin
+      then [
+        nixpkgs.coreutils-prefixed
+      ]
+      else []
+    )
     ++ (
       if nixpkgs.stdenv.isLinux
       then [

@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  config,
   ...
 }: let
   grafanaSecretsDir = "/var/lib/grafana/secrets";
@@ -37,7 +36,7 @@ in {
     "video=HDMI-A-1:1920x1080@144"
   ];
 
-  boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
+  # boot.extraModulePackages = [config.boot.kernelPackages.rtl8821au];
 
   networking = {
     hostName = "capybara";
@@ -79,6 +78,7 @@ in {
 
   system.stateVersion = "23.11";
   nix.settings.experimental-features = ["nix-command" "flakes" "ca-derivations"];
+  nix.package = pkgs.nixVersions.latest;
 
   nix.gc.automatic = true;
   nix.extraOptions = ''
@@ -108,12 +108,22 @@ in {
       common = {
         path_prefix = "/var/lib/loki";
         replication_factor = 1;
-        ring.kvstore.store = "inmemory";
+        # Otherwise the address is auto-detected from eth0/en0/lo, none of which is usable here.
+        # The ring setting alone isn't enough: memberlist-kv still auto-detects unless this is
+        # set, and at boot lo can briefly lack an address while NetworkManager takes it over.
+        instance_addr = "127.0.0.1";
+        ring = {
+          kvstore.store = "inmemory";
+          instance_addr = "127.0.0.1";
+        };
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
           rules_directory = "/var/lib/loki/rules";
         };
       };
+      # Otherwise the querier sends results back to the frontend on an auto-detected LAN
+      # address, but gRPC only listens on 127.0.0.1, so every query hangs.
+      frontend.address = "127.0.0.1";
       schema_config.configs = [
         {
           from = "2024-01-01";
@@ -143,7 +153,12 @@ in {
         grpc.endpoint = "127.0.0.1:4317";
         http.endpoint = "127.0.0.1:4318";
       };
-      ingester.trace_idle_period = "10s";
+      # Tempo 3 defaults these to /var/tempo, which the sandboxed unit can't write to.
+      live_store = {
+        wal.path = "/var/lib/tempo/live-store/traces";
+        shutdown_marker_dir = "/var/lib/tempo/live-store/shutdown-marker";
+      };
+      backend_scheduler.local_work_path = "/var/lib/tempo/backend-scheduler";
       storage.trace = {
         backend = "local";
         local.path = "/var/lib/tempo/traces";
@@ -198,6 +213,17 @@ in {
         instance_addr = "127.0.0.1";
         kvstore.store = "inmemory";
       };
+      # Mimir 3 also starts rings for these; unpinned, they fail at boot looking for
+      # an address on eth0/en0 (and the querier ring defaults to memberlist).
+      querier.ring = {
+        instance_addr = "127.0.0.1";
+        kvstore.store = "inmemory";
+      };
+      compactor.sharding_ring = {
+        instance_addr = "127.0.0.1";
+        kvstore.store = "inmemory";
+      };
+      frontend.address = "127.0.0.1";
       usage_stats.enabled = false;
     };
   };
