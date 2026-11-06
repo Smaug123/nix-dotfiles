@@ -150,7 +150,7 @@ in {
       tls = {enable = false;};
     };
     userName =
-      if pkgs.stdenv.isLinux
+      if pkgs.stdenv.hostPlatform.isLinux
       then builtins.head (pkgs.lib.strings.splitString "@" address)
       else address;
   };

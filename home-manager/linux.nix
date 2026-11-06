@@ -196,7 +196,7 @@
   };
 
   services.gpg-agent = {
-    enable = nixpkgs.stdenv.isLinux;
+    enable = nixpkgs.stdenv.hostPlatform.isLinux;
     pinentry.package = nixpkgs.pinentry-curses;
   };
 

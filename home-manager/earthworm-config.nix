@@ -5,6 +5,7 @@
 
   hardware.asahi.peripheralFirmwareDirectory = ./../firmware;
   hardware.asahi = {
+    enable = true;
     setupAsahiSound = true;
   };
   hardware.graphics.enable = true;

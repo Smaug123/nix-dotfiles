@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   programs.ghostty = {
-    enable = pkgs.stdenv.isLinux;
+    enable = pkgs.stdenv.hostPlatform.isLinux;
     enableZshIntegration = true;
     settings = {
       keybind = [
@@ -10,7 +10,7 @@
   };
 
   home.packages =
-    if pkgs.stdenv.isLinux
+    if pkgs.stdenv.hostPlatform.isLinux
     then [
       pkgs.ghostty
     ]
