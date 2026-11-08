@@ -35,13 +35,6 @@ jobs:
         uses: "actions/checkout@v7"
       - name: "Disk space before"
         run: "df -h"
-      # The root filesystem on the Linux runners is too small for a full closure, but the
-      # temporary disk at /mnt has plenty of room, so put the store there before Nix is installed.
-      - name: "Put the Nix store on /mnt"
-        if: runner.os == 'Linux'
-        run: |
-          sudo mkdir -p /mnt/nix /nix
-          sudo mount --bind /mnt/nix /nix
       - name: "Install Nix"
         uses: "cachix/install-nix-action@v31"
         with: { "extra_nix_config": "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" }
