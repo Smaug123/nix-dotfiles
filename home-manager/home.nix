@@ -36,6 +36,7 @@
     ./modules/ripgrep.nix
     ./modules/rust.nix
     ./modules/posix-sh.nix
+    ./modules/claude-code.nix
     (import ./modules/mail.nix
       {
         inherit mbsync secretsPath;
@@ -322,7 +323,6 @@
       nixpkgs.gopls
       nixpkgs.go
       nixpkgs.libiconv
-      nixpkgs.claude-code
       nixpkgs.codex
       nixpkgs.uv
     ]
