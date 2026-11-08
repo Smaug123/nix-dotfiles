@@ -1,0 +1,52 @@
+name: Build closures
+
+# Building every machine's full system closure is expensive (earthworm compiles its kernel), so
+# only do it when the closures are likely to have changed underneath us: when the lockfile moves.
+on:
+  pull_request:
+    branches: [ main ]
+    paths: [ "flake.lock", ".github/workflows/build-closures.yaml" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: capybara
+            runner: ubuntu-latest
+            attr: nixosConfigurations.capybara.config.system.build.toplevel
+          - name: earthworm
+            runner: ubuntu-24.04-arm
+            attr: nixosConfigurations.earthworm.config.system.build.toplevel
+          - name: darwin
+            runner: macos-latest
+            attr: darwinConfigurations.patrick.system
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+      - name: "Disk space before"
+        run: "df -h"
+      # The root filesystem on the Linux runners is too small for a full closure, but the
+      # temporary disk at /mnt has plenty of room, so put the store there before Nix is installed.
+      - name: "Put the Nix store on /mnt"
+        if: runner.os == 'Linux'
+        run: |
+          sudo mkdir -p /mnt/nix /nix
+          sudo mount --bind /mnt/nix /nix
+      - name: "Install Nix"
+        uses: "cachix/install-nix-action@v31"
+        with: { "extra_nix_config": "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" }
+      - name: "Build"
+        run: "nix build --no-link --keep-going .#${{ matrix.attr }}"
+      - name: "Disk space after"
+        if: always()
+        run: "df -h"
