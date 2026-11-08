@@ -113,16 +113,6 @@ in {
         RunAtLoad = true;
       };
     };
-
-    nix-store-optimise = {
-      command = ''${pkgs.nix}/bin/nix store optimise'';
-      serviceConfig = {
-        KeepAlive = false;
-        UserName = "patrick";
-        StartInterval = 72000;
-        RunAtLoad = true;
-      };
-    };
   };
 
   # because of Determinate
@@ -137,7 +127,11 @@ in {
   # nix.settings.sandbox = false;
 
   # Optimising store leads to transient build failures https://github.com/NixOS/nix/issues/7273
-  # and syspolicyd lockups https://github.com/nix-darwin/nix-darwin/issues/1307
+  # and syspolicyd lockups https://github.com/nix-darwin/nix-darwin/issues/1307 .
+  # Don't run `nix store optimise` periodically either: it hardlinks every store file into
+  # /nix/store/.links (over a million entries). The kernel can then report a running Nix binary's
+  # path as /nix/store/.links/<hash>, and socketfilterfw scans the executable's directory on every
+  # new network flow, so one chatty daemon (syncthing) pinned it at a full core.
   nix.extraOptions = ''
     auto-optimise-store = false
     experimental-features = nix-command flakes
