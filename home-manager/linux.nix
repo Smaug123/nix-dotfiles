@@ -197,7 +197,12 @@
 
   services.gpg-agent = {
     enable = nixpkgs.stdenv.hostPlatform.isLinux;
-    pinentry.package = nixpkgs.pinentry-curses;
+    # pinentry-qt pops up a GUI dialog under Wayland, and falls back to curses on a bare TTY.
+    pinentry.package = nixpkgs.pinentry-qt;
+    # Cache the passphrase effectively forever (~400 days), like pinentry-mac + Keychain on Darwin.
+    # defaultCacheTtl is reset on every use; maxCacheTtl is a hard cap counted from first entry.
+    defaultCacheTtl = 34560000;
+    maxCacheTtl = 34560000;
   };
 
   services.swayidle = {
