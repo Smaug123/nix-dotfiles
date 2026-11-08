@@ -73,6 +73,7 @@
             };
           in [
             ./home-manager/capybara-config.nix
+            ./nixos-modules/user-groups-exist.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -99,6 +100,7 @@
             };
           in [
             ./home-manager/earthworm-config.nix
+            ./nixos-modules/user-groups-exist.nix
             apple-silicon.nixosModules.default
             home-manager.nixosModules.home-manager
             {
@@ -170,10 +172,69 @@
           dontBuild = true;
           doCheck = true;
         };
+      # Exhaustive test of ./nixos-modules/user-groups-exist.nix: one user for every
+      # combination of (declared) primary group and extra groups drawn from a small universe,
+      # all evaluated in a single NixOS configuration. The oracle says an extraGroups entry
+      # should fail exactly when its group isn't declared. (Undeclared primary groups are
+      # already rejected by NixOS itself.) The work happens at evaluation time, so this
+      # is checked for every system by `nix flake check --all-systems`.
+      user-groups-exist = system: let
+        pkgs = import nixpkgs {inherit config system;};
+        lib = nixpkgs.lib;
+        # "wheel" and "users" are declared by NixOS itself; "declared" by the test config.
+        declared = ["wheel" "users" "declared"];
+        universe = ["wheel" "declared" "missing1" "missing2"];
+        subsets = lib.foldr (x: acc: acc ++ map (s: [x] ++ s) acc) [[]] universe;
+        primaries = ["users" "declared"];
+        cases =
+          lib.imap0 (i: c: c // {user = "u${toString i}";})
+          (lib.concatMap (group: map (extraGroups: {inherit group extraGroups;}) subsets) primaries);
+        eval = lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./nixos-modules/user-groups-exist.nix
+            {
+              boot.loader.grub.enable = false;
+              fileSystems."/" = {
+                device = "/dev/null";
+                fsType = "ext4";
+              };
+              system.stateVersion = "25.11";
+              users.groups.declared = {};
+              users.users = lib.listToAttrs (map (c: {
+                  name = c.user;
+                  value = {
+                    isNormalUser = true;
+                    inherit (c) group extraGroups;
+                  };
+                })
+                cases);
+            }
+          ];
+        };
+        failed = map (a: a.message) (lib.filter (a: !a.assertion) eval.config.assertions);
+        expected = lib.concatMap (c:
+          map (group: {
+            inherit (c) user;
+            inherit group;
+          }) (lib.filter (g: !lib.elem g declared) c.extraGroups))
+        cases;
+        mentions = e: m: lib.hasInfix "users.users.${e.user}.extraGroups " m && lib.hasInfix "‘${e.group}’" m;
+        unmatched = lib.filter (e: lib.length (lib.filter (mentions e) failed) != 1) expected;
+      in
+        assert lib.assertMsg (lib.length cases == 32) "expected 32 cases, got ${toString (lib.length cases)}";
+        assert lib.assertMsg (unmatched == [])
+        "user-groups-exist: these expected failures did not each match exactly one failed assertion: ${builtins.toJSON unmatched}\nFailed assertions were: ${builtins.toJSON failed}";
+        assert lib.assertMsg (lib.length failed == lib.length expected)
+        "user-groups-exist: expected ${toString (lib.length expected)} failed assertions, got ${toString (lib.length failed)}: ${builtins.toJSON failed}";
+          pkgs.runCommand "user-groups-exist" {} "mkdir $out";
     in
       builtins.listToAttrs (builtins.map (system: {
           name = system;
-          value = {fmt-check = fmt-check system;};
+          value = {
+            fmt-check = fmt-check system;
+            user-groups-exist = user-groups-exist system;
+          };
         })
         systems);
     devShells = let

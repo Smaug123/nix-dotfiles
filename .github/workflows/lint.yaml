@@ -17,6 +17,11 @@ jobs:
         with: { "extra_nix_config": "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" }
       - name: "Check flake"
         run: "nix flake check --all-systems"
+      # Upstream Nix's `flake check` doesn't know about `darwinConfigurations` and skips it
+      # without evaluating anything, so evaluate it explicitly. Evaluation is
+      # platform-independent (there's no import-from-derivation), so this works on Linux.
+      - name: "Evaluate Darwin configuration"
+        run: "nix eval --raw --option allow-import-from-derivation false .#darwinConfigurations.patrick.system.drvPath"
 
   all-required-checks-complete:
     if:  ${{ always() }}
