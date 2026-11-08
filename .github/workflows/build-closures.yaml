@@ -1,0 +1,45 @@
+name: Build closures
+
+# Building full system closures is expensive, so only do it when the closures are likely to have
+# changed underneath us: when the lockfile moves.
+#
+# earthworm is deliberately omitted: its Asahi kernel and u-boot aren't in any binary cache, so
+# every run would compile them from source.
+on:
+  pull_request:
+    branches: [ main ]
+    paths: [ "flake.lock", ".github/workflows/build-closures.yaml" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: capybara
+            runner: ubuntu-latest
+            attr: nixosConfigurations.capybara.config.system.build.toplevel
+          - name: darwin
+            runner: macos-latest
+            attr: darwinConfigurations.patrick.system
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+      - name: "Disk space before"
+        run: "df -h"
+      - name: "Install Nix"
+        uses: "cachix/install-nix-action@v31"
+        with: { "extra_nix_config": "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}" }
+      - name: "Build"
+        run: "nix build --no-link --keep-going .#${{ matrix.attr }}"
+      - name: "Disk space after"
+        if: always()
+        run: "df -h"
