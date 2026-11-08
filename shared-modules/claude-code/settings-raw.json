@@ -1,0 +1,31 @@
+{
+  "env": {
+    "CLAUDE_AFK_TIMEOUT_MS": "86400000",
+    "CLAUDE_CODE_DISABLE_CRON": "1",
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
+  },
+  "subagentPromptCacheTtl": "1h",
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "opus",
+  "enabledPlugins": {},
+  "sandbox": {
+    "enabled": false,
+    "allowUnsandboxedCommands": true
+  },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "switchModelsOnFlag": false,
+  "skipAutoPermissionPrompt": true
+}
+
