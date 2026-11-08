@@ -75,6 +75,7 @@
             ./home-manager/capybara-config.nix
             ./nixos-modules/user-groups-exist.nix
             home-manager.nixosModules.home-manager
+            (import ./shared-modules/claude-code.nix {username = "patrick";})
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
@@ -103,6 +104,7 @@
             ./nixos-modules/user-groups-exist.nix
             apple-silicon.nixosModules.default
             home-manager.nixosModules.home-manager
+            (import ./shared-modules/claude-code.nix {username = "patrick";})
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
@@ -146,6 +148,7 @@
             system.configurationRevision = self.rev or self.dirtyRev or null;
           }
           home-manager.darwinModules.home-manager
+          (import ./shared-modules/claude-code.nix {username = "patrick";})
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
