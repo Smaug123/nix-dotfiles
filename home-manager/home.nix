@@ -337,7 +337,7 @@
       if nixpkgs.stdenv.hostPlatform.isLinux
       then [
         nixpkgs.protonmail-bridge
-        nixpkgs.pinentry-curses
+        nixpkgs.pinentry-qt
         nixpkgs.signal-desktop
         nixpkgs.keepassxc
       ]
