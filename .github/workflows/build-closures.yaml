@@ -1,7 +1,10 @@
 name: Build closures
 
-# Building every machine's full system closure is expensive (earthworm compiles its kernel), so
-# only do it when the closures are likely to have changed underneath us: when the lockfile moves.
+# Building full system closures is expensive, so only do it when the closures are likely to have
+# changed underneath us: when the lockfile moves.
+#
+# earthworm is deliberately omitted: its Asahi kernel and u-boot aren't in any binary cache, so
+# every run would compile them from source.
 on:
   pull_request:
     branches: [ main ]
@@ -24,9 +27,6 @@ jobs:
           - name: capybara
             runner: ubuntu-latest
             attr: nixosConfigurations.capybara.config.system.build.toplevel
-          - name: earthworm
-            runner: ubuntu-24.04-arm
-            attr: nixosConfigurations.earthworm.config.system.build.toplevel
           - name: darwin
             runner: macos-latest
             attr: darwinConfigurations.patrick.system
