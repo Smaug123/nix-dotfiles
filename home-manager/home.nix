@@ -323,6 +323,7 @@
       nixpkgs.go
       nixpkgs.libiconv
       nixpkgs.claude-code
+      nixpkgs.codex
       nixpkgs.uv
     ]
     ++ (
