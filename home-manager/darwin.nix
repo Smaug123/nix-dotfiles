@@ -5,7 +5,7 @@
   whisper,
   ...
 }: {
-  imports = [./rider];
+  imports = [./rider ./modules/safari-widget.nix];
 
   rider = {
     enable = true;
